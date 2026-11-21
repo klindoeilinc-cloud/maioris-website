@@ -32,7 +32,7 @@ export async function onRequestPost({ request, env }) {
   for (const k of Object.keys(MAX)) f[k] = clean(data[k], MAX[k]);
   f.challenges = clean(data.challenges, 600);
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(f.email);
-  if (!f.organisation || !f.name || !emailOk || (f.context.match(/\S+/g) || []).length < 35 || !f.support || !data.consent) {
+  if (!f.organisation || !f.name || !emailOk || f.context.length < 35 || !f.support || !data.consent) {
     return json({ ok: false, error: "validation" }, 422);
   }
 
