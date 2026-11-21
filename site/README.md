@@ -1,5 +1,7 @@
 # MAIORIS.NET 2.0 — mise en ligne
 
+> Important : ce dépôt ne contient pas le générateur (`content.py`, `build.py`) cité plus bas. Les pages sont éditées directement dans ce dossier. Voir le README à la racine du dépôt.
+
 Site statique bilingue (français principal, anglais disponible), sans framework ni dépendance.
 
 ## Contenu du dossier
