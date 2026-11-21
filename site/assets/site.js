@@ -1,4 +1,4 @@
-/* MAIORIS.NET 2.0 — interactions et mesure (sans dépendance) */
+/* MAIORIS.NET 2.0, interactions et mesure (sans dépendance) */
 {
   const root = document.documentElement;
   const body = document.body;
@@ -482,7 +482,7 @@
   if (ctxField) {
     try {
       const r = sessionStorage.getItem("maioris-diag");
-      if (r && !ctxField.value) { ctxField.value = (document.documentElement.lang === "en" ? "Self-assessment: main constraint: " : "Autodiagnostic : contrainte principale : ") + r + ".\n"; }
+      if (r && !ctxField.value) { ctxField.value = (document.documentElement.lang === "en" ? "Self-assessment, main constraint: " : "Autodiagnostic, contrainte principale : ") + r + ".\n"; }
       sessionStorage.removeItem("maioris-diag");
     } catch (e) {}
   }

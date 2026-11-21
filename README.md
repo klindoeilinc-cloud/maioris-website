@@ -5,12 +5,24 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 ## Structure
 
 - `site/` : le site publié. **C'est la source de vérité.** Les pages HTML sont éditées directement.
+- `tools/build_assets.py` : publie le CSS et le JavaScript partagés (nom versionné).
 - `tools/qa.py` : contrôle qualité automatique (liens, ancres, titres uniques, hreflang réciproques, JSON-LD, images sans alt, tirets, sitemap, redirections).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
 
 ## Avertissement : ne pas régénérer le site depuis un ancien générateur
 
 `site/README.md` mentionne des fichiers `content.py` et `build.py`. Ils ne sont pas dans ce dépôt. Les pages ont été modifiées directement depuis (analyses, FAQ, niveaux d'accompagnement, cas stratégiques, version anglaise, outil, formulaire, etc.). Régénérer le site depuis l'ancien générateur **effacerait ces modifications**.
+
+## Modifier le style ou le JavaScript
+
+Le CSS et le JavaScript du site sont des fichiers partagés versionnés. Éditer `site/assets/site.css` ou `site/assets/site.js`, puis :
+
+```bash
+python3 tools/build_assets.py
+python3 tools/qa.py
+```
+
+Le premier met à jour le nom des fichiers publiés (`site.<empreinte>.css` et `.js`) et leur référence dans toutes les pages. Le second vérifie que rien n'a été oublié. Ne jamais éditer directement les fichiers `site.<empreinte>.*`.
 
 ## Avant chaque mise en ligne
 

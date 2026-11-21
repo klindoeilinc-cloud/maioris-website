@@ -121,6 +121,19 @@ css = open(os.path.join(SITE, "assets", "site.css"), encoding="utf8").read()
 for u in re.findall(r"url\((/assets/[^)]+)\)", css):
     if not os.path.isfile(os.path.join(SITE, u.lstrip("/"))): err(f"site.css: fichier introuvable {u}")
 
+# CSS et JavaScript partagés : versionnés par empreinte (voir tools/build_assets.py)
+import hashlib
+def dig(name): return hashlib.sha256(open(os.path.join(SITE, "assets", name), encoding="utf8").read().encode("utf8")).hexdigest()[:8]
+for ext in ("css", "js"):
+    h = dig("site." + ext)
+    if not os.path.isfile(os.path.join(SITE, "assets", "site.%s.%s" % (h, ext))):
+        err("assets/site.%s à jour mais site.%s.%s est absent : lancez python3 tools/build_assets.py" % (ext, h, ext))
+    for p, t in pages.items():
+        if p == "404.html": continue
+        refs = set(re.findall(r"/assets/site\.([0-9a-f]{8})\.%s" % ext, t))
+        if refs and refs != {h}: err("%s: référence périmée à site.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
+        if not refs and ext == "css": err("%s: aucune feuille de style partagée" % p)
+
 print(f"{len(pages)} pages analysées")
 for w in warnings: print("AVERTISSEMENT", w)
 for e in errors: print("ERREUR", e)
