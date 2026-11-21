@@ -1,0 +1,19 @@
+/* lettre MAIORIS Insights : bloc d'inscription */
+.nl { background: var(--paper2, #F2F4FF); }
+.nl-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; align-items: start; }
+.nl-txt { grid-column: 1 / span 6; }
+.nl-form { grid-column: 8 / span 5; }
+.nl-t { margin: 0 0 16px; font: 600 clamp(28px, 3.4vw, 46px)/1.05 var(--sans); letter-spacing: -.035em; text-wrap: balance; }
+.nl-txt p { max-width: 540px; margin: 0; font-size: clamp(17px, 1.4vw, 19px); line-height: 1.6; }
+.nl-form .f { margin-bottom: 16px; }
+.nl-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.nl-consent { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 20px; font-size: 14.5px; line-height: 1.5; color: var(--mute); cursor: pointer; }
+.nl-consent input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: var(--red, #243AFF); cursor: pointer; }
+.nl-consent a { color: var(--ink); }
+.nl-form input:focus-visible { outline: 3px solid var(--red, #243AFF); outline-offset: 2px; }
+.nl-status { margin: 14px 0 0; min-height: 1.4em; font-size: 15px; line-height: 1.5; }
+.nl-status.ok { color: #0F7B3F; }
+.nl-status.err { color: #8A2310; }
+.nl-form [aria-invalid="true"] { border: 2px solid #8A2310; }
+@media (max-width: 900px) { .nl-txt, .nl-form { grid-column: 1 / -1; } }
+@media print { .nl { display: none; } }

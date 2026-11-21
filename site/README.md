@@ -10,6 +10,7 @@ Site statique bilingue (français principal, anglais disponible), sans framework
 - `assets/` : `site.css`, `site.js`, favicon, images Open Graph.
 - `sitemap.xml`, `robots.txt`, `_headers` (en-têtes de sécurité), `_redirects` (anciennes URL → nouvelles).
 - `functions/api/contact.js` : réception du formulaire (Cloudflare Pages Function).
+- `functions/api/subscribe.js` : inscription à la lettre MAIORIS Insights (Cloudflare Pages Function, Resend).
 
 ## Déploiement recommandé : Cloudflare Pages
 
@@ -20,9 +21,10 @@ Le site actuel est déjà servi via Cloudflare (robots.txt géré par Cloudflare
    - `RESEND_API_KEY` (secret) — compte gratuit sur resend.com, domaine maioris.net vérifié ;
    - `CONTACT_TO` = hello@maioris.net ;
    - `CONTACT_FROM` = `MAIORIS <site@maioris.net>`.
-3. Optionnel : lier un espace KV nommé `RATE_KV` (limite de 5 envois par heure et par IP).
-4. Rattacher le domaine maioris.net au projet.
-5. Mesure d'audience : ajouter dans chaque page, avant `</head>`, le script Plausible
+3. Lettre MAIORIS Insights (`functions/api/subscribe.js`) : ajouter `RESEND_AUDIENCE_ID` (identifiant de l'audience Resend qui reçoit les inscriptions). Optionnel : `RESEND_AUDIENCE_ID_EN` pour une audience distincte des inscriptions faites depuis les pages en anglais.
+4. Optionnel : lier un espace KV nommé `RATE_KV` (limite de 5 envois par heure et par IP, partagée par le formulaire de contact et l'inscription à la lettre).
+5. Rattacher le domaine maioris.net au projet.
+6. Mesure d'audience : ajouter dans chaque page, avant `</head>`, le script Plausible
    `<script defer data-domain="maioris.net" src="https://plausible.io/js/script.tagged-events.js"></script>`.
    Les événements (cta_click, contact_start, contact_step, contact_submit, service_engaged, case_engaged, lang_switch) sont déjà émis par `site.js`.
 
