@@ -283,6 +283,9 @@ ul.outcomes li { font: 600 clamp(22px, 2.3vw, 32px)/1.2 var(--sans); letter-spac
 .f textarea { resize: vertical; }
 .f [aria-invalid="true"] { border: 2px solid var(--red-ink); }
 .hint { font-size: 14px; color: var(--mute); margin-top: 6px; }
+.f .hint { margin: -2px 0 10px; }
+.f .hint.wc { margin: 8px 0 0; text-align: right; font-variant-numeric: tabular-nums; }
+.f .hint.wc.ok { color: var(--ink); font-weight: 600; }
 .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 24px; }
 @media (max-width: 640px) { .choices { grid-template-columns: 1fr; } }
 .choice { display: flex; gap: 12px; align-items: center; background: #FFFFFF; border: 1px solid #B9B6AE; border-radius: 6px; padding: 13px 14px; cursor: pointer; min-height: 52px; font-size: 15px; transition: border-color .2s, background .2s; }
@@ -1369,8 +1372,8 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
   const form = document.getElementById("qualify");
   if (form) {
     const t = lang === "fr"
-      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…" }
-      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…" };
+      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…", short: "Encore quelques mots, s'il vous plaît : 35 minimum pour que nous comprenions bien votre situation." }
+      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…", short: "A few more words, please: 35 minimum so we can understand your situation." };
     const steps = [...form.querySelectorAll("fieldset[data-step]")];
     const marks = [...form.querySelectorAll(".steps li")];
     const prev = form.querySelector("[data-prev]");
@@ -1398,6 +1401,18 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
       form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     };
 
+    const words = (v) => (v.match(/\S+/g) || []).length;
+    const ctx = form.querySelector("[data-minwords]");
+    const ctxCount = document.getElementById("context-count");
+    const minWords = ctx ? parseInt(ctx.dataset.minwords, 10) : 0;
+    const updateCount = () => {
+      if (!ctx || !ctxCount) return;
+      const n = words(ctx.value);
+      ctxCount.textContent = n + " / " + minWords + " " + ctxCount.dataset.unit;
+      ctxCount.classList.toggle("ok", n >= minWords);
+    };
+    if (ctx) { ctx.addEventListener("input", updateCount); updateCount(); }
+
     const valid = (i) => {
       const s = steps[i];
       let ok = true;
@@ -1412,6 +1427,7 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
       groups.forEach((g) => {
         if (!s.querySelector('input[name="' + g + '"]:checked')) { ok = false; msg = t.pick; }
       });
+      if (ok && ctx && s.contains(ctx) && words(ctx.value) < minWords) { ctx.setAttribute("aria-invalid", "true"); ok = false; msg = t.short; }
       if (!ok) { err.textContent = msg; err.hidden = false; const f = s.querySelector('[aria-invalid="true"]'); if (f) f.focus(); }
       return ok;
     };
