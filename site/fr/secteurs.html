@@ -1370,8 +1370,8 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
   const form = document.getElementById("qualify");
   if (form) {
     const t = lang === "fr"
-      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…", short: "Encore quelques mots, s'il vous plaît : 35 minimum pour que nous comprenions bien votre situation." }
-      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…", short: "A few more words, please: 35 minimum so we can understand your situation." };
+      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…", short: "Encore quelques mots, s'il vous plaît : 35 caractères minimum pour que nous comprenions bien votre situation." }
+      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…", short: "A few more words, please: 35 characters minimum so we can understand your situation." };
     const steps = [...form.querySelectorAll("fieldset[data-step]")];
     const marks = [...form.querySelectorAll(".steps li")];
     const prev = form.querySelector("[data-prev]");
@@ -1399,7 +1399,7 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
       form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     };
 
-    const words = (v) => (v.match(/\S+/g) || []).length;
+    const words = (v) => v.trim().length;
     const ctx = form.querySelector("[data-minwords]");
     const ctxCount = document.getElementById("context-count");
     const minWords = ctx ? parseInt(ctx.dataset.minwords, 10) : 0;
