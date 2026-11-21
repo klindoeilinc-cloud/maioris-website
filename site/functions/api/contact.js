@@ -51,16 +51,16 @@ export async function onRequestPost({ request, env }) {
     ["Enjeux", f.challenges], ["Contexte", f.context], ["Accompagnement", f.support], ["Budget", f.budget],
     ["Nom", f.name], ["E-mail", f.email], ["Téléphone", f.phone], ["Langue", f.lang],
   ];
-  const html = "<h2>Nouvelle demande — maioris.net</h2><table cellpadding='6'>" +
-    rows.map(([k, v]) => `<tr><td><b>${k}</b></td><td>${esc(v || "—").replace(/\n/g, "<br>")}</td></tr>`).join("") + "</table>";
-  const text = rows.map(([k, v]) => `${k}: ${v || "—"}`).join("\n");
+  const html = "<h2>Nouvelle demande maioris.net</h2><table cellpadding='6'>" +
+    rows.map(([k, v]) => `<tr><td><b>${k}</b></td><td>${esc(v || "non renseigné").replace(/\n/g, "<br>")}</td></tr>`).join("") + "</table>";
+  const text = rows.map(([k, v]) => `${k}: ${v || "non renseigné"}`).join("\n");
 
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: f.email,
-      subject: `[MAIORIS] ${f.organisation} — ${f.support}`, html, text,
+      subject: `[MAIORIS] ${f.organisation} | ${f.support}`, html, text,
     }),
   });
   if (!res.ok) return json({ ok: false, error: "send" }, 502);

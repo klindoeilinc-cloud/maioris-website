@@ -469,7 +469,7 @@
   if (ctxField) {
     try {
       const r = sessionStorage.getItem("maioris-diag");
-      if (r && !ctxField.value) { ctxField.value = (document.documentElement.lang === "en" ? "Self-assessment — main constraint: " : "Autodiagnostic — contrainte principale : ") + r + ".\n"; }
+      if (r && !ctxField.value) { ctxField.value = (document.documentElement.lang === "en" ? "Self-assessment: main constraint: " : "Autodiagnostic : contrainte principale : ") + r + ".\n"; }
       sessionStorage.removeItem("maioris-diag");
     } catch (e) {}
   }
