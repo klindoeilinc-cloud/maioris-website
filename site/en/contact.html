@@ -283,6 +283,9 @@ ul.outcomes li { font: 600 clamp(22px, 2.3vw, 32px)/1.2 var(--sans); letter-spac
 .f textarea { resize: vertical; }
 .f [aria-invalid="true"] { border: 2px solid var(--red-ink); }
 .hint { font-size: 14px; color: var(--mute); margin-top: 6px; }
+.f .hint { margin: -2px 0 10px; }
+.f .hint.wc { margin: 8px 0 0; text-align: right; font-variant-numeric: tabular-nums; }
+.f .hint.wc.ok { color: var(--ink); font-weight: 600; }
 .choices { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 24px; }
 @media (max-width: 640px) { .choices { grid-template-columns: 1fr; } }
 .choice { display: flex; gap: 12px; align-items: center; background: #FFFFFF; border: 1px solid #B9B6AE; border-radius: 6px; padding: 13px 14px; cursor: pointer; min-height: 52px; font-size: 15px; transition: border-color .2s, background .2s; }
@@ -1093,7 +1096,7 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 <div class="f"><label for="country">Country</label><input autocomplete="country-name" id="country" name="country" value="Côte d'Ivoire"/></div>
 </fieldset>
 <fieldset data-step="2" hidden=""><legend>Your challenge</legend><p class="hint">Select all that apply.</p><div class="choices"><label class="choice"><input name="challenges" type="checkbox" value="fragmented-operations"/><span>Fragmented creative operations</span></label><label class="choice"><input name="challenges" type="checkbox" value="weak-differentiation"/><span>Weak brand differentiation</span></label><label class="choice"><input name="challenges" type="checkbox" value="strategic-misalignment"/><span>Strategic misalignment</span></label><label class="choice"><input name="challenges" type="checkbox" value="inefficient-systems"/><span>Inefficient creative systems</span></label><label class="choice"><input name="challenges" type="checkbox" value="underperforming-investments"/><span>Underperforming marketing investments</span></label><label class="choice"><input name="challenges" type="checkbox" value="ai-without-architecture"/><span>AI adoption without strategic architecture</span></label><label class="choice"><input name="challenges" type="checkbox" value="growth-without-readiness"/><span>Growth without organisational readiness</span></label><label class="choice"><input name="challenges" type="checkbox" value="unsure"/><span>Not sure yet</span></label></div>
-<div class="f"><label for="context">In a few lines: what is happening, and what have you tried?</label><textarea id="context" minlength="20" name="context" required="" rows="5"></textarea></div></fieldset>
+<div class="f"><label for="context">In a few lines: what is happening, and what have you tried?</label><p class="hint" id="context-hint">A few sentences are enough, 35 words minimum. Tell us what you are seeing, since when, and what you have already tried.</p><textarea aria-describedby="context-hint context-count" data-minwords="35" id="context" name="context" required="" rows="5"></textarea><p aria-live="polite" class="hint wc" id="context-count" data-unit="words">0 / 35 words</p></div></fieldset>
 <fieldset data-step="3" hidden=""><legend>The support you are looking for</legend><div class="choices"><label class="choice"><input name="support" required="" type="radio" value="diagnostic"/><span>MCPS Diagnostic</span></label><label class="choice"><input name="support" type="radio" value="project"/><span>A defined project (Brand Intelligence, Growth Architecture, Creative Operating System)</span></label><label class="choice"><input name="support" type="radio" value="t90"/><span>Transformation 90</span></label><label class="choice"><input name="support" type="radio" value="claas"/><span>Ongoing creative leadership (CLaaS)</span></label><label class="choice"><input name="support" type="radio" value="partnership"/><span>Agency partnership</span></label><label class="choice"><input name="support" type="radio" value="advice"/><span>I'd like your recommendation</span></label></div>
 <div class="f"><label for="budget">Indicative budget (optional)</label><select id="budget" name="budget"><option value="na">Prefer not to say</option></select></div></fieldset>
 <fieldset data-step="4" hidden=""><legend>How can we reach you?</legend>
@@ -1391,8 +1394,8 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
   const form = document.getElementById("qualify");
   if (form) {
     const t = lang === "fr"
-      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…" }
-      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…" };
+      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…", short: "Encore quelques mots, s'il vous plaît : 35 minimum pour que nous comprenions bien votre situation." }
+      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…", short: "A few more words, please: 35 minimum so we can understand your situation." };
     const steps = [...form.querySelectorAll("fieldset[data-step]")];
     const marks = [...form.querySelectorAll(".steps li")];
     const prev = form.querySelector("[data-prev]");
@@ -1420,6 +1423,18 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
       form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     };
 
+    const words = (v) => (v.match(/\S+/g) || []).length;
+    const ctx = form.querySelector("[data-minwords]");
+    const ctxCount = document.getElementById("context-count");
+    const minWords = ctx ? parseInt(ctx.dataset.minwords, 10) : 0;
+    const updateCount = () => {
+      if (!ctx || !ctxCount) return;
+      const n = words(ctx.value);
+      ctxCount.textContent = n + " / " + minWords + " " + ctxCount.dataset.unit;
+      ctxCount.classList.toggle("ok", n >= minWords);
+    };
+    if (ctx) { ctx.addEventListener("input", updateCount); updateCount(); }
+
     const valid = (i) => {
       const s = steps[i];
       let ok = true;
@@ -1434,6 +1449,7 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
       groups.forEach((g) => {
         if (!s.querySelector('input[name="' + g + '"]:checked')) { ok = false; msg = t.pick; }
       });
+      if (ok && ctx && s.contains(ctx) && words(ctx.value) < minWords) { ctx.setAttribute("aria-invalid", "true"); ok = false; msg = t.short; }
       if (!ok) { err.textContent = msg; err.hidden = false; const f = s.querySelector('[aria-invalid="true"]'); if (f) f.focus(); }
       return ok;
     };

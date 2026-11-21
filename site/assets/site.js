@@ -273,8 +273,8 @@
   const form = document.getElementById("qualify");
   if (form) {
     const t = lang === "fr"
-      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…" }
-      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…" };
+      ? { req: "Merci de compléter les champs indiqués.", pick: "Merci de choisir au moins une option.", fail: "L'envoi n'a pas abouti. Vous pouvez réessayer ou écrire directement à hello@maioris.net.", sending: "Envoi…", short: "Encore quelques mots, s'il vous plaît : 35 minimum pour que nous comprenions bien votre situation." }
+      : { req: "Please complete the highlighted fields.", pick: "Please choose at least one option.", fail: "Your request could not be sent. Please try again or write directly to hello@maioris.net.", sending: "Sending…", short: "A few more words, please: 35 minimum so we can understand your situation." };
     const steps = [...form.querySelectorAll("fieldset[data-step]")];
     const marks = [...form.querySelectorAll(".steps li")];
     const prev = form.querySelector("[data-prev]");
@@ -302,6 +302,18 @@
       form.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     };
 
+    const words = (v) => (v.match(/\S+/g) || []).length;
+    const ctx = form.querySelector("[data-minwords]");
+    const ctxCount = document.getElementById("context-count");
+    const minWords = ctx ? parseInt(ctx.dataset.minwords, 10) : 0;
+    const updateCount = () => {
+      if (!ctx || !ctxCount) return;
+      const n = words(ctx.value);
+      ctxCount.textContent = n + " / " + minWords + " " + ctxCount.dataset.unit;
+      ctxCount.classList.toggle("ok", n >= minWords);
+    };
+    if (ctx) { ctx.addEventListener("input", updateCount); updateCount(); }
+
     const valid = (i) => {
       const s = steps[i];
       let ok = true;
@@ -316,6 +328,7 @@
       groups.forEach((g) => {
         if (!s.querySelector('input[name="' + g + '"]:checked')) { ok = false; msg = t.pick; }
       });
+      if (ok && ctx && s.contains(ctx) && words(ctx.value) < minWords) { ctx.setAttribute("aria-invalid", "true"); ok = false; msg = t.short; }
       if (!ok) { err.textContent = msg; err.hidden = false; const f = s.querySelector('[aria-invalid="true"]'); if (f) f.focus(); }
       return ok;
     };
