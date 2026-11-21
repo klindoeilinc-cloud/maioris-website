@@ -1050,3 +1050,33 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 .wa-btn svg { width: 22px; height: 22px; }
 @media (max-width: 640px) { .wa-btn span { display: none; } .wa-btn { padding: 14px; right: 16px; bottom: 16px; } }
 .book-link { margin: 0 0 18px; }
+
+/* ---------- contact rapide : WhatsApp et rendez-vous ---------- */
+.wa { position: fixed; right: 18px; bottom: 18px; z-index: 25; display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 18px; border-radius: 999px; background: #1FAD54; color: #FFFFFF; font: 600 15px/1 var(--sans); text-decoration: none; box-shadow: 0 8px 24px -8px rgba(11, 22, 80, .45); transition: transform .2s, box-shadow .2s; }
+.wa:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -8px rgba(11, 22, 80, .55); }
+.wa:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+.wa-ic { width: 24px; height: 24px; flex: none; }
+@media (max-width: 640px) { .wa { padding: 0; width: 54px; height: 54px; justify-content: center; right: 14px; bottom: 14px; } .wa span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } }
+@media print { .wa { display: none; } }
+.direct-cta { display: grid; gap: 10px; margin-top: 22px; }
+.direct-cta .btn { justify-content: center; }
+.btn-wa { background: #1FAD54; }
+.btn-wa:hover { background: var(--ink); }
+.btn-wa .wa-ic { width: 20px; height: 20px; }
+
+/* bandeau de preuves : 4 repères, règle finale */
+.proof .pf { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+.proof .pf > .pf-c { padding: 28px 22px 26px; border-right: 1px solid var(--line); border-bottom: 0; border-left: 0; }
+.proof .pf > .pf-c:first-child { padding-left: 0; }
+.proof .pf > .pf-c:last-child { border-right: 0; }
+.proof .pf-n { font-size: clamp(40px, 4.6vw, 72px); }
+.proof .pf-d { max-width: 24ch; }
+@media (max-width: 900px) {
+  .proof .pf { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+  .proof .pf > .pf-c { padding: 24px 18px 22px 0; border-right: 0; border-bottom: 1px solid var(--line); }
+  .proof .pf > .pf-c:nth-child(even) { padding-left: 18px; border-left: 1px solid var(--line); }
+}
+@media (max-width: 480px) {
+  .proof .pf { grid-template-columns: 1fr !important; }
+  .proof .pf > .pf-c, .proof .pf > .pf-c:nth-child(even) { padding: 22px 0; border-left: 0; }
+}
