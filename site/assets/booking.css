@@ -1,0 +1,13 @@
+/* rendez-vous : calendrier Cal.com chargé à la demande */
+.bk { background: var(--paper2, #F2F4FF); }
+.bk-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 32px; align-items: start; }
+.bk-txt { grid-column: 1 / span 5; }
+.bk-t { margin: 0 0 16px; font: 600 clamp(28px, 3.4vw, 46px)/1.05 var(--sans); letter-spacing: -.035em; text-wrap: balance; }
+.bk-txt p { max-width: 520px; margin: 0 0 22px; font-size: clamp(17px, 1.4vw, 19px); line-height: 1.6; }
+.bk-alt { font-size: 15px !important; color: var(--mute); }
+.bk-alt a { color: var(--ink); }
+.bk-frame { grid-column: 6 / span 7; min-height: 120px; background: #fff; border: 1px solid var(--line); }
+.bk-frame iframe { display: block; width: 100%; height: 720px; border: 0; }
+.bk-frame p { margin: 0; padding: 28px; color: var(--mute); }
+@media (max-width: 900px) { .bk-txt, .bk-frame { grid-column: 1 / -1; } .bk-frame iframe { height: 640px; } }
+@media print { .bk { display: none; } }
