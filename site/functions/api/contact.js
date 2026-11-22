@@ -1,6 +1,7 @@
 /**
  * MAIORIS.NET — réception du formulaire de qualification (Cloudflare Pages Function).
- * POST /api/contact  →  envoie la demande par e-mail via l'API Resend.
+ * POST /api/contact  →  envoie la demande par e-mail via l'API Resend,
+ * puis un e-mail de suite au visiteur avec un lien de réservation (un échec de cet envoi n'annule pas la demande).
  *
  * Variables d'environnement à définir dans Cloudflare Pages :
  *   RESEND_API_KEY   clé API Resend (secret)
@@ -17,6 +18,20 @@ const json = (body, status = 200) =>
 
 const clean = (v, max) => String(Array.isArray(v) ? v.join(", ") : v ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
 const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const BOOKING = "https://cal.com/maioris";
+const CONFIRM = {
+  fr: {
+    subject: "Votre demande à MAIORIS est bien reçue",
+    html: (n) => `<p>Bonjour ${esc(n)},</p><p>Nous avons bien reçu votre demande et nous la lisons personnellement. Nous vous répondons par e-mail pour proposer un premier échange.</p><p>Si vous préférez ne pas attendre, vous pouvez réserver directement un échange de 30 minutes :<br><a href="${BOOKING}">Réserver un échange</a></p><p>Vous pouvez aussi répondre à ce message pour compléter votre demande.</p><p>MAIORIS Group<br>Abidjan, Côte d'Ivoire</p>`,
+    text: (n) => `Bonjour ${n},\n\nNous avons bien reçu votre demande et nous la lisons personnellement. Nous vous répondons par e-mail pour proposer un premier échange.\n\nSi vous préférez ne pas attendre, vous pouvez réserver directement un échange de 30 minutes : ${BOOKING}\n\nVous pouvez aussi répondre à ce message pour compléter votre demande.\n\nMAIORIS Group\nAbidjan, Côte d'Ivoire`,
+  },
+  en: {
+    subject: "Your request to MAIORIS has been received",
+    html: (n) => `<p>Hello ${esc(n)},</p><p>We have received your request and we read it personally. We will reply by email to propose a first conversation.</p><p>If you would rather not wait, you can book a 30 minute conversation directly:<br><a href="${BOOKING}">Book a conversation</a></p><p>You can also reply to this message to add to your request.</p><p>MAIORIS Group<br>Abidjan, Côte d'Ivoire</p>`,
+    text: (n) => `Hello ${n},\n\nWe have received your request and we read it personally. We will reply by email to propose a first conversation.\n\nIf you would rather not wait, you can book a 30 minute conversation directly: ${BOOKING}\n\nYou can also reply to this message to add to your request.\n\nMAIORIS Group\nAbidjan, Côte d'Ivoire`,
+  },
+};
 
 export async function onRequestPost({ request, env }) {
   const origin = request.headers.get("Origin");
@@ -64,5 +79,15 @@ export async function onRequestPost({ request, env }) {
     }),
   });
   if (!res.ok) return json({ ok: false, error: "send" }, 502);
+
+  // e-mail de suite au visiteur : la demande est déjà transmise, un échec ici ne l'annule pas
+  try {
+    const c = CONFIRM[f.lang === "en" ? "en" : "fr"];
+    await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: env.CONTACT_FROM, to: [f.email], reply_to: env.CONTACT_TO, subject: c.subject, html: c.html(f.name), text: c.text(f.name) }),
+    });
+  } catch { /* ignoré */ }
   return json({ ok: true });
 }
