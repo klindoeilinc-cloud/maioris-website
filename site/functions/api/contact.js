@@ -10,6 +10,8 @@
  * Optionnel :
  *   RATE_KV          espace KV lié, pour limiter à 5 envois par heure et par adresse IP
  */
+import { buildPdf, toBase64, pdfName } from "../_lib/pdf.js";
+
 const MAX = { organisation: 200, role: 40, sector: 40, country: 80, context: 4000, support: 40, budget: 40, name: 120, email: 200, phone: 40, lang: 2 };
 const ALLOWED_ORIGINS = ["https://maioris.net", "https://www.maioris.net"];
 
@@ -70,12 +72,28 @@ export async function onRequestPost({ request, env }) {
     rows.map(([k, v]) => `<tr><td><b>${k}</b></td><td>${esc(v || "non renseigné").replace(/\n/g, "<br>")}</td></tr>`).join("") + "</table>";
   const text = rows.map(([k, v]) => `${k}: ${v || "non renseigné"}`).join("\n");
 
+  // PDF structuré (logo et couleurs MAIORIS) joint au message ; sa génération ne bloque jamais l'envoi
+  let attachments;
+  try {
+    const ref = "DEM-" + [...crypto.getRandomValues(new Uint8Array(3))].map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
+    const pdf = buildPdf({
+      lang: "fr", kicker: "Formulaire de qualification", title: `Demande de ${f.organisation}`, subtitle: "Informations saisies par le visiteur sur maioris.net, sans modification.", ref,
+      blocks: [
+        { h: "Organisation", rows: [["Organisation", f.organisation], ["Fonction", f.role], ["Secteur", f.sector], ["Pays", f.country]] },
+        { h: "Projet et besoin", rows: [["Enjeux", f.challenges], ["Contexte", f.context], ["Accompagnement souhaité", f.support], ["Budget", f.budget]] },
+        { h: "Coordonnées", rows: [["Nom", f.name], ["E-mail", f.email], ["Téléphone", f.phone], ["Langue du visiteur", f.lang]] },
+        { note: "Le visiteur a coché le consentement au traitement de sa demande avant l'envoi." },
+      ],
+    });
+    attachments = [{ filename: pdfName("demande", f.organisation), content: toBase64(pdf) }];
+  } catch (e) { console.error("pdf", e && e.message); }
+
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: f.email,
-      subject: `[MAIORIS] ${f.organisation} | ${f.support}`, html, text,
+      subject: `[MAIORIS] ${f.organisation} | ${f.support}`, html, text, ...(attachments ? { attachments } : {}),
     }),
   });
   if (!res.ok) return json({ ok: false, error: "send" }, 502);

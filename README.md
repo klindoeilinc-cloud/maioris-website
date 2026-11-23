@@ -179,6 +179,8 @@ Le script doit afficher `0 erreur(s)`. Les avertissements sont à lire mais ne b
 
 Variables d'environnement : `RESEND_API_KEY` (clé en Full access), `CONTACT_TO`, `CONTACT_FROM`, `RESEND_AUDIENCE_ID` (et `RESEND_AUDIENCE_ID_EN` en option). Espace KV `RATE_KV` en option. Détail dans `site/README.md` et `newsletter/README.md`.
 
+**PDF joint aux e-mails reçus.** Chaque envoi d'un visiteur (formulaire de qualification, résultat d'un outil de diagnostic, inscription à la lettre) arrive à `CONTACT_TO` avec un PDF structuré en pièce jointe, au logo et aux couleurs MAIORIS : tout ce que le visiteur a saisi, sans modification. Généré dans la fonction (`site/functions/_lib/pdf.js`, sans dépendance). Si la génération échoue, l'e-mail part quand même, sans pièce jointe. L'inscription à la lettre n'est notifiée à l'équipe que si `CONTACT_TO` est défini.
+
 ## Mesure d'audience
 
 Chaque page charge le script Plausible (sans cookie). Il faut créer le site `maioris.net` dans le compte Plausible pour recevoir les données.

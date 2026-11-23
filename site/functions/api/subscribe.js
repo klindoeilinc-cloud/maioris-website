@@ -13,6 +13,8 @@
  *
  * Aucune réponse ne prétend qu'une inscription a réussi sans que Resend l'ait acceptée.
  */
+import { buildPdf, toBase64, pdfName } from "../_lib/pdf.js";
+
 const ALLOWED_ORIGINS = ["https://maioris.net", "https://www.maioris.net"];
 
 const json = (body, status = 200) =>
@@ -78,5 +80,18 @@ export async function onRequestPost({ request, env }) {
     });
   } catch { /* ignoré */ }
 
+  // notification à l'équipe avec un PDF de l'inscription (si CONTACT_TO est défini) ; sans effet sur la réponse
+  if (env.CONTACT_TO) {
+    try {
+      const pdf = buildPdf({
+        lang: "fr", kicker: "Lettre MAIORIS Insights", title: "Nouvelle inscription à la lettre", subtitle: "Adresse saisie par le visiteur sur maioris.net.", ref: "INS-" + [...crypto.getRandomValues(new Uint8Array(3))].map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase(),
+        blocks: [{ h: "Inscription", rows: [["E-mail", email], ["Langue de la page", lang]] }, { note: "Le visiteur a coché le consentement avant de s'inscrire. L'adresse a été ajoutée à l'audience Resend et un e-mail de bienvenue lui a été envoyé." }],
+      });
+      await fetch("https://api.resend.com/emails", {
+        method: "POST", headers,
+        body: JSON.stringify({ from: env.CONTACT_FROM, to: [env.CONTACT_TO], subject: `[MAIORIS] Inscription lettre | ${email}`, text: `Nouvelle inscription à la lettre MAIORIS Insights : ${email} (${lang}). Détail en pièce jointe.`, attachments: [{ filename: pdfName("inscription", email.split("@")[0]), content: toBase64(pdf) }] }),
+      });
+    } catch { /* ignoré */ }
+  }
   return json({ ok: true });
 }
