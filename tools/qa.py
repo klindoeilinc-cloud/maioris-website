@@ -148,6 +148,14 @@ for ext in ("css", "js"):
         refs = set(re.findall(r"/assets/coi\.([0-9a-f]{8})\.%s" % ext, t))
         if refs and refs != {h}: err("%s: référence périmée à coi.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
 
+# Bloc partagé des outils (tools/sync_tools.py) : présent et identique sur les pages d'outils et sur Insights
+for lang, names in (("fr", ("evaluer-votre-brief", "autodiagnostic", "creative-operations-intelligence", "analyses")), ("en", ("brief-check", "self-assessment", "creative-operations-intelligence", "insights"))):
+    for n in names:
+        t = pages.get("%s/%s.html" % (lang, n), "")
+        if "<!--tools-next-->" not in t: err("%s/%s.html: bloc « outils » absent : lancez python3 tools/sync_tools.py" % (lang, n)); continue
+        for target in ("evaluer-votre-brief" if lang == "fr" else "brief-check", "autodiagnostic" if lang == "fr" else "self-assessment", "creative-operations-intelligence"):
+            if n != target and (target + ".html") not in t.split("<!--tools-next-->")[1]: err("%s/%s.html: le bloc « outils » ne mène pas vers %s" % (lang, n, target))
+
 print(f"{len(pages)} pages analysées")
 for w in warnings: print("AVERTISSEMENT", w)
 for e in errors: print("ERREUR", e)
