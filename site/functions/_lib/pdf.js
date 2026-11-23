@@ -186,3 +186,17 @@ export function toBase64(bytes) {
 /** Nom de fichier sûr : lettres, chiffres et tirets. */
 export const pdfName = (prefix, label) =>
   `${prefix}-${String(label || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40) || "demande"}-${new Date().toISOString().slice(0, 10)}.pdf`;
+
+/**
+ * Pièce jointe PDF pour Resend. Essaie la mise en page complète ; en cas d'échec, une version simplifiée (texte seul) ;
+ * renvoie undefined seulement si les deux échouent (l'appelant le signale alors dans l'e-mail).
+ */
+export function pdfAttachment(opts, filename) {
+  const attempt = (o) => { const b = buildPdf(o); if (!b || b.length < 400 || String.fromCharCode(...b.subarray(0, 5)) !== "%PDF-") throw new Error("pdf invalide"); return [{ filename, content: toBase64(b) }]; };
+  try { return attempt(opts); } catch (e) { console.error("pdf", e && e.message); }
+  try {
+    const flat = (opts.blocks || []).map((b) => b.note ? b.note : `${b.h || ""}\n` + (b.rows ? b.rows.map(([k, v]) => `${k} : ${v}`).join("\n") : b.text || "")).join("\n\n");
+    return attempt({ ...opts, blocks: [{ h: "Contenu", text: flat }] });
+  } catch (e) { console.error("pdf secours", e && e.message); }
+  return undefined;
+}

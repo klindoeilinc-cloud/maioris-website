@@ -12,7 +12,7 @@
  */
 import { json, clean, cleanText } from "../_lib/util.js";
 import { persistSubmission, markEmail } from "../_lib/persist.js";
-import { buildPdf, toBase64, pdfName } from "../_lib/pdf.js";
+import { pdfAttachment, pdfName } from "../_lib/pdf.js";
 
 const ALLOWED_ORIGINS = ["https://maioris.net", "https://www.maioris.net"];
 const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -106,7 +106,7 @@ export async function onRequestPost({ request, env }) {
   let res;
   // PDF structuré (logo et couleurs MAIORIS) joint au message ; sa génération ne bloque jamais l'envoi
   let attachments;
-  try {
+  {
     const ref = saved.evaluationId ? String(saved.evaluationId).slice(-8).toUpperCase() : "EVAL-" + [...crypto.getRandomValues(new Uint8Array(3))].map((b) => b.toString(16).padStart(2, "0")).join("").toUpperCase();
     const blocks = [
       { h: "Visiteur", rows: [["Nom", name], ["E-mail", email], ["Organisation", company], ["Langue", lang]] },
@@ -115,9 +115,9 @@ export async function onRequestPost({ request, env }) {
       ...(report ? [{ h: "Rapport transmis", text: report }] : []),
       { note: "Évaluation déclarative, calculée dans le navigateur du visiteur à partir de ses réponses. Aucun fichier n'est transmis. Consentement donné avant l'envoi." },
     ];
-    attachments = [{ filename: pdfName("evaluation", toolName + " " + (company || name)), content: toBase64(buildPdf({ lang: "fr", kicker: toolName, title: `${toolName} : ${company || name}`, subtitle: "Informations saisies par le visiteur, sans modification.", ref, blocks })) }];
-  } catch (e) { console.error("pdf", e && e.message); }
-  try { res = await send({ from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: email, subject: `[MAIORIS] ${toolName} | ${company || name}`, html, text, ...(attachments ? { attachments } : {}) }); } catch { res = { ok: false }; }
+    attachments = pdfAttachment({ lang: "fr", kicker: toolName, title: `${toolName} : ${company || name}`, subtitle: "Informations saisies par le visiteur, sans modification.", ref, blocks }, pdfName("evaluation", toolName + " " + (company || name)));
+  }
+  try { res = await send({ from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: email, subject: `${attachments ? "" : "[PDF non généré] "}[MAIORIS] ${toolName} | ${company || name}`, html, text: attachments ? text : "ATTENTION : le PDF n'a pas pu être généré, les informations ci-dessous sont complètes.\n\n" + text, ...(attachments ? { attachments } : {}) }); } catch { res = { ok: false }; }
   if (!res.ok) {
     await markEmail(env, saved.evaluationId, "failed");
     return saved.persisted ? json({ ok: true, emailed: false, ...idInfo }) : json({ ok: false, error: "send" }, 502);
