@@ -1,0 +1,10 @@
+/* MAIORIS INTELLIGENCE CORE™ : panneau « Vos résultats dans cet onglet » */
+.core-panel{margin:34px 0 0;padding:22px 24px;border:1px solid var(--line);background:#fff;max-width:760px}
+.core-panel h3{margin:0 0 12px;font:600 20px/1.25 var(--sans)}
+.core-keep{display:flex;gap:12px;align-items:flex-start;font-weight:600;font-size:16px;line-height:1.4;cursor:pointer}.core-keep input{flex:none;width:22px;height:22px;margin-top:1px;accent-color:var(--red)}
+.core-keep:has(input:focus-visible){outline:3px solid var(--red);outline-offset:3px}
+.core-note{margin:10px 0 0;font-size:14.5px;line-height:1.5;color:var(--mute)}.core-msg{min-height:1.3em;margin:8px 0 0;font-weight:600;font-size:14.5px;color:var(--red)}
+.core-list{margin:16px 0 0;padding:0;list-style:none;border-top:1px solid var(--line)}.core-list li{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:4px 18px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px}
+.core-list a{font-weight:600}.core-list li span{color:var(--mute)}.core-list li.done span{color:var(--ink)}
+.core-panel .link{background:none;border:0;padding:0;margin-top:12px;cursor:pointer;font:inherit;text-decoration:underline;color:var(--ink)}
+@media(max-width:700px){.core-list li{grid-template-columns:1fr}}

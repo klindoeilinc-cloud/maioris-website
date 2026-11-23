@@ -1240,7 +1240,7 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 
 /* Bloc partagé « Poursuivre votre diagnostic » (tools/sync_tools.py) */
 .tnx-lead { max-width: 640px; margin: 0 0 28px; font-size: 17px; line-height: 1.55; color: var(--mute); }
-.tnx-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.tnx-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
 .tnx-i > a, .tnx-i > div { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 22px; border: 1px solid var(--ink); background: #fff; color: var(--ink); text-decoration: none; }
 .tnx-i > a:hover { background: var(--ink); color: var(--paper); }
 .tnx-i > a:hover .tnx-k, .tnx-i > a:hover .tnx-q { color: var(--on-dark); }
@@ -1251,4 +1251,4 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 .tnx-q { font-size: 15px; line-height: 1.5; color: var(--mute); }
 .tnx-go, .tnx-here { margin-top: auto; padding-top: 10px; font: 600 14px/1.2 var(--sans); }
 .tnx-here { font: 500 12px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
-@media (max-width: 900px) { .tnx-list { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .tnx-list { grid-template-columns: 1fr; } }

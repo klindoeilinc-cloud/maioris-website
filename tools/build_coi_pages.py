@@ -50,7 +50,7 @@ def build(lang):
     c = CFG[lang]; src = rd("fr/faq.html" if lang == "fr" else "en/faq.html")
     head_start = src.index('<link href="../assets/favicon.svg"'); head_end = src.index('<script type="application/ld+json">')
     keep = src[head_start:head_end]; plaus = re.search(r'<script data-domain="maioris.net"[^>]*></script>', src).group(0)
-    keep = re.sub(r'<link href="/assets/site\.[0-9a-f]{8}\.css" rel="stylesheet"/>', lambda m: m.group(0) + '<link href="/assets/coi.00000000.css" rel="stylesheet"/>', keep)
+    keep = re.sub(r'<link href="/assets/site\.[0-9a-f]{8}\.css" rel="stylesheet"/>', lambda m: m.group(0) + '<link href="/assets/tools.00000000.css" rel="stylesheet"/>', keep)
     body_start = src.index('<body data-lang'); main_start = src.index('<main id="main">'); foot_start = src.index('</main>') + len('</main>')
     foot_end = src.index('<script defer="" src="/assets/site.')
     foot = src[foot_start:src.index('</footer>') + len('</footer>')]
@@ -78,7 +78,7 @@ def build(lang):
             '<div class="coi-priv" id="coi-priv"><h2>%s</h2>%s<p><a href="%s">%s</a></p></div>\n'
             '<div class="coi" id="coi" data-lang="%s" style="margin-top:34px"><div data-coi-head aria-label="%s"></div><div data-coi-body></div><div class="coi-nav" data-coi-nav></div></div><script>document.getElementById("coi").setAttribute("data-js","")</script>\n'
             '<div class="coi-result" id="coi-result" hidden></div>\n'
-            '<section class="coi-cta" id="coi-cta" hidden aria-labelledby="coi-cta-t"><h3 id="coi-cta-t">%s</h3><p>%s</p><ul class="coi-facts">%s<li>%s : <b class="coi-price">%s</b></li></ul>'
+            '<section class="coi-cta" id="coi-cta" hidden aria-labelledby="coi-cta-t"><h3 id="coi-cta-t">%s</h3><p>%s</p><ul class="coi-facts">%s<li>%s<b class="coi-price">%s</b></li></ul>'
             '<div class="actions"><a class="btn" data-track="cta_click" data-rank="primary" data-label="coi-audit" href="%s">%s</a><a class="link" data-track="cta_click" data-rank="secondary" data-label="coi-contact" href="%s">%s</a></div>\n'
             '<h3 style="margin-top:34px;font-size:20px">%s</h3><p style="font-size:15px">%s</p>\n'
             '<form class="coi-send" id="coi-send" novalidate data-invalid="%s" data-noconsent="%s" data-sending="%s" data-sent="%s" data-fail="%s">'
@@ -89,7 +89,7 @@ def build(lang):
             cb[0], cb[1], c["crumb_t"], c["h1"], E(c["lead"]), E(c["sig"]), E(c["nojs"]),
             E(c["privT"]), "".join("<p>%s</p>" % E(p) for p in c["priv"]), c["privL"][0], E(c["privL"][1]),
             lang, c["head_lbl"],
-            E(c["cta_t"]), E(c["cta_p"]), "".join("<li>%s : <b>%s</b></li>" % (E(a), E(b)) for a, b in c["facts"]), E(c["price_l"]), E(c["price"]),
+            E(c["cta_t"]), E(c["cta_p"]), "".join("<li>%s%s<b>%s</b></li>" % (E(a), " : " if lang == "fr" else ": ", E(b)) for a, b in c["facts"]), E(c["price_l"]) + (" : " if lang == "fr" else ": "), E(c["price"]),
             c["cta1"][1], E(c["cta1"][0]), c["cta2"][1], E(c["cta2"][0]),
             E(c["send_t"]), E(c["send_p"]), E(c["msgs"]["invalid"]), E(c["msgs"]["noconsent"]), E(c["msgs"]["sending"]), E(c["msgs"]["sent"]), E(c["msgs"]["fail"]),
             E(c["f_name"]), E(c["f_email"]), E(c["f_co"]), E(c["consent"]), c["privL"][0], E(c["privL"][1].replace("Lire la politique","Politique").replace("Read the privacy policy","Privacy policy")), E(c["submit"]))
@@ -98,4 +98,5 @@ def build(lang):
     out = head + pre + main + foot + "\n" + site_js + scripts + aside + "\n</body>\n</html>\n"
     open(os.path.join(SITE, c["out"]), "w", encoding="utf8").write(out)
     print("écrit", c["out"], len(out))
-for l in ("fr", "en"): build(l)
+if __name__ == "__main__":
+    for l in ("fr", "en"): build(l)
