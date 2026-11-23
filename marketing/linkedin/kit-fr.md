@@ -1,5 +1,8 @@
 # Kit LinkedIn MAIORIS : français
 
+> **À lire avant de publier : pages retirées du site.** Les pages « Strategic Cases » (et leurs 4 études) et « Strategic Cases & Perspectives » ont été supprimées. Leurs anciennes adresses renvoient désormais vers MAIORIS Insights. Les publications suivantes pointent vers ces adresses et sont **à retirer ou à réécrire** avant tout usage : **C1** (Case 01), **S1** (un cas réel, trois scénarios fictifs), et les liens « étude complète » de **A4b/A4c** et **A5c**. Les autres publications (analyses, outils, lettre) restent valables.
+
+
 20 publications prêtes à relire. Chaque lien contient des paramètres de suivi (`utm_`) que Plausible lit automatiquement.
 
 ---
