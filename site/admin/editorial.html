@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Back-office éditorial MAIORIS</title>
+<style>
+:root{--ink:#101A3A;--cream:#FFF8EA;--cobalt:#243BFF;--yellow:#FFD84D;--coral:#FF6B5E;--emerald:#19B77A;--line:#D9D2BF;--mute:#4B5273}
+*{box-sizing:border-box}body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:baseline;justify-content:space-between;padding:18px 28px;border-bottom:2px solid var(--ink);background:#fff}
+h1{margin:0;font-size:19px}h2{margin:0 0 12px;font-size:16px}h3{margin:18px 0 6px;font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)}.who,.hint{font-size:13px;color:var(--mute)}
+a{color:var(--cobalt)}main{max-width:1180px;margin:0 auto;padding:22px 28px 80px}
+input,select,textarea,button{font:inherit;color:var(--ink)}input,select,textarea{width:100%;min-height:40px;padding:8px 10px;border:1px solid var(--ink);border-radius:0;background:#fff}textarea{min-height:90px;resize:vertical;line-height:1.5}
+button{min-height:40px;padding:0 14px;border:1px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer;border-radius:0}button.ghost{background:#fff;color:var(--ink)}button.danger{background:#8A2310;border-color:#8A2310}button[disabled]{opacity:.45;cursor:not-allowed}
+:is(input,select,textarea,button,a,summary):focus-visible{outline:3px solid var(--cobalt);outline-offset:2px}
+.bar,.row{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:0 0 14px}.bar>*{flex:1 1 160px}.bar button{flex:0 0 auto}.row>*{flex:1 1 200px}
+label{display:block;font-weight:600;font-size:13px;margin:0 0 4px}.chk{display:flex;gap:8px;align-items:center;font-weight:500}.chk input{width:18px;min-height:18px}
+.scroll{overflow-x:auto;border:1px solid var(--line);background:#fff}table{width:100%;border-collapse:collapse;font-size:14px;min-width:820px}th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);background:#F4EAD3}
+tr.r{cursor:pointer}tr.r:hover{background:#FFF1CC}
+.st{display:inline-block;padding:2px 8px;border:1px solid var(--ink);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}.st-published{background:var(--emerald)}.st-review,.st-approved{background:var(--yellow)}.st-archived{background:#ddd}.st-draft{background:#fff}
+.panel{margin:0 0 18px;padding:18px;border:1px solid var(--ink);background:#fff}.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 18px}
+.tabs{display:flex;gap:0;margin:0 0 -1px}.tabs button{background:#fff;color:var(--ink);border-bottom-color:transparent}.tabs button[aria-selected=true]{background:var(--ink);color:#fff}
+.tools{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.tools button{min-height:32px;font-size:13px}
+.src{display:grid;grid-template-columns:28px repeat(2,minmax(0,1fr)) 130px;gap:8px;align-items:start;margin:0 0 10px;padding:10px;border:1px solid var(--line)}.src .full{grid-column:2/-1}
+.msg{min-height:1.4em;margin:8px 0;font-weight:600}.ok{color:#0B6B47}.err{color:#8A2310}.errs{margin:10px 0;padding:12px 16px;border-left:6px solid var(--coral);background:#FFEDEA}.errs ul{margin:6px 0 0;padding-left:18px}
+.score{font-size:22px;font-weight:700}.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.stk{position:sticky;bottom:0;z-index:5;display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:12px 0;background:var(--cream);border-top:2px solid var(--ink)}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}.src{grid-template-columns:1fr}.src .full{grid-column:1}main{padding:16px}}
+</style>
+</head>
+<body>
+<header><h1>Back-office éditorial · Strategic Cases &amp; Perspectives</h1><p class="who"><a href="/admin/">Administration</a> · <span id="who">Vérification de l'accès…</span></p></header>
+<main id="main">
+<p class="msg" id="msg" role="status"></p>
+<section id="list">
+  <p class="hint">Un contenu n'est public que lorsqu'il est « Published » et que sa date de mise en ligne est atteinte. Les brouillons, les contenus en relecture ou approuvés et les archives ne sont jamais servis au public.</p>
+  <div class="bar">
+    <div><label for="f-status">Statut</label><select id="f-status"><option value="">Tous</option></select></div>
+    <div><label for="f-cat">Rubrique</label><select id="f-cat"><option value="">Toutes</option></select></div>
+    <div><label for="f-q">Recherche</label><input id="f-q" type="search" maxlength="60" placeholder="Titre ou adresse"/></div>
+    <button id="f-go" type="button">Filtrer</button>
+  </div>
+  <div class="panel"><h2>Nouvelle publication</h2><div class="row"><div><label for="n-cat">Rubrique</label><select id="n-cat"></select></div><div><label for="n-fmt">Format</label><select id="n-fmt"></select></div><button id="n-go" type="button" style="flex:0 0 auto">Créer un brouillon</button></div></div>
+  <div class="scroll"><table><caption class="sr">Publications</caption><thead><tr><th scope="col">Titre (FR)</th><th scope="col">Rubrique</th><th scope="col">Format</th><th scope="col">Statut</th><th scope="col">Grille</th><th scope="col">EN</th><th scope="col">Mise en ligne</th><th scope="col">Modifié</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+<section id="editor" hidden></section>
+</main>
+<script src="/admin/editorial.js" defer></script>
+</body>
+</html>

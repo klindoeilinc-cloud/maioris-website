@@ -18,7 +18,7 @@ PRESELECT = {"diagnostic", "brand", "growth", "cos", "t90", "claas"}
 def err(m): errors.append(m)
 def warn(m): warnings.append(m)
 
-files = sorted(f for f in glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True) if os.sep + "admin" + os.sep not in f)  # l'administration est privée : hors contrôles éditoriaux
+files = sorted(f for f in glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True) if os.sep + "admin" + os.sep not in f and os.sep + "editorial-shell" + os.sep not in f)  # administration privée et gabarits des fonctions : hors contrôles éditoriaux (leurs références d'assets sont vérifiées plus bas)
 rel = lambda f: os.path.relpath(f, SITE).replace(os.sep, "/")
 pages = {rel(f): open(f, encoding="utf8").read() for f in files}
 
@@ -71,6 +71,17 @@ for k, v in descs.items():
         same = [p for p in v if lang_of(p) == lg]
         if len(same) > 1: warn("description en double sur %s" % ", ".join(same))
 
+# routes dynamiques de la section éditoriale : l'accueil et les cinq rubriques, servis par site/functions/[lang]/perspectives/[[path]].js
+FN = os.path.join(SITE, "functions", "[lang]", "perspectives", "[[path]].js")
+DYNAMIC_ROUTES = set()
+if os.path.isfile(FN):
+    cat_src = open(os.path.join(SITE, "functions", "_lib", "editorial", "taxonomy.js"), encoding="utf8").read()
+    slugs = re.findall(r'slug: "([a-z-]+)"', cat_src)
+    for lg in ("fr", "en"):
+        DYNAMIC_ROUTES.add("/%s/perspectives" % lg)
+        for sl in slugs: DYNAMIC_ROUTES.add("/%s/perspectives/%s" % (lg, sl))
+    if len(slugs) != 5: err("taxonomie : cinq rubriques attendues, %d trouvées" % len(slugs))
+
 # liens internes et ancres
 ids = {p: set(re.findall(r'\bid="([^"]+)"', t)) for p, t in pages.items()}
 for p, t in pages.items():
@@ -78,6 +89,7 @@ for p, t in pages.items():
         u, frag = m.group(1), m.group(2)
         if re.match(r"(https?:|mailto:|tel:|data:)", u) or "'" in u or "+" in u or u.startswith("//"): continue
         target = os.path.normpath(os.path.join(os.path.dirname(os.path.join(SITE, p)), u)) if u and not u.startswith("/") else os.path.join(SITE, u.lstrip("/")) if u else os.path.join(SITE, p)
+        if re.match(r"^/(fr|en)/perspectives(/|$)", u) and u.rstrip("/") in DYNAMIC_ROUTES: continue   # routes servies par une fonction (voir plus bas)
         cands = [target, target + ".html", os.path.join(target, "index.html")]
         hit = next((c for c in cands if os.path.isfile(c)), None)
         if not hit: err(f"{p}: lien cassé {u}"); continue
@@ -153,6 +165,15 @@ for lang, names in (("fr", ("evaluer-votre-brief", "autodiagnostic", "creative-o
         for target in ("evaluer-votre-brief" if lang == "fr" else "brief-check", "autodiagnostic" if lang == "fr" else "self-assessment", "creative-operations-intelligence", "creative-maturity-assessment", "brand-consistency-review"):
             if n != target and (target + ".html") not in t.split("<!--tools-next-->")[1]: err("%s/%s.html: le bloc « outils » ne mène pas vers %s" % (lang, n, target))
 
+# gabarits de la section éditoriale : références d'assets à jour (le reste des contrôles ne s'applique pas à des gabarits)
+for gf in sorted(glob.glob(os.path.join(SITE, "editorial-shell", "*.html"))):
+    gt = open(gf, encoding="utf8").read()
+    for name, (src_, ext) in bundles.all_bundles().items():
+        refs = set(re.findall(r"/assets/%s\.([0-9a-f]{8})\.%s" % (name, ext), gt)); h = hashlib.sha256(src_.encode("utf8")).hexdigest()[:8]
+        if refs and refs != {h}: err("editorial-shell/%s: référence périmée à %s.%s : lancez python3 tools/build_assets.py" % (os.path.basename(gf), name, "/".join(sorted(refs))))
+    for ext, nm in (("css", "site"), ("js", "site")):
+        refs = set(re.findall(r"/assets/site\.([0-9a-f]{8})\.%s" % ext, gt)); h = dig("site." + ext)
+        if refs and refs != {h}: err("editorial-shell/%s: référence périmée à site.%s" % (os.path.basename(gf), ext))
 print(f"{len(pages)} pages analysées")
 for w in warnings: print("AVERTISSEMENT", w)
 for e in errors: print("ERREUR", e)

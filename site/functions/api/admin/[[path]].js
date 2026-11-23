@@ -8,12 +8,14 @@
  *   GET  /api/admin/export?format=csv|json  export (tool facultatif) : journalisé
  *   POST /api/admin/erase                   { profile_id } ou { evaluation_id } : journalisé
  *   POST /api/admin/purge                   purge des données expirées : journalisé
+ *   /api/admin/editorial/*                  back-office éditorial (voir _lib/editorial/admin.js)
  * Jamais de CORS : l'interface est servie par le même domaine.
  */
 import { json, nowIso } from "../../_lib/util.js";
 import { requireAdmin } from "../../_lib/access.js";
 import { audit, eraseProfile, eraseEvaluation } from "../../_lib/erase.js";
 import { purgeExpired } from "../../_lib/purge.js";
+import { handleEditorial } from "../../_lib/editorial/admin.js";
 
 const NS = { "Cache-Control": "no-store", "X-Robots-Tag": "noindex" };
 const jsonNS = (b, s = 200) => json(b, s, NS);
@@ -38,11 +40,12 @@ export async function onRequest({ request, env }) {
   if (!auth.ok) return jsonNS({ ok: false, error: auth.error }, auth.status);
   if (!env.MAIORIS_DB) return jsonNS({ ok: false, error: "no_database" }, 503);
   const db = env.MAIORIS_DB, url = new URL(request.url), path = url.pathname.replace(/^\/api\/admin\/?/, "").replace(/\/$/, ""), method = request.method;
-  if (method === "POST") {
+  if (method !== "GET") {
     const origin = request.headers.get("Origin");
     if (origin && origin !== url.origin) return jsonNS({ ok: false, error: "origin" }, 403);
   }
   const now = nowIso();
+  if (path.startsWith("editorial/")) return handleEditorial({ request, env, auth, path: path.slice("editorial/".length), url });
 
   if (method === "GET" && path === "me") return jsonNS({ ok: true, email: auth.email });
   if (method === "GET" && path === "stats") {

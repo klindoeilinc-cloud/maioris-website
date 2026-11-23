@@ -13,6 +13,7 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `src/coi/` : sources de l'outil **Creative Operations Intelligence™** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
 - `tools/build_coi_pages.py` et `tools/build_tool_pages.py` : génèrent les pages FR et EN des trois outils modulaires à partir du gabarit du site.
 - `tools/sync_tools.py` : insère le bloc partagé « Poursuivre votre diagnostic » sur les trois outils et sur Insights (à relancer après `build_coi_pages.py`).
+- `site/functions/_lib/editorial/`, `site/functions/[lang]/perspectives/[[path]].js`, `site/admin/editorial.html` : section éditoriale **STRATEGIC CASES & PERSPECTIVES** (voir plus bas). `tools/build_editorial_shell.py` génère ses gabarits statiques (`site/editorial-shell/`), `tools/build_editorial_demo.js` ses exemples fictifs (`d1/demo/`).
 - `site/functions/api/diagnostic.js` : envoi facultatif du Snapshot (Resend), uniquement avec le consentement du visiteur.
 - `tests/` : tests automatiques (`node --test tests/*.test.js`) et test de bout en bout (`tests/e2e/coi.e2e.js`, nécessite Playwright et un serveur local).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
@@ -49,6 +50,7 @@ Après toute modification de `src/coi/` ou de `tools/build_coi_pages.py` :
 python3 tools/build_coi_pages.py
 python3 tools/build_tool_pages.py
 python3 tools/sync_tools.py
+python3 tools/build_editorial_shell.py
 python3 tools/build_assets.py
 node --test tests/*.test.js
 python3 tools/qa.py
@@ -120,6 +122,24 @@ Durées dans `retention_policies` (initialement 365 jours pour les évaluations,
 | Brief et autodiagnostic conservés côté serveur | **Non réalisé** (pas de consentement ni de contact dans ces outils) |
 | Dépôt et conservation de documents clients (R2) | **Non réalisé** (la table `documents` est prête, aucun fichier n'est reçu) |
 | Analyse automatique de documents | **Non réalisé** et non prévu sans décision explicite |
+
+## STRATEGIC CASES & PERSPECTIVES (plateforme éditoriale)
+
+Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspectives`, `/en/perspectives`, rubriques et articles), avec l'en-tête et le pied de page du site. Identité propre à la section (palette Soft Cream, Deep Navy, Cobalt, Solar Yellow, Coral, Emerald ; Poppins auto-hébergée) : `src/editorial/editorial.css`, limitée à la classe `.ed`. Le reste du site ne change pas.
+
+**Contenu.** Cinq rubriques permanentes et six formats (Strategic Case, Executive Brief, Deep Perspective, Market Signals, Strategic Framework, Future Outlook), définis dans `site/functions/_lib/editorial/taxonomy.js` et contrôlés en base. Ils s'attribuent aux publications, ils ne se créent pas depuis l'interface. Chaque publication affiche son format et son temps de lecture (calculé à 220 mots par minute).
+
+**Back-office** : `/admin/editorial.html` (protégé par Cloudflare Access, voir la section Administration). Statuts Draft, In Review, Approved, Published, Archived ; transitions contrôlées (on ne publie qu'un contenu approuvé) ; brouillons enregistrés avec historique des versions ; aperçu non indexable ; publication programmée (une date future rend le contenu visible à l'échéance, sans tâche planifiée) ; dépublication immédiate ; versions française et anglaise ; sources numérotées ; articles associés ; à la une et Strategic Selection ; métadonnées SEO.
+
+**Règles de publication** (`gate.js`) : la mise en ligne est refusée tant que la grille de qualité interne n'atteint pas **85 sur 100** (jamais affichée au public), que les métadonnées sont incomplètes, qu'un chiffre n'est ni sourcé ni présenté comme hypothèse, qu'une citation `[^n]` n'a pas de source, qu'une source n'est pas consultable (https) ou, pour une étude de cas, qu'il manque les blocs faits vérifiés, analyse, hypothèses et questions ouvertes ou deux sources. Une publication en ligne reste soumise à ces règles à chaque modification, et son adresse ne change plus.
+
+**Rédaction.** Markdown restreint, sans HTML brut (tout est échappé) : `##` et `###`, listes, citations, `**gras**`, liens http(s) ou internes, images de `/assets/` ou https avec texte alternatif, `[^n]` pour les sources, et les blocs `:::facts`, `:::analysis`, `:::hypotheses`, `:::questions`, `:::insight` fermés par `:::`.
+
+**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit™ n'apparaît qu'en mention discrète (tarif officiel de 750 000 FCFA).
+
+**Mise en route.** Appliquer `d1/migrations/0003_editorial.sql` (comme les deux premières, voir la section D1). Sans cette migration, `/fr/perspectives` s'affiche sans publication et renvoie vers les archives. Les exemples fictifs (`d1/demo/editorial_demo.sql`, marqués `is_demo`) **ne se chargent jamais en production** : ils servent à une base de test ou de prévisualisation (bandeau « Exemple éditorial fictif », jamais indexés, absents du plan du site). Plan du site : `/sitemap-perspectives.xml`, déclaré dans `robots.txt`.
+
+**Limites connues.** Images : pas de téléversement (aucun stockage de fichiers) : un fichier se dépose dans `site/assets/editorial/` puis se référence par son chemin, ou s'indique par une adresse https ; à défaut, un visuel géométrique aux couleurs de la charte est généré. Une seule personne ou plusieurs adresses autorisées avec les mêmes droits : pas de rôles distincts (rédacteur, relecteur, éditeur). La lettre éditoriale utilise le même formulaire et la même audience Resend que la lettre existante.
 
 ## Avant chaque mise en ligne
 

@@ -4,3 +4,4 @@ Disallow: /admin/
 Disallow: /api/
 
 Sitemap: https://maioris.net/sitemap.xml
+Sitemap: https://maioris.net/sitemap-perspectives.xml
