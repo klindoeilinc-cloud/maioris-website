@@ -1,4 +1,4 @@
-/* MAIORIS Brand Consistency Review™ : interface de revue guidée. Aucun fichier n'est lu, analysé ni envoyé : seuls le nom, la taille et le type sont contrôlés. */
+/* MAIORIS Brand Consistency Review : interface de revue guidée. Aucun fichier n'est lu, analysé ni envoyé : seuls le nom, la taille et le type sont contrôlés. */
 (function () {
   "use strict";
   var D = window.BRData, C = window.BRCalc, R = window.BRReport, Core = window.MaiorisCore;

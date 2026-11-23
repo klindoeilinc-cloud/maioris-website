@@ -1,4 +1,4 @@
-/* MAIORIS Creative Operations Intelligence™ : textes de l'interface et construction du rapport.
+/* MAIORIS Creative Operations Intelligence : textes de l'interface et construction du rapport.
    Aucun accès au DOM. Le rapport ne s'appuie que sur les réponses données : rien n'est affirmé au-delà. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));

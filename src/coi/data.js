@@ -1,4 +1,4 @@
-/* MAIORIS Creative Operations Intelligence™ : questions, options et textes (FR et EN).
+/* MAIORIS Creative Operations Intelligence : questions, options et textes (FR et EN).
    Ce fichier ne contient aucune logique de calcul ni d'affichage. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));

@@ -1,4 +1,4 @@
-/* MAIORIS Creative Maturity Assessment™ : styles propres à l'outil (les composants .coi-* du site sont réutilisés). */
+/* MAIORIS Creative Maturity Assessment : styles propres à l'outil (les composants .coi-* du site sont réutilisés). */
 .mat-ctx{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;max-width:760px}
 .mat-f label{display:block;margin:0 0 6px;font-weight:600;font-size:16px}.mat-f input,.mat-f select{width:100%;min-height:50px;padding:0 14px;border:1px solid #B9B6AE;border-radius:6px;background:#fff;font:17px var(--sans);color:var(--ink)}
 .mat-f input:focus-visible,.mat-f select:focus-visible{outline:3px solid var(--red);outline-offset:2px}

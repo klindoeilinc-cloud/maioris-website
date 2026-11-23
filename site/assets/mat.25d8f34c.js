@@ -1,4 +1,4 @@
-/* MAIORIS INTELLIGENCE CORE™ : listes d'options communes aux outils (secteur, taille). Une seule définition. */
+/* MAIORIS INTELLIGENCE CORE : listes d'options communes aux outils (secteur, taille). Une seule définition. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.MaiorisOptions = factory();
@@ -19,7 +19,7 @@
 });
 
 ;
-/* MAIORIS INTELLIGENCE CORE™ : profil organisationnel commun, historique et consolidation des résultats.
+/* MAIORIS INTELLIGENCE CORE : profil organisationnel commun, historique et consolidation des résultats.
 
    Principes
    - Désactivé par défaut. Rien n'est conservé sans action explicite du visiteur (case à cocher du panneau).
@@ -36,10 +36,10 @@
   var KEY = "maioris.core.v1", FIELDS = ["org", "sector", "size", "market", "contactName", "contactEmail"], MAXLEN = 200, MAXHIST = 100;
   var TOOLS = ["brief", "diag", "coi", "maturity", "brand"];
   var META = {
-    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] },
-    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] }
+    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] },
+    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] }
   };
   var T = {
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
@@ -169,7 +169,7 @@
 });
 
 ;
-/* MAIORIS Creative Maturity Assessment™ : dimensions, 24 questions, échelle comportementale et niveaux (FR et EN).
+/* MAIORIS Creative Maturity Assessment : dimensions, 24 questions, échelle comportementale et niveaux (FR et EN).
    Version du questionnaire : voir VERSION. Aucune logique de calcul ni d'affichage ici. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));
@@ -240,7 +240,7 @@
 });
 
 ;
-/* MAIORIS Creative Maturity Assessment™ : moteur de scoring. Fonctions pures, sans DOM.
+/* MAIORIS Creative Maturity Assessment : moteur de scoring. Fonctions pures, sans DOM.
 
    Réponse valide : entier de 1 (Absent) à 5 (Intégré). « Je ne sais pas / Non applicable » ("na") et l'absence de réponse ne sont JAMAIS comptées comme zéro :
    elles sortent simplement du calcul.
@@ -319,7 +319,7 @@
 });
 
 ;
-/* MAIORIS Creative Maturity Assessment™ : textes et rapport. Les interprétations reposent exclusivement sur les réponses données. */
+/* MAIORIS Creative Maturity Assessment : textes et rapport. Les interprétations reposent exclusivement sur les réponses données. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));
   else root.MATReport = factory(root.MATData, root.MATCalc);
@@ -422,7 +422,7 @@
 });
 
 ;
-/* MAIORIS Creative Maturity Assessment™ : interface. Les réponses restent en mémoire de la page ; l'envoi à MAIORIS est facultatif et soumis au consentement. */
+/* MAIORIS Creative Maturity Assessment : interface. Les réponses restent en mémoire de la page ; l'envoi à MAIORIS est facultatif et soumis au consentement. */
 (function () {
   "use strict";
   var D = window.MATData, C = window.MATCalc, R = window.MATReport, Core = window.MaiorisCore, OPT = window.MaiorisOptions;

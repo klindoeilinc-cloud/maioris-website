@@ -1,4 +1,4 @@
-/* MAIORIS Brand Consistency Review™ : profil de marque, catégories de supports, six dimensions et critères d'observation (FR et EN).
+/* MAIORIS Brand Consistency Review : profil de marque, catégories de supports, six dimensions et critères d'observation (FR et EN).
    Mode guidé : aucun fichier n'est lu ni analysé automatiquement. Le visiteur référence les supports et consigne ses observations avec leurs preuves. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));

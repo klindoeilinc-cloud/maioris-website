@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère les pages FR et EN de Creative Operations Intelligence™ à partir du gabarit (en-tête, navigation, pied de page)
+"""Génère les pages FR et EN de Creative Operations Intelligence à partir du gabarit (en-tête, navigation, pied de page)
 des pages existantes. Commande : python3 tools/build_coi_pages.py puis python3 tools/build_assets.py"""
 import html, json, os, re
 SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site")
@@ -8,9 +8,9 @@ rd = lambda p: open(os.path.join(SITE, p), encoding="utf8").read()
 CFG = {
  "fr": dict(src="fr/index.html", out="fr/creative-operations-intelligence.html", url="https://maioris.net/fr/creative-operations-intelligence", other="../en/creative-operations-intelligence.html", otherurl="https://maioris.net/en/creative-operations-intelligence",
    og="https://maioris.net/assets/og/fr-calc.png", locale="fr_FR", crumb=("analyses.html", "Insights"), crumb_t="Outil",
-   title="Creative Operations Intelligence™ : diagnostic de vos opérations créatives | MAIORIS",
+   title="Creative Operations Intelligence : diagnostic de vos opérations créatives | MAIORIS",
    desc="Un outil de diagnostic en cinq étapes pour estimer ce que les reprises, validations et frictions coûtent à vos opérations créatives, et identifier ce qui limite votre performance. Calcul dans votre navigateur.",
-   h1="Creative Operations Intelligence™", sig="Understand your creative operations. Identify what limits your performance.",
+   h1="Creative Operations Intelligence", sig="Understand your creative operations. Identify what limits your performance.",
    lead="Comprenez vos opérations créatives. Identifiez ce qui limite votre performance. Vingt questions, cinq étapes, et une estimation indicative de ce que les reprises et les validations répétées coûtent chaque année à votre organisation.",
    privT="Ce qui se passe avec vos réponses",
    priv=["Le calcul s'exécute dans votre navigateur. Vos réponses ne sont ni envoyées ni enregistrées : elles restent en mémoire le temps de la visite et disparaissent si vous fermez la page.",
@@ -18,18 +18,18 @@ CFG = {
          "Nous mesurons uniquement la fréquentation de l'outil, par exemple le nombre d'étapes atteintes, sans jamais enregistrer vos réponses."],
    privL=("confidentialite.html", "Lire la politique de confidentialité"), nojs="Cet outil a besoin de JavaScript pour fonctionner. Le calcul s'exécute entièrement dans votre navigateur.",
    cta_t="Votre système créatif mérite une analyse approfondie.",
-   cta_p="Ce Snapshot s'appuie sur vos déclarations. Le Creative Audit™ de MAIORIS Group va plus loin : une mission indépendante de diagnostic stratégique qui examine, à partir de vos documents et de vos pratiques réelles, pourquoi votre système créatif produit, ou non, les résultats attendus.",
+   cta_p="Ce Snapshot s'appuie sur vos déclarations. Le Creative Audit de MAIORIS Group va plus loin : une mission indépendante de diagnostic stratégique qui examine, à partir de vos documents et de vos pratiques réelles, pourquoi votre système créatif produit, ou non, les résultats attendus.",
    facts=[("Durée", "5 à 7 jours ouvrés"), ("Restitution", "60 à 90 minutes"), ("Livrables", "5 documents stratégiques")], price_l="Tarif", price="750\u00a0000 FCFA",
-   cta1=("Découvrir le Creative Audit™", "accompagnement/creative-audit.html"), cta2=("Échanger avec MAIORIS", "contact.html"),
+   cta1=("Découvrir le Creative Audit", "accompagnement/creative-audit.html"), cta2=("Échanger avec MAIORIS", "contact.html"),
    send_t="Transmettre mon Snapshot à MAIORIS (facultatif)", send_p="Vous recevrez un accusé de réception et nous vous répondrons par e-mail. Vos données sont conservées 12 mois ; pour les faire effacer, écrivez à hello@maioris.net.",
    f_name="Nom", f_email="Adresse e-mail", f_co="Organisation (facultatif)", consent="J'accepte que MAIORIS reçoive mes réponses et mon Snapshot, les conserve 12 mois et les utilise pour me répondre.", submit="Transmettre mon Snapshot",
    msgs=dict(invalid="Indiquez votre nom et une adresse e-mail valide.", noconsent="Cochez la case de consentement pour transmettre votre Snapshot.", sending="Envoi en cours…", sent="Merci, votre Snapshot a bien été transmis.", fail="L'envoi a échoué. Réessayez, ou écrivez-nous à hello@maioris.net."),
    head_lbl="Progression"),
  "en": dict(src="en/index.html", out="en/creative-operations-intelligence.html", url="https://maioris.net/en/creative-operations-intelligence", other="../fr/creative-operations-intelligence.html", otherurl="https://maioris.net/fr/creative-operations-intelligence",
    og="https://maioris.net/assets/og/en-calc.png", locale="en_GB", crumb=("insights.html", "Insights"), crumb_t="Tool",
-   title="Creative Operations Intelligence™: a diagnostic of your creative operations | MAIORIS",
+   title="Creative Operations Intelligence: a diagnostic of your creative operations | MAIORIS",
    desc="A five step diagnostic tool to estimate what rework, approvals and friction cost your creative operations, and to identify what limits your performance. The calculation runs in your browser.",
-   h1="Creative Operations Intelligence™", sig="Understand your creative operations. Identify what limits your performance.",
+   h1="Creative Operations Intelligence", sig="Understand your creative operations. Identify what limits your performance.",
    lead="Twenty questions, five steps, and an indicative estimate of what rework and repeated approvals cost your organisation every year, so you can see what limits your creative performance.",
    privT="What happens to your answers",
    priv=["The calculation runs in your browser. Your answers are neither sent nor saved: they stay in memory during the visit and disappear if you close the page.",
@@ -37,9 +37,9 @@ CFG = {
          "We only measure how the tool is used, for example the number of steps reached, and never record your answers."],
    privL=("privacy.html", "Read the privacy policy"), nojs="This tool needs JavaScript to work. The calculation runs entirely in your browser.",
    cta_t="Your creative system deserves a deeper analysis.",
-   cta_p="This Snapshot relies on what you declared. MAIORIS Group's Creative Audit™ goes further: an independent strategic diagnostic engagement that examines, from your documents and real practices, why your creative system does or does not deliver the expected results.",
+   cta_p="This Snapshot relies on what you declared. MAIORIS Group's Creative Audit goes further: an independent strategic diagnostic engagement that examines, from your documents and real practices, why your creative system does or does not deliver the expected results.",
    facts=[("Duration", "5 to 7 working days"), ("Debrief", "60 to 90 minutes"), ("Deliverables", "5 strategic documents")], price_l="Fee", price="750\u00a0000 FCFA",
-   cta1=("Discover the Creative Audit™", "advisory/creative-audit.html"), cta2=("Talk to MAIORIS", "contact.html"),
+   cta1=("Discover the Creative Audit", "advisory/creative-audit.html"), cta2=("Talk to MAIORIS", "contact.html"),
    send_t="Send my Snapshot to MAIORIS (optional)", send_p="You will receive an acknowledgement and we will reply by email. Your data is kept for 12 months; to have it deleted, write to hello@maioris.net.",
    f_name="Name", f_email="Email address", f_co="Organisation (optional)", consent="I agree that MAIORIS receives my answers and my Snapshot, keeps them for 12 months and uses them to reply to me.", submit="Send my Snapshot",
    msgs=dict(invalid="Enter your name and a valid email address.", noconsent="Tick the consent box to send your Snapshot.", sending="Sending…", sent="Thank you, your Snapshot has been sent.", fail="Sending failed. Please try again, or write to hello@maioris.net."),

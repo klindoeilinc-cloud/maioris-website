@@ -1,4 +1,4 @@
-/* MAIORIS Creative Maturity Assessment™ : moteur de scoring. Fonctions pures, sans DOM.
+/* MAIORIS Creative Maturity Assessment : moteur de scoring. Fonctions pures, sans DOM.
 
    Réponse valide : entier de 1 (Absent) à 5 (Intégré). « Je ne sais pas / Non applicable » ("na") et l'absence de réponse ne sont JAMAIS comptées comme zéro :
    elles sortent simplement du calcul.

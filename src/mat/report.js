@@ -1,4 +1,4 @@
-/* MAIORIS Creative Maturity Assessment™ : textes et rapport. Les interprétations reposent exclusivement sur les réponses données. */
+/* MAIORIS Creative Maturity Assessment : textes et rapport. Les interprétations reposent exclusivement sur les réponses données. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));
   else root.MATReport = factory(root.MATData, root.MATCalc);

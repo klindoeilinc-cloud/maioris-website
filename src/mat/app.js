@@ -1,4 +1,4 @@
-/* MAIORIS Creative Maturity Assessment™ : interface. Les réponses restent en mémoire de la page ; l'envoi à MAIORIS est facultatif et soumis au consentement. */
+/* MAIORIS Creative Maturity Assessment : interface. Les réponses restent en mémoire de la page ; l'envoi à MAIORIS est facultatif et soumis au consentement. */
 (function () {
   "use strict";
   var D = window.MATData, C = window.MATCalc, R = window.MATReport, Core = window.MaiorisCore, OPT = window.MaiorisOptions;

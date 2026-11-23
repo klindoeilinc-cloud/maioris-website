@@ -1,4 +1,4 @@
-/* MAIORIS INTELLIGENCE CORE™ : profil organisationnel commun, historique et consolidation des résultats.
+/* MAIORIS INTELLIGENCE CORE : profil organisationnel commun, historique et consolidation des résultats.
 
    Principes
    - Désactivé par défaut. Rien n'est conservé sans action explicite du visiteur (case à cocher du panneau).
@@ -15,10 +15,10 @@
   var KEY = "maioris.core.v1", FIELDS = ["org", "sector", "size", "market", "contactName", "contactEmail"], MAXLEN = 200, MAXHIST = 100;
   var TOOLS = ["brief", "diag", "coi", "maturity", "brand"];
   var META = {
-    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] },
-    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] }
+    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] },
+    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] }
   };
   var T = {
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
