@@ -44,24 +44,25 @@ C["en"] = dict(
     mk="Priority markets: France, Côte d'Ivoire, Senegal, Canada and French speaking Africa.",
     prob_t="Situations we are brought in for", prob=["A strategy that lives in the founder's head rather than in the organisation.", "Briefs, validations and handovers that follow no shared framework, and rework as a consequence.", "Growth that moves faster than the structure meant to carry it.", "AI tools adopted one by one, without governance or quality control.", "Founder decisions taken without a senior sounding board outside the agency."],
     off_k="03 / 07", off_h="Four offers, each with a defined scope", off_i="Each offer has a fixed reference fee in FCFA, a stated duration and named deliverables. Prices are fixed reference fees, excluding any applicable taxes.",
+    scope_note="The main deliverables are listed here. The detailed scope is set out in the proposal.",
     d_label="Deliverables", inc_label="Included", out_label="Expected outcome", dur="Duration", pos="Positioning", eng="Initial commitment", fee="Reference fee",
     offers=[
       dict(key="audit", n="Offer 01", name="Agency Creative Audit", pos="Strategic Diagnostic", dur="10 to 15 working days", price_sub="Fixed reference fee",
            desc="An in depth diagnostic for agencies that want to understand the limits of their creative organisation, their commercial model and their operating processes.",
-           lab="Deliverables", items=["Agency Positioning Audit", "Creative Organization Assessment", "Workflow Analysis", "AI Maturity Assessment", "Creative Performance Score /100", "Identification of organisational constraints", "Strategic Recommendations", "90 Day Transformation Roadmap"],
+           lab="Deliverables", items=["Agency Positioning Audit", "Creative Performance Score /100", "Strategic Recommendations", "90 Day Transformation Roadmap"],
            out="A clear view of dysfunctions, improvement opportunities and strategic priorities.", cta="Request an Agency Audit", note=None),
       dict(key="cos", n="Offer 02", name="Creative Operating System", pos="Creative Operations Transformation", dur="4 to 6 weeks", price_sub="Fixed reference fee",
            desc="Design of an operating system that lets the agency better organise, govern and steer its creative activity.",
-           lab="Deliverables", items=["Creative Operating Architecture", "Workflow Design", "Brief Management Framework", "Creative Governance Model", "Roles & Responsibilities Matrix", "AI Integration Protocols", "Creative Performance Dashboard", "Operational Playbook"],
+           lab="Deliverables", items=["Creative Operating Architecture", "Creative Governance Model", "Creative Performance Dashboard", "Operational Playbook"],
            out="A more structured, consistent and measurable creative organisation.", cta="Build Your Creative Operating System", note=None),
       dict(key="fractional", n="Offer 03", name="Fractional Creative Leadership", pos="External Strategic Creative Leadership", dur="Initial commitment of 3 months", price_sub="Billed monthly",
            desc="Recurring strategic support for agency founders and leaders who want senior expertise without hiring a full time strategy director.",
-           lab="Included", items=["Two strategic sessions per month", "Monthly Strategic Review", "Review of priority projects", "Advice to the founder", "Strategic Decision Support", "Creative Performance Monitoring", "Monthly Strategic Recommendations", "Asynchronous support within a defined scope"],
+           lab="Included", items=["Two strategic sessions per month", "Monthly Strategic Review", "Strategic Decision Support", "Monthly Strategic Recommendations"],
            out="Better capacity for decision, direction and strategic steering.", cta="Explore Strategic Partnership",
            note="This service is not a daily art direction service, hierarchical management or creative production."),
       dict(key="ai", n="Offer 04", name="AI Creative Transformation", pos="AI & Creative Infrastructure", dur="3 to 5 weeks", price_sub="Fixed reference fee",
            desc="Support for agencies that want to bring artificial intelligence into their creative organisation in a structured, controlled and effective way.",
-           lab="Deliverables", items=["AI Maturity Assessment", "AI Opportunity Mapping", "Creative Workflow Automation Strategy", "AI Governance Framework", "Content Quality Control Protocol", "AI Adoption Roadmap", "Team Adoption Recommendations"],
+           lab="Deliverables", items=["AI Maturity Assessment", "AI Governance Framework", "Content Quality Control Protocol", "AI Adoption Roadmap"],
            out="Moving from occasional use of AI tools to a structured creative infrastructure.", cta="Transform Your Creative Infrastructure", note=None),
     ],
     pr_k="04 / 07", pr_h="Pricing at a glance", pr_i="All amounts are fixed reference fees in FCFA, excluding any applicable taxes. Only the Fractional offer is billed monthly.",
@@ -114,24 +115,25 @@ C["fr"] = dict(
     mk="Marchés prioritaires : France, Côte d'Ivoire, Sénégal, Canada et Afrique francophone.",
     prob_t="Les situations pour lesquelles on nous sollicite", prob=["Une stratégie qui vit dans la tête du fondateur plutôt que dans l'organisation.", "Des briefs, des validations et des passages de relais sans cadre commun, et des reprises qui en découlent.", "Une croissance plus rapide que la structure censée la porter.", "Des outils d'IA adoptés un par un, sans gouvernance ni contrôle qualité.", "Des décisions de dirigeant prises sans interlocuteur senior extérieur à l'agence."],
     off_k="03 / 07", off_h="Quatre offres, chacune à périmètre défini", off_i="Chaque offre a un tarif forfaitaire de référence en FCFA, une durée annoncée et des livrables nommés. Les prix sont des tarifs forfaitaires de référence, hors taxes éventuellement applicables.",
+    scope_note="Les livrables principaux figurent ici. Le périmètre détaillé est remis dans la proposition.",
     d_label="Livrables", inc_label="Inclus", out_label="Résultat attendu", dur="Durée", pos="Positionnement", eng="Engagement initial", fee="Tarif de référence",
     offers=[
       dict(key="audit", n="Offre 01", name="Agency Creative Audit", pos="Diagnostic stratégique", dur="10 à 15 jours ouvrés", price_sub="Tarif forfaitaire de référence",
            desc="Un diagnostic approfondi destiné aux agences qui souhaitent comprendre les limites de leur organisation créative, leur modèle commercial et leurs processus opérationnels.",
-           lab="Livrables", items=["Agency Positioning Audit", "Creative Organization Assessment", "Workflow Analysis", "AI Maturity Assessment", "Creative Performance Score /100", "Identification des contraintes organisationnelles", "Strategic Recommendations", "90 Day Transformation Roadmap"],
+           lab="Livrables", items=["Agency Positioning Audit", "Creative Performance Score /100", "Strategic Recommendations", "90 Day Transformation Roadmap"],
            out="Une vision claire des dysfonctionnements, des opportunités d'amélioration et des priorités stratégiques.", cta="Demander un Agency Audit", note=None),
       dict(key="cos", n="Offre 02", name="Creative Operating System", pos="Transformation des opérations créatives", dur="4 à 6 semaines", price_sub="Tarif forfaitaire de référence",
            desc="Conception d'un système opérationnel permettant à l'agence de mieux organiser, gouverner et piloter ses activités créatives.",
-           lab="Livrables", items=["Creative Operating Architecture", "Workflow Design", "Brief Management Framework", "Creative Governance Model", "Roles & Responsibilities Matrix", "AI Integration Protocols", "Creative Performance Dashboard", "Operational Playbook"],
+           lab="Livrables", items=["Creative Operating Architecture", "Creative Governance Model", "Creative Performance Dashboard", "Operational Playbook"],
            out="Une organisation créative plus structurée, cohérente et mesurable.", cta="Construire votre Creative Operating System", note=None),
       dict(key="fractional", n="Offre 03", name="Fractional Creative Leadership", pos="Direction créative stratégique externe", dur="Engagement initial de 3 mois", price_sub="Facturation mensuelle",
            desc="Un accompagnement stratégique récurrent destiné aux fondateurs et dirigeants d'agences qui souhaitent bénéficier d'une expertise senior sans recruter un directeur stratégique à temps plein.",
-           lab="Inclus", items=["Deux sessions stratégiques mensuelles", "Monthly Strategic Review", "Revue des projets prioritaires", "Conseil au fondateur", "Strategic Decision Support", "Creative Performance Monitoring", "Monthly Strategic Recommendations", "Accompagnement asynchrone dans un périmètre défini"],
+           lab="Inclus", items=["Deux sessions stratégiques mensuelles", "Monthly Strategic Review", "Strategic Decision Support", "Monthly Strategic Recommendations"],
            out="Une meilleure capacité de décision, d'orientation et de pilotage stratégique.", cta="Explorer un partenariat stratégique",
            note="Ce service ne constitue pas une prestation de direction artistique quotidienne, de management hiérarchique ou de production créative."),
       dict(key="ai", n="Offre 04", name="AI Creative Transformation", pos="IA et infrastructure créative", dur="3 à 5 semaines", price_sub="Tarif forfaitaire de référence",
            desc="Accompagnement des agences souhaitant intégrer l'intelligence artificielle dans leur organisation créative de manière structurée, maîtrisée et performante.",
-           lab="Livrables", items=["AI Maturity Assessment", "AI Opportunity Mapping", "Creative Workflow Automation Strategy", "AI Governance Framework", "Content Quality Control Protocol", "AI Adoption Roadmap", "Team Adoption Recommendations"],
+           lab="Livrables", items=["AI Maturity Assessment", "AI Governance Framework", "Content Quality Control Protocol", "AI Adoption Roadmap"],
            out="Passer d'une utilisation ponctuelle des outils d'IA à une infrastructure créative structurée.", cta="Transformer votre infrastructure créative", note=None),
     ],
     pr_k="04 / 07", pr_h="Les tarifs en un coup d'œil", pr_i="Tous les montants sont des tarifs forfaitaires de référence en FCFA, hors taxes éventuellement applicables. Seule l'offre Fractional est facturée au mois.",
@@ -229,9 +231,9 @@ def build(lang):
         p = money(PRICES[o["key"]], lang)
         meta = '<li><b>%s</b> : %s</li><li><b>%s</b> : %s</li>' % (E(c["dur"] if o["key"] != "fractional" else c["eng"]), E(o["dur"] if o["key"] != "fractional" else o["dur"].replace("Initial commitment of ", "").replace("Engagement initial de ", "")), E(c["pos"]), E(o["pos"]))
         return ('<li class="pt-offer" id="offer-%s"><div><p class="pt-num">%s</p><h3>%s</h3><p class="pt-pos">%s</p></div>'
-                '<div><p class="pt-desc">%s</p><h4>%s</h4><ul class="pt-del">%s</ul><p class="pt-out"><b>%s :</b> %s</p>%s</div>'
+                '<div><p class="pt-desc">%s</p><h4>%s</h4><ul class="pt-del">%s</ul><p class="pt-scope">%s</p><p class="pt-out"><b>%s :</b> %s</p>%s</div>'
                 '<div class="pt-buy"><p class="pt-price">%s%s<small>%s</small></p><ul class="pt-meta">%s</ul><a class="btn btn-sm" data-offer="%s" data-track="cta_click" data-rank="primary" data-label="partners-%s" href="#contact">%s</a></div></li>') % (
-            o["key"], E(o["n"]), E(o["name"]), E(o["pos"]), E(o["desc"]), E(o["lab"]), "".join("<li>%s</li>" % E(x) for x in o["items"]), E(c["out_label"]), E(o["out"]),
+            o["key"], E(o["n"]), E(o["name"]), E(o["pos"]), E(o["desc"]), E(o["lab"]), "".join("<li>%s</li>" % E(x) for x in o["items"]), E(c["scope_note"]), E(c["out_label"]), E(o["out"]),
             ('<p class="pt-note">%s</p>' % E(o["note"])) if o["note"] else "", p, ("<br>" + E({"en": "per month", "fr": "par mois"}[lang])) if o["key"] == "fractional" else "", E(o["price_sub"]), meta, o["key"], o["key"], E(o["cta"]))
     offers = ('<section class="pt-sec" id="offers" data-reveal="" aria-labelledby="off-t"><div class="wrap">' + sec_head(c["off_k"], c["off_h"], c["off_i"]).replace('<h2 class="pt-h2">', '<h2 class="pt-h2" id="off-t">') +
               '<ol class="pt-offers">%s</ol></div></section>') % "".join(offer_html(o) for o in c["offers"])
