@@ -20,16 +20,16 @@ function staticFetch(url) {
   for (const f of cands) if (f.startsWith(SITE) && fs.existsSync(f) && fs.statSync(f).isFile()) return new Response(fs.readFileSync(f), { status: 200, headers: { "Content-Type": MIME[path.extname(f)] || "application/octet-stream" } });
   return new Response("not found", { status: 404 });
 }
-async function start({ port = 0, demo = true, access = true, media = true, publicSection = true } = {}) {
+async function start({ port = 0, demo = true, access = true, media = true, publicSection = true, mail = false } = {}) {
   const db = migrated(); if (demo) db._db.exec(fs.readFileSync(path.join(__dirname, "../../d1/demo/editorial_demo.sql"), "utf8"));
   const kp = await crypto.subtle.generateKey({ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" }, true, ["sign", "verify"]);
   const jwk = { ...(await crypto.subtle.exportKey("jwk", kp.publicKey)), kid: "dev", alg: "RS256", use: "sig" }, TEAM = "dev.cloudflareaccess.com", AUD = "dev-aud";
   const b64 = (b) => Buffer.from(b).toString("base64url");
   async function token(email = "admin@maioris.net") { const h = b64(JSON.stringify({ alg: "RS256", kid: "dev" })), now = Math.floor(Date.now() / 1000), p = b64(JSON.stringify({ iss: `https://${TEAM}`, aud: [AUD], email, exp: now + 3600, nbf: now - 5 })); return `${h}.${p}.${b64(Buffer.from(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", kp.privateKey, new TextEncoder().encode(h + "." + p))))}`; }
   (await FN("_lib/access.js")).resetAccessCache(); // chaque banc d'essai a sa propre paire de clés
-  const realFetch = global.fetch; global.fetch = async (u, o) => (String(u).includes("/cdn-cgi/access/certs") ? new Response(JSON.stringify({ keys: [jwk] }), { status: 200 }) : realFetch(u, o));
-  const r2 = createR2(); const env = { ...(publicSection ? { EDITORIAL_PUBLIC: "1" } : {}), MAIORIS_DB: db, ...(media ? { MAIORIS_MEDIA: r2 } : {}), ASSETS: { fetch: async (u) => staticFetch(u instanceof Request ? u.url : String(u)) }, ...(access ? { ACCESS_TEAM_DOMAIN: TEAM, ACCESS_AUD: AUD } : {}) };
-  const mediaFn = await FN("media/[id].js"), admin = await FN("api/admin/[[path]].js"), pub = await FN("[lang]/perspectives/[[path]].js"), sm = await FN("sitemap-perspectives.xml.js");
+  const realFetch = global.fetch, mails = []; global.fetch = async (u, o) => (String(u).includes("/cdn-cgi/access/certs") ? new Response(JSON.stringify({ keys: [jwk] }), { status: 200 }) : String(u).startsWith("https://api.resend.com/") ? (mails.push(JSON.parse(o.body)), new Response("{}", { status: 200 })) : realFetch(u, o));
+  const r2 = createR2(); const env = { ...(mail ? { RESEND_API_KEY: "k", CONTACT_TO: "team@example.com", CONTACT_FROM: "MAIORIS <site@example.com>" } : {}), ...(publicSection ? { EDITORIAL_PUBLIC: "1" } : {}), MAIORIS_DB: db, ...(media ? { MAIORIS_MEDIA: r2 } : {}), ASSETS: { fetch: async (u) => staticFetch(u instanceof Request ? u.url : String(u)) }, ...(access ? { ACCESS_TEAM_DOMAIN: TEAM, ACCESS_AUD: AUD } : {}) };
+  const partnersFn = await FN("api/partners.js"), mediaFn = await FN("media/[id].js"), admin = await FN("api/admin/[[path]].js"), pub = await FN("[lang]/perspectives/[[path]].js"), sm = await FN("sitemap-perspectives.xml.js");
   const server = http.createServer(async (req, res) => {
     try {
       const url = new URL(req.url, "http://" + req.headers.host); const chunks = []; for await (const c of req) chunks.push(c); const body = chunks.length ? Buffer.concat(chunks) : undefined;
@@ -37,6 +37,7 @@ async function start({ port = 0, demo = true, access = true, media = true, publi
       let r; const m = /^\/(fr|en)\/perspectives(?:\/(.*))?$/.exec(url.pathname);
       if (m && req.method === "GET") r = await pub.onRequestGet({ request, env, params: { lang: m[1], path: (m[2] || "").split("/").filter(Boolean) }, next: () => staticFetch(url.href) });
       else if (/^\/media\/[^/]+$/.test(url.pathname) && ["GET", "HEAD"].includes(req.method)) r = await (req.method === "HEAD" ? mediaFn.onRequestHead : mediaFn.onRequestGet)({ request, env, params: { id: url.pathname.split("/")[2] } });
+      else if (url.pathname === "/api/partners" && req.method === "POST") r = await partnersFn.onRequestPost({ request: new Request(request, { headers: { ...Object.fromEntries(request.headers), origin: "https://maioris.net" } }), env }); /* le banc d'essai présente l'origine de production */
       else if (url.pathname === "/sitemap-perspectives.xml") r = await sm.onRequestGet({ request, env });
       else if (url.pathname.startsWith("/api/admin/")) r = await admin.onRequest({ request, env });
       else r = staticFetch(url.href);
@@ -44,7 +45,7 @@ async function start({ port = 0, demo = true, access = true, media = true, publi
     } catch (e) { console.error("pages-dev", e); res.writeHead(500); res.end(String(e && e.stack)); }
   });
   await new Promise((r) => server.listen(port, "127.0.0.1", r));
-  return { server, db, env, r2, port: server.address().port, base: `http://127.0.0.1:${server.address().port}`, token, close: () => new Promise((r) => { global.fetch = realFetch; server.close(r); }) };
+  return { server, db, env, r2, mails, port: server.address().port, base: `http://127.0.0.1:${server.address().port}`, token, close: () => new Promise((r) => { global.fetch = realFetch; server.close(r); }) };
 }
 module.exports = { start };
 if (require.main === module) start({ port: +process.env.PORT || 8130 }).then((s) => console.log("pages-dev", s.base));
