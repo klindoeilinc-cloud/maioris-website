@@ -22,3 +22,11 @@
 /fr/cout-inefficacite-creative.html  /fr/creative-operations-intelligence  301
 /en/creative-inefficiency-cost  /en/creative-operations-intelligence  301
 /en/creative-inefficiency-cost.html  /en/creative-operations-intelligence  301
+
+# Cas stratégiques retirés : les anciennes adresses mènent à MAIORIS Insights
+/fr/cas-strategiques  /fr/analyses  301
+/fr/cas-strategiques/*  /fr/analyses  301
+/fr/cas-strategiques.html  /fr/analyses  301
+/en/strategic-cases  /en/insights  301
+/en/strategic-cases/*  /en/insights  301
+/en/strategic-cases.html  /en/insights  301

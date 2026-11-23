@@ -1,5 +1,8 @@
 # Kit LinkedIn MAIORIS : English
 
+> **Read before publishing: pages removed from the site.** The "Strategic Cases" pages (and their 4 studies) and "Strategic Cases & Perspectives" have been deleted. Their old addresses now redirect to MAIORIS Insights. The following posts link to those addresses and must be **removed or rewritten** before any use: **C1** (Case 01), **S1** (one real case, three fictional scenarios), and the "full study" links in **A4b/A4c** and **A5c**. The other posts (analyses, tools, newsletter) remain valid.
+
+
 20 posts ready to review. Each link carries tracking parameters (`utm_`) that Plausible reads automatically.
 
 ---

@@ -14,7 +14,7 @@ const get = async (s, p) => { const r = await fetch(s.base + p); return { status
 test("accueil sans publication : état vide honnête, archives existantes reliées, aucune promesse de fréquence", async () => {
   const s = await start({ demo: false }); try {
     const r = await get(s, "/fr/perspectives"); assert.equal(r.status, 200);
-    assert.match(r.text, /ne sont pas encore en ligne/); assert.match(r.text, /href="\/fr\/analyses"/); assert.match(r.text, /href="\/fr\/cas-strategiques"/);
+    assert.match(r.text, /ne sont pas encore en ligne/); assert.match(r.text, /href="\/fr\/analyses"/); assert.ok(!/cas-strategiques/.test(r.text.replace(/<footer.*<\/footer>/s, "")), "plus de renvoi vers les cas retirés");
     assert.ok(!/Exemple éditorial fictif/.test(r.text), "aucune démo en production"); assert.ok(!/par mois|chaque semaine|hebdomadaire|mensuelle/i.test(r.text.replace(/<head>.*<\/head>/s, "")), "aucune fréquence promise");
   } finally { await s.close(); }
 });

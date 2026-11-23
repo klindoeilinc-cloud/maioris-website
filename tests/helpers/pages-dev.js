@@ -20,7 +20,7 @@ function staticFetch(url) {
   for (const f of cands) if (f.startsWith(SITE) && fs.existsSync(f) && fs.statSync(f).isFile()) return new Response(fs.readFileSync(f), { status: 200, headers: { "Content-Type": MIME[path.extname(f)] || "application/octet-stream" } });
   return new Response("not found", { status: 404 });
 }
-async function start({ port = 0, demo = true, access = true, media = true } = {}) {
+async function start({ port = 0, demo = true, access = true, media = true, publicSection = true } = {}) {
   const db = migrated(); if (demo) db._db.exec(fs.readFileSync(path.join(__dirname, "../../d1/demo/editorial_demo.sql"), "utf8"));
   const kp = await crypto.subtle.generateKey({ name: "RSASSA-PKCS1-v1_5", modulusLength: 2048, publicExponent: new Uint8Array([1, 0, 1]), hash: "SHA-256" }, true, ["sign", "verify"]);
   const jwk = { ...(await crypto.subtle.exportKey("jwk", kp.publicKey)), kid: "dev", alg: "RS256", use: "sig" }, TEAM = "dev.cloudflareaccess.com", AUD = "dev-aud";
@@ -28,7 +28,7 @@ async function start({ port = 0, demo = true, access = true, media = true } = {}
   async function token(email = "admin@maioris.net") { const h = b64(JSON.stringify({ alg: "RS256", kid: "dev" })), now = Math.floor(Date.now() / 1000), p = b64(JSON.stringify({ iss: `https://${TEAM}`, aud: [AUD], email, exp: now + 3600, nbf: now - 5 })); return `${h}.${p}.${b64(Buffer.from(await crypto.subtle.sign("RSASSA-PKCS1-v1_5", kp.privateKey, new TextEncoder().encode(h + "." + p))))}`; }
   (await FN("_lib/access.js")).resetAccessCache(); // chaque banc d'essai a sa propre paire de clés
   const realFetch = global.fetch; global.fetch = async (u, o) => (String(u).includes("/cdn-cgi/access/certs") ? new Response(JSON.stringify({ keys: [jwk] }), { status: 200 }) : realFetch(u, o));
-  const r2 = createR2(); const env = { MAIORIS_DB: db, ...(media ? { MAIORIS_MEDIA: r2 } : {}), ASSETS: { fetch: async (u) => staticFetch(u instanceof Request ? u.url : String(u)) }, ...(access ? { ACCESS_TEAM_DOMAIN: TEAM, ACCESS_AUD: AUD } : {}) };
+  const r2 = createR2(); const env = { ...(publicSection ? { EDITORIAL_PUBLIC: "1" } : {}), MAIORIS_DB: db, ...(media ? { MAIORIS_MEDIA: r2 } : {}), ASSETS: { fetch: async (u) => staticFetch(u instanceof Request ? u.url : String(u)) }, ...(access ? { ACCESS_TEAM_DOMAIN: TEAM, ACCESS_AUD: AUD } : {}) };
   const mediaFn = await FN("media/[id].js"), admin = await FN("api/admin/[[path]].js"), pub = await FN("[lang]/perspectives/[[path]].js"), sm = await FN("sitemap-perspectives.xml.js");
   const server = http.createServer(async (req, res) => {
     try {

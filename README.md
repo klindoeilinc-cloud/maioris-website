@@ -126,6 +126,10 @@ Durées dans `retention_policies` (initialement 365 jours pour les évaluations,
 
 ## STRATEGIC CASES & PERSPECTIVES (plateforme éditoriale)
 
+> **État actuel : section retirée du site public.** Les pages « Strategic Cases » (4 études) et « Strategic Cases & Perspectives » ont été supprimées du site. Leurs adresses renvoient vers MAIORIS Insights (redirections 301 dans `site/_redirects` pour les cas, redirection temporaire 302 pour `/fr/perspectives` et `/en/perspectives`). Le **moteur éditorial reste en place, inchangé et inactif côté public** : back-office, base, images, règles de publication, aperçu. Les tables restent dans la base D1 ; rien n'a été supprimé.
+>
+> **Pour réactiver la partie publique :** (1) définir la variable `EDITORIAL_PUBLIC` à `1` dans le projet Pages ; (2) ajouter un lien vers `/fr/perspectives` (et `/en/perspectives`) dans le pied de page ; (3) ajouter `Sitemap: https://maioris.net/sitemap-perspectives.xml` à `site/robots.txt` ; (4) relancer un déploiement. Les pages « Strategic Cases » supprimées sont récupérables dans l'historique Git (PR 24 à 30).
+
 Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspectives`, `/en/perspectives`, rubriques et articles), avec l'en-tête et le pied de page du site. Identité propre à la section (palette Soft Cream, Deep Navy, Cobalt, Solar Yellow, Coral, Emerald ; Poppins auto-hébergée) : `src/editorial/editorial.css`, limitée à la classe `.ed`. Le reste du site ne change pas.
 
 **Contenu.** Cinq rubriques permanentes et six formats (Strategic Case, Executive Brief, Deep Perspective, Market Signals, Strategic Framework, Future Outlook), définis dans `site/functions/_lib/editorial/taxonomy.js` et contrôlés en base. Ils s'attribuent aux publications, ils ne se créent pas depuis l'interface. Chaque publication affiche son format et son temps de lecture (calculé à 220 mots par minute).

@@ -4,6 +4,7 @@ import { CATEGORIES, catById } from "./_lib/editorial/taxonomy.js";
 
 const O = "https://maioris.net", esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 export async function onRequestGet({ env }) {
+  if (env.EDITORIAL_PUBLIC !== "1") return new Response("Not found", { status: 404, headers: { "Cache-Control": "no-store" } });   // section retirée du site public
   const urls = [];
   const alt = (fr, en) => `<xhtml:link rel="alternate" hreflang="fr" href="${esc(fr)}"/><xhtml:link rel="alternate" hreflang="en" href="${esc(en)}"/><xhtml:link rel="alternate" hreflang="x-default" href="${esc(fr)}"/>`;
   urls.push(...["fr", "en"].map((l) => `<url><loc>${O}/${l}/perspectives</loc>${alt(`${O}/fr/perspectives`, `${O}/en/perspectives`)}</url>`));
