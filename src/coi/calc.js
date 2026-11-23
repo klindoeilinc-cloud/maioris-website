@@ -1,4 +1,4 @@
-/* MAIORIS Creative Operations Intelligence™ : moteur de calcul et validations.
+/* MAIORIS Creative Operations Intelligence : moteur de calcul et validations.
    Fonctions pures, sans accès au DOM. Les formules sont centralisées dans compute().
 
    Variables

@@ -1,4 +1,4 @@
-/* MAIORIS Creative Maturity Assessment™ : dimensions, 24 questions, échelle comportementale et niveaux (FR et EN).
+/* MAIORIS Creative Maturity Assessment : dimensions, 24 questions, échelle comportementale et niveaux (FR et EN).
    Version du questionnaire : voir VERSION. Aucune logique de calcul ni d'affichage ici. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));

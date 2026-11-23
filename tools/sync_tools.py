@@ -19,17 +19,17 @@ TXT = {
    here="Vous êtes ici", go="Ouvrir l'outil",
    items={"brief": ("Évaluez votre brief", "2 minutes · 5 questions", "Votre brief est-il assez solide pour lancer la production ?"),
           "diag": ("Où est votre contrainte ?", "2 minutes · 7 affirmations", "Qu'est-ce qui freine le plus probablement votre marque ?"),
-          "coi": ("Creative Operations Intelligence™", "20 questions · 5 étapes", "Combien coûtent vos reprises, et qu'est-ce qui limite votre performance ?"),
-          "mat": ("Creative Maturity Assessment™", "24 questions · 6 dimensions", "Votre organisation a-t-elle les capacités de produire une création cohérente et performante ?"),
-          "brand": ("Brand Consistency Review™", "Revue guidée · 6 dimensions", "Votre marque s'exprime-t-elle de façon cohérente et distinctive sur ses supports ?")}),
+          "coi": ("Creative Operations Intelligence", "20 questions · 5 étapes", "Combien coûtent vos reprises, et qu'est-ce qui limite votre performance ?"),
+          "mat": ("Creative Maturity Assessment", "24 questions · 6 dimensions", "Votre organisation a-t-elle les capacités de produire une création cohérente et performante ?"),
+          "brand": ("Brand Consistency Review", "Revue guidée · 6 dimensions", "Votre marque s'exprime-t-elle de façon cohérente et distinctive sur ses supports ?")}),
  "en": dict(lbl="Tools", t_tool="Continue your diagnostic", t_hub="Five tools to look at your situation from five angles",
    lead="Each tool answers a different question and calculates in your browser. Take them in any order: none depends on another.",
    here="You are here", go="Open the tool",
    items={"brief": ("Assess your brief", "2 minutes · 5 questions", "Is your brief solid enough to start production?"),
           "diag": ("Where is your constraint?", "2 minutes · 7 statements", "What is most likely holding your brand back?"),
-          "coi": ("Creative Operations Intelligence™", "20 questions · 5 steps", "What do your reworks cost, and what limits your performance?"),
-          "mat": ("Creative Maturity Assessment™", "24 questions · 6 dimensions", "Does your organisation have the capabilities to produce consistent, high performing creative work?"),
-          "brand": ("Brand Consistency Review™", "Guided review · 6 dimensions", "Does your brand express itself consistently and distinctively across its materials?")}),
+          "coi": ("Creative Operations Intelligence", "20 questions · 5 steps", "What do your reworks cost, and what limits your performance?"),
+          "mat": ("Creative Maturity Assessment", "24 questions · 6 dimensions", "Does your organisation have the capabilities to produce consistent, high performing creative work?"),
+          "brand": ("Brand Consistency Review", "Guided review · 6 dimensions", "Does your brand express itself consistently and distinctively across its materials?")}),
 }
 E_ = html.escape
 

@@ -1,4 +1,4 @@
-/* MAIORIS Brand Consistency Review™ : règles d'évaluation guidée. Fonctions pures, sans DOM.
+/* MAIORIS Brand Consistency Review : règles d'évaluation guidée. Fonctions pures, sans DOM.
 
    Aucun fichier n'est lu ni analysé : validateFile() ne contrôle que le nom, la taille et le type déclaré.
    Un constat « observé » (conforme, partiellement conforme, non conforme) n'est retenu que s'il cite un support du registre ET décrit un fait observé.

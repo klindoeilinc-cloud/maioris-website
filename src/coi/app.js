@@ -1,4 +1,4 @@
-/* MAIORIS Creative Operations Intelligence™ : interface. Les réponses restent en mémoire de la page, rien n'est stocké ni envoyé
+/* MAIORIS Creative Operations Intelligence : interface. Les réponses restent en mémoire de la page, rien n'est stocké ni envoyé
    sans action explicite de l'utilisateur (envoi facultatif avec consentement). */
 (function () {
   "use strict";

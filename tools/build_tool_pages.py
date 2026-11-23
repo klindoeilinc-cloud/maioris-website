@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Génère les pages FR et EN du Creative Maturity Assessment™ et du Brand Consistency Review™ à partir du gabarit du site.
+"""Génère les pages FR et EN du Creative Maturity Assessment et du Brand Consistency Review à partir du gabarit du site.
 Commande : python3 tools/build_tool_pages.py puis python3 tools/sync_tools.py puis python3 tools/build_assets.py"""
 import html, json, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -9,15 +9,15 @@ rd = B.rd
 NB = " "
 
 TOOLS = {
- "mat": dict(slug="creative-maturity-assessment", bundle="mat", root="mat", mount="mat", name="Creative Maturity Assessment™",
-   fr=dict(title="Creative Maturity Assessment™ : évaluez la maturité de votre système créatif | MAIORIS",
+ "mat": dict(slug="creative-maturity-assessment", bundle="mat", root="mat", mount="mat", name="Creative Maturity Assessment",
+   fr=dict(title="Creative Maturity Assessment : évaluez la maturité de votre système créatif | MAIORIS",
            desc="Vingt-quatre questions, six dimensions : évaluez la maturité stratégique, organisationnelle et opérationnelle de votre système créatif. Autoévaluation déclarative, calcul dans votre navigateur.",
            lead="Votre organisation possède-t-elle les capacités stratégiques, humaines et opérationnelles nécessaires pour produire une création cohérente et performante ? Évaluez la maturité de votre organisation dans la manière dont elle définit sa stratégie créative, gouverne sa marque, dirige ses équipes, organise ses processus et mesure la performance de ses activités créatives.",
            sig="24 questions · 6 dimensions · 10 à 12 minutes",
            priv=["Le calcul s'exécute dans votre navigateur. Vos réponses ne sont ni envoyées ni enregistrées : elles restent en mémoire le temps de la visite et disparaissent si vous fermez la page.",
                  "Vous pouvez choisir de transmettre votre profil à MAIORIS. Dans ce cas seulement, vos réponses, votre nom et votre adresse e-mail nous sont envoyés, avec votre consentement explicite.",
                  "Il s'agit d'une autoévaluation déclarative propriétaire, et non d'une certification indépendante."]),
-   en=dict(title="Creative Maturity Assessment™: assess the maturity of your creative system | MAIORIS",
+   en=dict(title="Creative Maturity Assessment: assess the maturity of your creative system | MAIORIS",
            desc="Twenty four questions, six dimensions: assess the strategic, organisational and operational maturity of your creative system. Declarative self assessment, calculated in your browser.",
            lead="Does your organisation have the strategic, human and operational capabilities needed to produce consistent, high performing creative work? Assess your organisation's maturity in how it defines creative strategy, governs its brand, leads its teams, organises its processes and measures the performance of its creative activities.",
            sig="24 questions · 6 dimensions · 10 to 12 minutes",
@@ -25,25 +25,25 @@ TOOLS = {
                  "You can choose to send your profile to MAIORIS. Only then are your answers, your name and your email address sent to us, with your explicit consent.",
                  "This is a proprietary declarative self assessment, not an independent certification."]),
    cta_t=dict(fr="Votre diagnostic révèle des éléments qui méritent une analyse stratégique approfondie.", en="Your diagnostic reveals points that deserve an in depth strategic analysis.")),
- "brand": dict(slug="brand-consistency-review", bundle="brand", root="brand", mount="brand", name="Brand Consistency Review™",
-   fr=dict(title="Brand Consistency Review™ : examinez la cohérence de votre marque | MAIORIS",
+ "brand": dict(slug="brand-consistency-review", bundle="brand", root="brand", mount="brand", name="Brand Consistency Review",
+   fr=dict(title="Brand Consistency Review : examinez la cohérence de votre marque | MAIORIS",
            desc="Une revue guidée de la cohérence, de la singularité et de la discipline d'expression de votre marque à travers ses points de contact. Aucun fichier analysé automatiquement, rapport structuré.",
            lead="Votre marque exprime-t-elle une identité cohérente, reconnaissable et différenciante à travers ses différents points de contact ? Examinez la cohérence de votre identité, de votre discours et de vos expressions créatives afin d'identifier les écarts susceptibles d'affaiblir la perception de votre marque.",
            sig="Revue guidée · 6 dimensions · 10 à 15 minutes selon les supports",
            priv=["Aucun fichier n'est lu, analysé ni envoyé. Le fichier que vous choisissez est seulement contrôlé (format et taille) puis référencé dans votre registre, dans cet onglet.",
                  "Vous pouvez choisir de transmettre votre rapport à MAIORIS. Dans ce cas seulement, le texte du rapport (constats, noms de supports, liens), votre nom et votre adresse e-mail nous sont envoyés, avec votre consentement explicite. Les fichiers ne sont jamais transmis ; pour nous en confier, écrivez-nous à hello@maioris.net.",
-                 "Cet outil se distingue du Creative Maturity Assessment™ : l'un examine l'organisation, celui-ci examine les expressions de la marque."]),
-   en=dict(title="Brand Consistency Review™: examine the consistency of your brand | MAIORIS",
+                 "Cet outil se distingue du Creative Maturity Assessment : l'un examine l'organisation, celui-ci examine les expressions de la marque."]),
+   en=dict(title="Brand Consistency Review: examine the consistency of your brand | MAIORIS",
            desc="A guided review of the consistency, distinctiveness and expression discipline of your brand across its touchpoints. No file analysed automatically, structured report.",
            lead="Does your brand express a consistent, recognisable and differentiating identity across its touchpoints? Examine the consistency of your identity, your discourse and your creative expressions in order to identify the gaps that may weaken how your brand is perceived.",
            sig="Guided review · 6 dimensions · 10 to 15 minutes depending on the materials",
            priv=["No file is read, analysed or sent. The file you choose is only checked (format and size) and then listed in your register, in this tab.",
                  "You can choose to send your report to MAIORIS. Only then are the report text (findings, material names, links), your name and your email address sent to us, with your explicit consent. Files are never transmitted; to share some with us, write to hello@maioris.net.",
-                 "This tool is distinct from the Creative Maturity Assessment™: one examines the organisation, this one examines the expressions of the brand."]),
+                 "This tool is distinct from the Creative Maturity Assessment: one examines the organisation, this one examines the expressions of the brand."]),
    cta_t=dict(fr="Votre diagnostic révèle des éléments qui méritent une analyse stratégique approfondie.", en="Your diagnostic reveals points that deserve an in depth strategic analysis.")),
 }
-CTA_P = dict(fr="Le Creative Audit™ de MAIORIS Group est une mission indépendante de diagnostic stratégique comprenant analyse documentaire, entretiens, évaluation du système créatif, recommandations et restitution exécutive.",
-             en="MAIORIS Group's Creative Audit™ is an independent strategic diagnostic engagement comprising document analysis, interviews, an assessment of the creative system, recommendations and an executive debrief.")
+CTA_P = dict(fr="Le Creative Audit de MAIORIS Group est une mission indépendante de diagnostic stratégique comprenant analyse documentaire, entretiens, évaluation du système créatif, recommandations et restitution exécutive.",
+             en="MAIORIS Group's Creative Audit is an independent strategic diagnostic engagement comprising document analysis, interviews, an assessment of the creative system, recommendations and an executive debrief.")
 
 def build(key, lang):
     T = TOOLS[key]; c = B.CFG[lang]; x = T[lang]; url = "https://maioris.net/%s/%s" % (lang, T["slug"]); other = "https://maioris.net/%s/%s" % ("en" if lang == "fr" else "fr", T["slug"])

@@ -1,4 +1,4 @@
-/* MAIORIS INTELLIGENCE CORE™ : listes d'options communes aux outils (secteur, taille). Une seule définition. */
+/* MAIORIS INTELLIGENCE CORE : listes d'options communes aux outils (secteur, taille). Une seule définition. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.MaiorisOptions = factory();

@@ -1,4 +1,4 @@
-/* MAIORIS INTELLIGENCE CORE™ : listes d'options communes aux outils (secteur, taille). Une seule définition. */
+/* MAIORIS INTELLIGENCE CORE : listes d'options communes aux outils (secteur, taille). Une seule définition. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.MaiorisOptions = factory();
@@ -19,7 +19,7 @@
 });
 
 ;
-/* MAIORIS INTELLIGENCE CORE™ : profil organisationnel commun, historique et consolidation des résultats.
+/* MAIORIS INTELLIGENCE CORE : profil organisationnel commun, historique et consolidation des résultats.
 
    Principes
    - Désactivé par défaut. Rien n'est conservé sans action explicite du visiteur (case à cocher du panneau).
@@ -36,10 +36,10 @@
   var KEY = "maioris.core.v1", FIELDS = ["org", "sector", "size", "market", "contactName", "contactEmail"], MAXLEN = 200, MAXHIST = 100;
   var TOOLS = ["brief", "diag", "coi", "maturity", "brand"];
   var META = {
-    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] },
-    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] }
+    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] },
+    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] }
   };
   var T = {
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
@@ -169,7 +169,7 @@
 });
 
 ;
-/* MAIORIS Brand Consistency Review™ : profil de marque, catégories de supports, six dimensions et critères d'observation (FR et EN).
+/* MAIORIS Brand Consistency Review : profil de marque, catégories de supports, six dimensions et critères d'observation (FR et EN).
    Mode guidé : aucun fichier n'est lu ni analysé automatiquement. Le visiteur référence les supports et consigne ses observations avec leurs preuves. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));
@@ -245,7 +245,7 @@
 });
 
 ;
-/* MAIORIS Brand Consistency Review™ : règles d'évaluation guidée. Fonctions pures, sans DOM.
+/* MAIORIS Brand Consistency Review : règles d'évaluation guidée. Fonctions pures, sans DOM.
 
    Aucun fichier n'est lu ni analysé : validateFile() ne contrôle que le nom, la taille et le type déclaré.
    Un constat « observé » (conforme, partiellement conforme, non conforme) n'est retenu que s'il cite un support du registre ET décrit un fait observé.
@@ -374,7 +374,7 @@
 });
 
 ;
-/* MAIORIS Brand Consistency Review™ : textes et Brand Review Report (sections A à H).
+/* MAIORIS Brand Consistency Review : textes et Brand Review Report (sections A à H).
    Le rapport ne dit que ce que les constats saisis permettent de dire, et distingue faits observés, interprétations, hypothèses à vérifier et informations manquantes. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));
@@ -517,7 +517,7 @@
 });
 
 ;
-/* MAIORIS Brand Consistency Review™ : interface de revue guidée. Aucun fichier n'est lu, analysé ni envoyé : seuls le nom, la taille et le type sont contrôlés. */
+/* MAIORIS Brand Consistency Review : interface de revue guidée. Aucun fichier n'est lu, analysé ni envoyé : seuls le nom, la taille et le type sont contrôlés. */
 (function () {
   "use strict";
   var D = window.BRData, C = window.BRCalc, R = window.BRReport, Core = window.MaiorisCore;

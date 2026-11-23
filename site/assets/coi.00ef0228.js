@@ -1,4 +1,4 @@
-/* MAIORIS INTELLIGENCE CORE™ : listes d'options communes aux outils (secteur, taille). Une seule définition. */
+/* MAIORIS INTELLIGENCE CORE : listes d'options communes aux outils (secteur, taille). Une seule définition. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory();
   else root.MaiorisOptions = factory();
@@ -19,7 +19,7 @@
 });
 
 ;
-/* MAIORIS INTELLIGENCE CORE™ : profil organisationnel commun, historique et consolidation des résultats.
+/* MAIORIS INTELLIGENCE CORE : profil organisationnel commun, historique et consolidation des résultats.
 
    Principes
    - Désactivé par défaut. Rien n'est conservé sans action explicite du visiteur (case à cocher du panneau).
@@ -36,10 +36,10 @@
   var KEY = "maioris.core.v1", FIELDS = ["org", "sector", "size", "market", "contactName", "contactEmail"], MAXLEN = 200, MAXHIST = 100;
   var TOOLS = ["brief", "diag", "coi", "maturity", "brand"];
   var META = {
-    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] },
-    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence™", "creative-operations-intelligence.html"],
-          maturity: ["Creative Maturity Assessment™", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review™", "brand-consistency-review.html"] }
+    fr: { brief: ["Évaluez votre brief", "evaluer-votre-brief.html"], diag: ["Où est votre contrainte ?", "autodiagnostic.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] },
+    en: { brief: ["Assess your brief", "brief-check.html"], diag: ["Where is your constraint?", "self-assessment.html"], coi: ["Creative Operations Intelligence", "creative-operations-intelligence.html"],
+          maturity: ["Creative Maturity Assessment", "creative-maturity-assessment.html"], brand: ["Brand Consistency Review", "brand-consistency-review.html"] }
   };
   var T = {
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
@@ -169,7 +169,7 @@
 });
 
 ;
-/* MAIORIS Creative Operations Intelligence™ : questions, options et textes (FR et EN).
+/* MAIORIS Creative Operations Intelligence : questions, options et textes (FR et EN).
    Ce fichier ne contient aucune logique de calcul ni d'affichage. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("../core/options.js"));
@@ -319,7 +319,7 @@
 });
 
 ;
-/* MAIORIS Creative Operations Intelligence™ : moteur de calcul et validations.
+/* MAIORIS Creative Operations Intelligence : moteur de calcul et validations.
    Fonctions pures, sans accès au DOM. Les formules sont centralisées dans compute().
 
    Variables
@@ -518,7 +518,7 @@
 });
 
 ;
-/* MAIORIS Creative Operations Intelligence™ : textes de l'interface et construction du rapport.
+/* MAIORIS Creative Operations Intelligence : textes de l'interface et construction du rapport.
    Aucun accès au DOM. Le rapport ne s'appuie que sur les réponses données : rien n'est affirmé au-delà. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));
@@ -678,7 +678,7 @@
 });
 
 ;
-/* MAIORIS Creative Operations Intelligence™ : interface. Les réponses restent en mémoire de la page, rien n'est stocké ni envoyé
+/* MAIORIS Creative Operations Intelligence : interface. Les réponses restent en mémoire de la page, rien n'est stocké ni envoyé
    sans action explicite de l'utilisateur (envoi facultatif avec consentement). */
 (function () {
   "use strict";

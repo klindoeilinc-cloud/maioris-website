@@ -1,4 +1,4 @@
-/* MAIORIS Brand Consistency Review™ : textes et Brand Review Report (sections A à H).
+/* MAIORIS Brand Consistency Review : textes et Brand Review Report (sections A à H).
    Le rapport ne dit que ce que les constats saisis permettent de dire, et distingue faits observés, interprétations, hypothèses à vérifier et informations manquantes. */
 (function (root, factory) {
   if (typeof module === "object" && module.exports) module.exports = factory(require("./data.js"), require("./calc.js"));

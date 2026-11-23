@@ -17,7 +17,8 @@ test("migrations : appliquées deux fois sans erreur (idempotentes)", () => {
   assert.deepEqual(d._db.prepare("PRAGMA foreign_key_check").all(), []);
 });
 test("migrations : strictement additives (aucun DROP, DELETE, TRUNCATE ni ALTER destructif)", () => {
-  const sql = SQL.replace(/--.*$/gm, "").replace(/ON DELETE CASCADE/gi, "");
+  /* seule exception : renommer un outil (0005, retrait du symbole), jamais d'autre UPDATE */
+  const sql = SQL.replace(/--.*$/gm, "").replace(/ON DELETE CASCADE/gi, "").replace(/UPDATE tools SET name = '[^']*' WHERE id = '(coi|maturity|brand)' AND name LIKE '%[^']*';/g, "");
   assert.ok(!/\b(DROP|DELETE|TRUNCATE|UPDATE)\b/i.test(sql), "instruction destructive");
   assert.ok(!/ALTER\s+TABLE[^;]*\b(DROP|RENAME)\b/i.test(sql));
   assert.ok(!/CREATE\s+TABLE\s+(?!IF NOT EXISTS)/i.test(sql) && !/CREATE\s+INDEX\s+(?!IF NOT EXISTS)/i.test(sql), "création non conditionnelle");
