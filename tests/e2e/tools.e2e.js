@@ -62,7 +62,7 @@ async function maturity(browser, lang, profile, scenario) {
   }
   ok(res.includes(lang === "fr" ? "et non d'une certification indépendante" : "not an independent certification"), "limites : pas une certification");
   const cta = nb(await page.textContent("#mat-cta"));
-  ok(cta.includes("750 000 FCFA") && !/250[\s,]000/.test(cta + res), "prix officiel 750 000 FCFA, jamais 250 000");
+  ok(cta.includes("800 000 FCFA") && !/250[\s,]000/.test(cta + res), "prix officiel 800 000 FCFA, jamais 250 000");
   ok(await page.locator("#mat-cta a.btn").getAttribute("href") === (lang === "fr" ? "accompagnement/creative-audit.html" : "advisory/creative-audit.html"), "lien Creative Audit");
   ok(posts.length === 0, "aucun envoi avant action explicite");
   await page.fill("#mat-send [name=name]", "Test"); await page.fill("#mat-send [name=email]", "t@example.com"); await page.click("#mat-send button[type=submit]");
@@ -139,7 +139,7 @@ async function brand(browser, lang, profile) {
   ok(res.includes(lang === "fr" ? "Aucun fichier n'a été lu ni analysé" : "No file was read or analysed"), "limites : aucun fichier analysé");
   ok(/Niveau de certitude|Level of certainty/.test(res) && !/élevé|high \(/i.test(res.split("F. Strategic risks")[1].split("G. Priority")[0]), "risque avec niveau de certitude non élevé");
   ok(await page.locator(".br-scroll").count() === 1, "registre des preuves en tableau défilant");
-  ok(nb(await page.textContent("#brand-cta")).includes("750 000 FCFA") && !/250[\s,]000/.test(res), "prix officiel 750 000 FCFA");
+  ok(nb(await page.textContent("#brand-cta")).includes("800 000 FCFA") && !/250[\s,]000/.test(res), "prix officiel 800 000 FCFA");
   ok(posts.length === 0, "aucun envoi avant action explicite");
   await page.waitForTimeout(15500); await page.fill("#brand-send [name=name]", "Test"); await page.fill("#brand-send [name=email]", "t@example.com"); await page.check("#brand-send [name=consent]"); await page.click("#brand-send button[type=submit]");
   await page.waitForFunction(() => document.querySelector("#brand-send button").disabled);
