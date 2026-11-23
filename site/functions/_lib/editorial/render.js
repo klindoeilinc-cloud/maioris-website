@@ -50,7 +50,7 @@ export function defaultVisual(seed, catId) {
     `<path d="M${r(200)} 400 L${220 + r(200)} ${150 + r(120)} L${420 + r(220)} 400Z" fill="${accent}" opacity=".55"/>`, `<line x1="0" y1="${300 + r(70)}" x2="640" y2="${240 + r(110)}" stroke="${cream}" stroke-width="2" opacity=".7"/>`];
   return `<svg viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="presentation" aria-hidden="true" focusable="false" preserveAspectRatio="xMidYMid slice">${shapes.join("")}</svg>`;
 }
-const visual = (a, lang, eager) => a.hero_image ? `<img src="${esc(a.hero_image)}" alt="${esc(a.hero_alt || "")}" ${eager ? "" : 'loading="lazy" '}decoding="async" width="1200" height="750">` : defaultVisual(a.slug || a.id, a.category_id);
+const visual = (a, lang, eager) => a.hero_image ? `<img src="${esc(a.hero_image)}" alt="${esc(a.hero_alt || "")}" ${eager ? "" : 'loading="lazy" '}decoding="async" width="${a.hero_w || 1200}" height="${a.hero_h || 750}">` : defaultVisual(a.slug || a.id, a.category_id);
 const metaLine = (a, lang) => { const f = fmtById(a.format_id); return `<ul class="ed-meta"><li class="ed-fmt">${esc(f.name[lang])}</li><li>${a.reading_minutes}${NB}${t(lang).read}</li><li><time datetime="${esc(a.published_at)}">${esc(fdate(a.published_at, lang))}</time></li></ul>`; };
 const demoTag = (a, lang) => a.is_demo ? `<p class="ed-meta"><span class="ed-fmt">${lang === "fr" ? "Exemple éditorial fictif" : "Fictional editorial example"}</span></p>` : "";
 export function card(a, lang, level = 3) {

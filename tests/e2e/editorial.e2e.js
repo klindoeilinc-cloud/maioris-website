@@ -11,7 +11,7 @@ const PROFILES = { desktop: { viewport: { width: 1366, height: 900 } }, tablette
 
 async function newPage(b, s, profile, extra = {}) {
   const ctx = await b.newContext({ ...PROFILES[profile], reducedMotion: "reduce", ...extra }), page = await ctx.newPage(), problems = [];
-  page.on("console", (m) => { if (["error", "warning"].includes(m.type()) && !/status of 422/.test(m.text())) problems.push(m.text()); }); page.on("pageerror", (e) => problems.push("pageerror " + e.message));
+  page.on("console", (m) => { if (["error", "warning"].includes(m.type()) && !/status of (422|413)/.test(m.text())) problems.push(m.text()); }); page.on("pageerror", (e) => problems.push("pageerror " + e.message));
   await page.route("**/plausible.io/**", (r) => r.fulfill({ status: 200, contentType: "application/javascript", body: "" }));
   return { ctx, page, problems };
 }
@@ -78,8 +78,44 @@ async function backOffice(b, s) {
   // sans accès : la page ne montre aucune donnée
   const c2 = await b.newContext(), p2 = await c2.newPage(); await p2.goto(s.base + "/admin/editorial.html"); await p2.waitForFunction(() => document.getElementById("msg").textContent.length > 0); ok(/refus|configur/.test(await p2.textContent("#msg")) && (await p2.locator("#rows tr.r").count()) === 0, "sans accès : message clair, aucune donnée"); await c2.close();
 }
+
+async function mediaFlow(b, s, profile) {
+  console.log(`\n== médias (${profile})`); const tok = await s.token(); const { ctx, page, problems } = await newPage(b, s, profile, { extraHTTPHeaders: { "Cf-Access-Jwt-Assertion": tok } });
+  page.on("dialog", (d) => d.accept()); const FX = (n) => require("path").join(__dirname, "../fixtures/media", n);
+  await page.goto(s.base + "/admin/editorial.html"); await page.waitForSelector("#n-go"); await page.selectOption("#n-cat", "perspectives"); await page.selectOption("#n-fmt", "case"); await page.click("#n-go"); await page.waitForSelector("#e-cat");
+  await page.click('button:has-text("Choisir ou téléverser l\'image principale")'); await page.waitForSelector("#media-dlg[open]"); ok(true, "bibliothèque ouverte");
+  await axeRun(page, "bibliothèque d'images " + profile);
+  await page.setInputFiles("#md-file", FX("dessin.svg")); await page.fill("#md-alt", "Un dessin vectoriel"); await page.click("#md-go"); await page.waitForFunction(() => /Format non accepté/.test(document.getElementById("md-msg").textContent)); ok(true, "SVG refusé avec un message clair");
+  const IMGF = profile === "desktop" ? "photo-exif.jpg" : "visuel-meta.png"; await page.setInputFiles("#md-file", FX(IMGF)); await page.fill("#md-alt", ""); await page.click("#md-go"); await page.waitForFunction(() => /texte alternatif/i.test(document.getElementById("md-msg").textContent)); ok(true, "texte alternatif exigé avant l'envoi");
+  await page.fill("#md-alt", "Composition géométrique bleue et crème"); await page.click("#md-go"); await page.waitForFunction(() => /téléversée|existe déjà/.test(document.getElementById("md-msg").textContent)); await page.waitForSelector("#md-grid .mi img"); ok((await page.textContent("#md-msg")).includes("téléversée"), "image téléversée");
+  ok(await page.evaluate(() => new Promise((res) => { const i = document.querySelector("#md-grid .mi img"); if (i.complete) res(i.naturalWidth > 0); else i.onload = () => res(i.naturalWidth > 0); })), "miniature servie par /media et décodée par le navigateur");
+  ok((await page.locator("#md-grid .mi:not(:has(.used)) .danger").first().isEnabled()), "suppression possible tant que l'image est inutilisée");
+  if (profile === "mobile") ok((await overflow(page)) <= 0, "bibliothèque sans défilement horizontal sur mobile");
+  await page.locator('#md-grid .mi:not(:has(.used)) button:has-text("Choisir")').first().click(); await page.waitForFunction(() => document.getElementById("e-img").value.startsWith("/media/")); ok((await page.inputValue("#e-alt")).includes("Composition géométrique"), "image principale choisie, texte alternatif repris");
+  ok(await page.locator("#e-thumb").isVisible(), "aperçu de l'image principale");
+  // texte, sources, grille, image dans le texte
+  await page.fill("#l-slug", "perspective-avec-visuel-" + profile); await page.fill("#l-title", "Une perspective illustrée par la bibliothèque"); await page.fill("#l-sub", "Un sous-titre stratégique précis"); await page.fill("#l-sum", "Une analyse structurée d'un repositionnement, de ses décisions, de ses limites et de ses enseignements pour les dirigeants de marque.");
+  await page.fill("#l-md", "Une analyse structurée d'un repositionnement de marque : décisions, limites et enseignements stratégiques pour les dirigeants."); await page.fill("#l-body", BODY); await page.fill("#l-take", "Un enseignement clé");
+  await page.click('button:text-is("Image")'); await page.waitForSelector("#media-dlg[open]"); await page.locator('#md-grid .mi button:has-text("Choisir")').first().click(); await page.waitForFunction(() => /!\[[^\]]*\]\(\/media\//.test(document.getElementById("l-body").value)); ok(true, "image insérée dans le texte");
+  for (const [id, v] of [["sources", 18], ["depth", 18], ["analysis", 18], ["business", 13], ["originality", 13], ["writing", 9]]) await page.fill("#q-" + id, String(v));
+  for (const [l, u, p] of [["Rapport annuel", "https://exemple.org/rapport", "Organisme"], ["Étude de marché", "https://exemple.org/etude", "Cabinet"]]) { await page.click('button:has-text("Ajouter une source")'); const n = await page.locator("#sources .src").count(); const row = page.locator("#sources .src").nth(n - 1); await row.locator('[data-k="label"]').fill(l); await row.locator('[data-k="url"]').fill(u); await row.locator('[data-k="publisher"]').fill(p); }
+  await page.click("#save"); await page.waitForFunction(() => document.getElementById("msg").textContent.includes("Enregistré"));
+  // l'image est utilisée : suppression impossible
+  await page.click('button:has-text("Choisir ou téléverser l\'image principale")'); await page.waitForSelector("#md-grid .mi .used"); ok(await page.locator("#md-grid .mi:has(.used) .danger").first().isDisabled(), "image utilisée : suppression désactivée"); await page.click("#md-close");
+  for (const t of ["Envoyer en relecture", "Approuver", "Publier"]) { await page.click(`button:has-text("${t}")`); await page.waitForTimeout(250); }
+  await page.waitForFunction(() => document.querySelector("#editor .st").textContent.includes("Published"), null, { timeout: 15000 }); ok(true, "publication avec images");
+  const pub = await ctx.newPage(); const errs = []; pub.on("console", (m) => { if (["error", "warning"].includes(m.type())) errs.push(m.text()); });
+  await pub.route("**/plausible.io/**", (r) => r.fulfill({ status: 200, contentType: "application/javascript", body: "" })); await pub.goto(s.base + "/fr/perspectives/executive-perspectives/perspective-avec-visuel-" + profile); await pub.waitForSelector(".ed-hero-img img"); await pub.evaluate(() => Promise.all([...document.images].map((i) => i.decode().catch(() => {}))));
+  const imgs = await pub.evaluate(() => [...document.querySelectorAll(".ed-hero-img img, .ed-prose img")].map((i) => ({ ok: i.naturalWidth > 0, src: i.getAttribute("src"), w: i.getAttribute("width"), alt: i.alt })));
+  ok(imgs.length === 2 && imgs.every((i) => i.ok && i.src.startsWith("/media/") && i.alt), "image principale et image du texte affichées depuis /media (décodées, avec texte alternatif)"); ok(imgs[0].w === (profile === "desktop" ? "960" : "720"), "dimensions réelles déclarées (pas de décalage de mise en page)");
+  ok((await overflow(pub)) <= 0, "aucun défilement horizontal sur la page publique"); await axeRun(pub, "article illustré " + profile); ok(errs.length === 0, "aucune erreur console ni violation CSP sur la page publique " + JSON.stringify(errs));
+  const og = await pub.getAttribute('meta[property="og:image"]', "content"); ok(/^https:\/\/maioris\.net\/media\/[A-Za-z0-9_-]{24}$/.test(og), "Open Graph pointe l'image de la bibliothèque");
+  const body = Buffer.from(await (await fetch(s.base + imgs[0].src)).arrayBuffer()); ok(!body.includes("EXIF-SECRET-DESCRIPTION") && !body.includes("JPEG-COMMENT-SECRET") && !body.includes("PNG-SECRET-AUTHOR"), "l'image servie ne contient plus les métadonnées");
+  if (process.env.SHOT_DIR) await pub.screenshot({ path: `${process.env.SHOT_DIR}/ed-media-${profile}.png`, fullPage: false });
+  ok(problems.length === 0, "aucune erreur console dans l'éditeur " + JSON.stringify(problems.filter((x) => !/status of (422|413)/.test(x)))); await ctx.close();
+}
 (async () => {
   const s = await start(); const b = await chromium.launch();
-  try { for (const p of ["desktop", "tablette", "mobile"]) await publicSite(b, s, p); await backOffice(b, s); } finally { await b.close(); await s.close(); }
+  try { for (const p of ["desktop", "tablette", "mobile"]) await publicSite(b, s, p); await backOffice(b, s); await mediaFlow(b, s, "desktop"); await mediaFlow(b, s, "mobile"); } finally { await b.close(); await s.close(); }
   console.log(fails ? `\n${fails} ÉCHEC(S)` : "\nTOUT PASSE"); process.exit(fails ? 1 : 0);
 })();

@@ -4,6 +4,7 @@ import { nowIso } from "../util.js";
 import { renderMarkdown } from "./markdown.js";
 import { readingMinutes, qualityTotal, TRANSITIONS, catById, fmtById, toolById } from "./taxonomy.js";
 import { validateForPublish } from "./gate.js";
+import { refsIn, missingRefs, dims } from "./media.js";
 
 const LANGS = ["fr", "en"], SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const str = (v, max) => String(v ?? "").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, " ").slice(0, max);
@@ -75,6 +76,9 @@ export async function saveArticle(db, id, doc, actor) {
   for (const t of Object.values(trs)) { const r = renderMarkdown(t.body_md, { sourceCount: sources.length, lang: t.lang }); t.word_count = r.words; t.reading_minutes = readingMinutes(r.words); }
   const related = (d.related === undefined ? cur.related : (Array.isArray(d.related) ? d.related : [])).map(String).filter((x) => x !== id).slice(0, 6);
   if (related.length) { const found = await all(db.prepare(`SELECT id FROM articles WHERE id IN (${related.map(() => "?").join(",")})`).bind(...related)); if (found.length !== related.length) throw new EditorialError("invalid", "Article associé inconnu."); }
+  // toute image de la bibliothèque citée (image principale ou texte) doit exister
+  const refs = [...refsIn(next.hero_image), ...Object.values(trs).flatMap((t) => refsIn(t.body_md))];
+  if (refs.length) { let miss; try { miss = await missingRefs(db, refs); } catch { miss = [...new Set(refs)]; } if (miss.length) throw new EditorialError("media_missing", "Une image citée n'existe pas dans la bibliothèque : " + miss.join(", "), miss); }
   // une publication en ligne ne peut pas être dégradée par une sauvegarde
   if (a.status === "published") {
     const g = validateForPublish({ ...a, ...next, is_demo: a.is_demo }, Object.values(trs), sources);
@@ -151,7 +155,8 @@ export async function publicGet(db, lang, slug, now = nowIso()) {
     all(db.prepare("SELECT ordinal, label, url, publisher, kind, accessed_on, note FROM article_sources WHERE article_id = ? ORDER BY ordinal").bind(row.id)),
     one(db.prepare(`SELECT t.lang, t.slug FROM articles a JOIN article_translations t ON t.article_id = a.id WHERE a.id = ? AND t.lang <> ? AND ${VISIBLE}`).bind(row.id, lang, now)),
     all(db.prepare(`SELECT ${COLS} FROM article_related r JOIN articles a ON a.id = r.related_id JOIN article_translations t ON t.article_id = a.id AND t.lang = ? WHERE r.article_id = ? AND ${VISIBLE} ORDER BY r.ordinal`).bind(lang, row.id, now))]);
-  return { ...row, takeaways: JSON.parse(row.takeaways_json || "[]"), sources, alternate: other || null, related };
+  const hd = await dims(db, row.hero_image);
+  return { ...row, hero_w: hd ? hd.width : null, hero_h: hd ? hd.height : null, takeaways: JSON.parse(row.takeaways_json || "[]"), sources, alternate: other || null, related };
 }
 
 export async function publicByIds(db, lang, ids, now = nowIso()) {

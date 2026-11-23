@@ -12,7 +12,7 @@ export function validateForPublish(article, translations, sources) {
   const cat = catById(article.category_id), fmt = fmtById(article.format_id);
   if (!cat) err("category", "Choisissez une rubrique."); if (!fmt) err("format", "Choisissez un format.");
   if (article.tool_suggestion && !toolById(article.tool_suggestion)) err("tool", "Outil suggéré inconnu.");
-  if (article.hero_image && !/^(\/assets\/|https:\/\/)/.test(article.hero_image)) err("image", "L'image principale doit être un fichier de /assets/ ou une adresse https.");
+  if (article.hero_image && !/^(\/assets\/|\/media\/[A-Za-z0-9_-]{16,40}$|https:\/\/)/.test(article.hero_image)) err("image", "L'image principale doit venir de la bibliothèque d'images, de /assets/ ou d'une adresse https.");
   if (article.hero_image && !String(article.hero_alt || "").trim()) err("image_alt", "Décrivez l'image principale (texte alternatif).");
   sources = sources || [];
   sources.forEach((s, i) => {

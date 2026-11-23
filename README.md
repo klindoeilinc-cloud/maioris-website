@@ -14,6 +14,7 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `tools/build_coi_pages.py` et `tools/build_tool_pages.py` : génèrent les pages FR et EN des trois outils modulaires à partir du gabarit du site.
 - `tools/sync_tools.py` : insère le bloc partagé « Poursuivre votre diagnostic » sur les trois outils et sur Insights (à relancer après `build_coi_pages.py`).
 - `site/functions/_lib/editorial/`, `site/functions/[lang]/perspectives/[[path]].js`, `site/admin/editorial.html` : section éditoriale **STRATEGIC CASES & PERSPECTIVES** (voir plus bas). `tools/build_editorial_shell.py` génère ses gabarits statiques (`site/editorial-shell/`), `tools/build_editorial_demo.js` ses exemples fictifs (`d1/demo/`).
+- `site/functions/_lib/editorial/image.js` (analyse et nettoyage des images), `media.js` (R2 et registre), `site/functions/media/[id].js` (lecture publique), `d1/migrations/0004_media.sql`.
 - `site/functions/api/diagnostic.js` : envoi facultatif du Snapshot (Resend), uniquement avec le consentement du visiteur.
 - `tests/` : tests automatiques (`node --test tests/*.test.js`) et test de bout en bout (`tests/e2e/coi.e2e.js`, nécessite Playwright et un serveur local).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
@@ -139,7 +140,27 @@ Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspect
 
 **Mise en route.** Appliquer `d1/migrations/0003_editorial.sql` (comme les deux premières, voir la section D1). Sans cette migration, `/fr/perspectives` s'affiche sans publication et renvoie vers les archives. Les exemples fictifs (`d1/demo/editorial_demo.sql`, marqués `is_demo`) **ne se chargent jamais en production** : ils servent à une base de test ou de prévisualisation (bandeau « Exemple éditorial fictif », jamais indexés, absents du plan du site). Plan du site : `/sitemap-perspectives.xml`, déclaré dans `robots.txt`.
 
-**Limites connues.** Images : pas de téléversement (aucun stockage de fichiers) : un fichier se dépose dans `site/assets/editorial/` puis se référence par son chemin, ou s'indique par une adresse https ; à défaut, un visuel géométrique aux couleurs de la charte est généré. Une seule personne ou plusieurs adresses autorisées avec les mêmes droits : pas de rôles distincts (rédacteur, relecteur, éditeur). La lettre éditoriale utilise le même formulaire et la même audience Resend que la lettre existante.
+**Limites connues.** Une seule personne ou plusieurs adresses autorisées avec les mêmes droits : pas de rôles distincts (rédacteur, relecteur, éditeur). La lettre éditoriale utilise le même formulaire et la même audience Resend que la lettre existante. Les images se gèrent dans la bibliothèque (section suivante).
+
+## Images éditoriales (stockage R2)
+
+Les images se téléversent depuis le back-office (bouton « Choisir ou téléverser l'image principale » et bouton « Image » de la barre d'outils du texte). Elles sont stockées dans un bucket **R2 privé** et servies par la fonction `/media/<id>`.
+
+**Mise en route.**
+1. Cloudflare > Storage & Databases > R2 > Create bucket (par exemple `maioris-media`). **Ne pas activer l'accès public ni le domaine r2.dev** : le bucket reste privé, seule la fonction le lit.
+2. Pages > Settings > Bindings (Functions) > Add > R2 bucket : nom de variable **`MAIORIS_MEDIA`**, bucket choisi, en Production. Pour la prévisualisation, lier un second bucket de test plutôt que celui de production.
+3. Appliquer `d1/migrations/0004_media.sql` (registre des images, voir la section D1).
+Sans le binding, la bibliothèque s'ouvre mais le téléversement est refusé avec un message clair, et les publications sans image continuent de fonctionner.
+
+**Règles (côté serveur, non contournables depuis l'interface).**
+- Formats JPEG, PNG, WebP. Le type est déterminé sur les **octets du fichier** : l'extension et le type déclaré par le navigateur sont ignorés. **SVG et GIF refusés** (le SVG peut contenir du script).
+- 5 Mo au maximum, 6000 pixels au maximum sur un côté, 30 millions de pixels au maximum. Un fichier tronqué, corrompu ou suivi de données parasites est refusé.
+- **Métadonnées retirées avant stockage** (EXIF et GPS, commentaires, IPTC, XMP, textes PNG) sans ré-encoder l'image : aucune perte de qualité. Profils colorimétriques conservés.
+- **Texte alternatif obligatoire** (3 à 300 caractères). Un doublon exact (même fichier) n'est stocké qu'une fois. 1000 images au plus.
+- Identifiants aléatoires et non devinables. Seul un identifiant du registre est lisible : jamais de chemin libre. Une image supprimée disparaît de R2 et du registre ; la suppression est **refusée tant qu'une publication l'utilise** (image principale ou texte).
+- Tout est journalisé (`audit_events`) avec l'adresse de l'administrateur. Réponses publiques : `Cache-Control` d'un an en `immutable`, `nosniff`, politique de sécurité qui interdit toute exécution.
+
+**À savoir.** Une image téléversée mais encore utilisée par un brouillon est lisible par quiconque connaît son adresse (non devinable, jamais indexée) : n'y mettez pas d'information confidentielle. Pas de redimensionnement automatique : téléversez une image à la bonne taille (1600 à 2400 px de large suffisent pour l'image principale). Les en-têtes de sécurité des pages dynamiques sont posés par les fonctions (`_lib/security.js`), car Cloudflare n'applique pas `_headers` aux réponses des Functions.
 
 ## Avant chaque mise en ligne
 

@@ -5,11 +5,12 @@ import * as R from "./render.js";
 import * as SEO from "./seo.js";
 import { publicList, publicGet, categoryCounts } from "./store.js";
 import { nowIso } from "../util.js";
+import { SECURITY_HEADERS } from "../security.js";
 
 const O = SEO.ORIGIN;
 const page = async (env, request, lang, { head, main, status = 200, headers = {}, langHref }) => {
   const shell = await R.loadFragment(env, request, `/editorial-shell/${lang}.html`);
-  return new Response(R.fillShell(shell, { head, main, langHref }), { status, headers: { "Content-Type": "text/html; charset=utf-8", "X-Content-Type-Options": "nosniff", ...headers } });
+  return new Response(R.fillShell(shell, { head, main, langHref }), { status, headers: { "Content-Type": "text/html; charset=utf-8", ...SECURITY_HEADERS, ...headers } });
 };
 const PUBLIC_CACHE = { "Cache-Control": "public, max-age=60" };
 

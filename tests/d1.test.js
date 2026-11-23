@@ -25,7 +25,7 @@ test("migrations : strictement additives (aucun DROP, DELETE, TRUNCATE ni ALTER 
 });
 test("migrations : tables du noyau et tables éditoriales attendues", () => {
   const t = rows(migrated(), "select name from sqlite_master where type='table' and name not like 'sqlite_%' order by 1").map((r) => r.name);
-  assert.deepEqual(t, ["article_related", "article_revisions", "article_sources", "article_translations", "articles", "audit_events", "consent_texts", "consents", "contacts", "documents", "evaluation_documents", "evaluation_metrics", "evaluations", "profiles", "questionnaire_versions", "reports", "retention_policies", "tools"]);
+  assert.deepEqual(t, ["article_related", "article_revisions", "article_sources", "article_translations", "articles", "audit_events", "consent_texts", "consents", "contacts", "documents", "evaluation_documents", "evaluation_metrics", "evaluations", "media", "profiles", "questionnaire_versions", "reports", "retention_policies", "tools"]);
 });
 test("données de référence : à jour avec les sources, cinq outils, versions et empreintes", () => {
   assert.equal(fs.readFileSync(path.join(MIGRATIONS, "0002_reference_data.sql"), "utf8"), seed.build(), "relancez node tools/export_d1_seed.js");

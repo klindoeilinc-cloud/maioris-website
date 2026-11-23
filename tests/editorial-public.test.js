@@ -113,3 +113,13 @@ test("palette et police de la section : jetons demandés présents, Poppins auto
   assert.ok(!/Poppins/.test(fs.readFileSync(path.join(__dirname, "../site/assets/site.css"), "utf8")), "le reste du site ne change pas");
   assert.ok(!/border-radius:\s*(?:[1-9]\d|[5-9])px/.test(css), "pas de cartes arrondies"); assert.ok(!/gradient/.test(css), "pas de dégradés");
 });
+
+test("en-têtes de sécurité des pages dynamiques : CSP identique à _headers, anti-framing, nosniff, HSTS (Cloudflare n'applique pas _headers aux Functions)", async () => {
+  const sec = await import(path.resolve(__dirname, "../site/functions/_lib/security.js")), hdr = fs.readFileSync(path.join(__dirname, "../site/_headers"), "utf8");
+  assert.equal(sec.CSP, /Content-Security-Policy: (.*)/.exec(hdr)[1].trim(), "politique identique à site/_headers");
+  const s = await start(); try {
+    for (const p of ["/fr/perspectives", "/fr/perspectives/strategic-cases", "/fr/perspectives/strategic-cases/maison-oree-un-cadre-a-trois-niveaux", "/fr/perspectives/introuvable"]) {
+      const r = await fetch(s.base + p); assert.equal(r.headers.get("content-security-policy"), sec.CSP, p); assert.equal(r.headers.get("x-frame-options"), "DENY", p); assert.equal(r.headers.get("x-content-type-options"), "nosniff", p); assert.match(r.headers.get("strict-transport-security"), /max-age=31536000/, p); assert.equal(r.headers.get("referrer-policy"), "strict-origin-when-cross-origin", p);
+    }
+  } finally { await s.close(); }
+});

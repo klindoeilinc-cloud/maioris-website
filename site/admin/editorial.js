@@ -58,7 +58,11 @@
     [cat, fmt, tool].forEach(function (s) { s.addEventListener("change", function () { DIRTY = true; }); });
     g.appendChild(field("Rubrique", cat, "e-cat")); g.appendChild(field("Format", fmt, "e-fmt")); g.appendChild(field("Outil suggéré en fin d'article (un seul, seulement s'il répond au sujet)", tool, "e-tool"));
     g.appendChild(field("Signature éditoriale", input("e-author", a.author, { maxlength: "120" }), "e-author")); g.appendChild(field("Image principale (chemin /assets/... ou https)", input("e-img", a.hero_image, { maxlength: "300" }), "e-img")); g.appendChild(field("Texte alternatif de l'image", input("e-alt", a.hero_alt, { maxlength: "300" }), "e-alt"));
-    meta.appendChild(g); var ck = el("div", { "class": "row" });
+    meta.appendChild(g);
+    var mrow = el("div", { "class": "row" }); var pickHero = el("button", { type: "button", "class": "ghost", style: "flex:0 0 auto" }, "Choisir ou téléverser l'image principale"); var thumb = el("img", { id: "e-thumb", alt: "", style: "max-height:80px;display:none;border:1px solid var(--ink)" });
+    function showThumb() { var v = ($("e-img").value || "").trim(); thumb.style.display = /^\/media\//.test(v) ? "block" : "none"; if (/^\/media\//.test(v)) thumb.src = v; }
+    pickHero.addEventListener("click", function () { openMedia(function (m) { $("e-img").value = m.url; if (!$("e-alt").value.trim()) $("e-alt").value = m.alt || ""; DIRTY = true; showThumb(); }); }); mrow.appendChild(pickHero); mrow.appendChild(thumb); meta.appendChild(mrow); setTimeout(showThumb, 0);
+    var ck = el("div", { "class": "row" });
     [["e-feat", "À la une", a.featured], ["e-sel", "Strategic Selection (dirigeants)", a.selection]].forEach(function (c) { var l = el("label", { "class": "chk" }); var i = el("input", { type: "checkbox", id: c[0] }); i.checked = !!c[2]; i.addEventListener("change", function () { DIRTY = true; }); l.appendChild(i); l.appendChild(document.createTextNode(c[1])); ck.appendChild(l); });
     meta.appendChild(ck); box.appendChild(meta);
 
@@ -101,8 +105,9 @@
     p.appendChild(g); p.appendChild(field("Résumé stratégique (80 à 400 caractères)", tx("l-sum", t.summary, 3), "l-sum")); p.appendChild(field("Meta description (70 à 170 caractères)", tx("l-md", t.meta_description, 2), "l-md"));
     var bl = el("label", { "for": "l-body" }, "Texte (Markdown restreint : ## titres, listes, > citation, **gras**, [lien](https://…), [^1] source)"); p.appendChild(bl);
     var bar = el("div", { "class": "tools" }); var body_ = tx("l-body", t.body_md, 22); body_.style.minHeight = "420px"; body_.style.fontFamily = "ui-monospace,Menlo,monospace";
-    [["## Titre", "\n## Titre de section\n\n"], ["Verified facts", "\n:::facts Verified facts\nFaits établis, avec leur source. [^1]\n:::\n"], ["MAIORIS Analysis", "\n:::analysis MAIORIS Analysis\nInterprétation stratégique de MAIORIS.\n:::\n"], ["Strategic hypotheses", "\n:::hypotheses Strategic hypotheses\nHypothèse explicitement présentée comme telle.\n:::\n"], ["Open questions", "\n:::questions Open questions\n- Question qui reste à vérifier\n:::\n"], ["Note analytique", "\n:::insight Note analytique\nEncadré analytique.\n:::\n"], ["Citation [^n]", "[^1]"]].forEach(function (b) {
-      var btn = el("button", { type: "button", "class": "ghost" }, b[0]); btn.addEventListener("click", function () { var s = body_.selectionStart || body_.value.length; body_.value = body_.value.slice(0, s) + b[1] + body_.value.slice(s); body_.focus(); DIRTY = true; count(); }); bar.appendChild(btn); });
+    [["## Titre", "\n## Titre de section\n\n"], ["Verified facts", "\n:::facts Verified facts\nFaits établis, avec leur source. [^1]\n:::\n"], ["MAIORIS Analysis", "\n:::analysis MAIORIS Analysis\nInterprétation stratégique de MAIORIS.\n:::\n"], ["Strategic hypotheses", "\n:::hypotheses Strategic hypotheses\nHypothèse explicitement présentée comme telle.\n:::\n"], ["Open questions", "\n:::questions Open questions\n- Question qui reste à vérifier\n:::\n"], ["Note analytique", "\n:::insight Note analytique\nEncadré analytique.\n:::\n"], ["Citation [^n]", "[^1]"], ["Image", null]].forEach(function (b) {
+      var btn = el("button", { type: "button", "class": "ghost" }, b[0]); if (b[1] === null) { btn.addEventListener("click", function () { openMedia(function (m) { var at = body_.selectionStart || body_.value.length, md = "\n![" + (m.alt || "").replace(/[\[\]]/g, "") + "](" + m.url + ")\n"; body_.value = body_.value.slice(0, at) + md + body_.value.slice(at); DIRTY = true; count(); body_.focus(); }); }); bar.appendChild(btn); return; }
+      btn.addEventListener("click", function () { var s = body_.selectionStart || body_.value.length; body_.value = body_.value.slice(0, s) + b[1] + body_.value.slice(s); body_.focus(); DIRTY = true; count(); }); bar.appendChild(btn); });
     p.appendChild(bar); p.appendChild(body_); var cnt = el("p", { "class": "hint", id: "l-count", "aria-live": "polite" }); p.appendChild(cnt); function count() { var w = words(body_.value); cnt.textContent = w + " mots · " + Math.max(1, Math.ceil(w / 220)) + " min de lecture"; } body_.addEventListener("input", count); count();
     p.appendChild(field("Key Takeaways (une idée par ligne, huit au plus)", tx("l-take", (t.takeaways || []).join("\n"), 4), "l-take")); body.appendChild(p);
   }
@@ -154,6 +159,39 @@
   function open(id) {
     say(""); return api("articles/" + id).then(function (j) { if (!j.ok) { say("Publication introuvable.", "err"); location.hash = ""; return; } CUR = { article: j.article, translations: j.translations, sources: j.sources, related: j.related, revisions: j.revisions }; DIRTY = false; LANG = "fr"; renderEditor(); }).catch(accessError);
   }
+
+  /* ---------- bibliothèque d'images ---------- */
+  var PICK = null;
+  function mmsg(t, kind) { var m = $("md-msg"); m.textContent = t || ""; m.className = "msg" + (kind ? " " + kind : ""); }
+  function mediaCard(it) {
+    var c = el("div", { "class": "mi" }); var img = el("img", { src: "/media/" + it.id, alt: it.alt || "", loading: "lazy", width: String(it.width), height: String(it.height) }); c.appendChild(img);
+    var b = el("div", { "class": "mb" }); b.appendChild(el("strong", null, it.original_name || it.id)); b.appendChild(el("span", null, it.width + " × " + it.height + " · " + Math.round(it.size_bytes / 1024) + " Ko"));
+    var alt = el("span", null, it.alt || ""); b.appendChild(alt); if (it.used) b.appendChild(el("span", { "class": "used" }, "Utilisée"));
+    var a = el("div", { "class": "ma" });
+    var pick = el("button", { type: "button" }, "Choisir"); pick.addEventListener("click", function () { var cb = PICK; $("media-dlg").close(); if (cb) cb({ id: it.id, url: "/media/" + it.id, alt: it.alt }); });
+    var ed = el("button", { type: "button", "class": "ghost" }, "Texte alt"); ed.addEventListener("click", function () { var v = prompt("Texte alternatif de l'image :", it.alt || ""); if (v === null) return; api("media/" + it.id, { method: "PUT", body: { alt: v } }).then(function (j) { if (j.ok) { mmsg("Texte alternatif enregistré.", "ok"); loadMedia(); } else mmsg(j.message || "Refusé.", "err"); }).catch(accessError); });
+    var del = el("button", { type: "button", "class": "danger" }, "Supprimer"); del.disabled = !!it.used; if (it.used) del.title = "Retirez d'abord l'image des publications qui l'utilisent";
+    del.addEventListener("click", function () { if (!confirm("Supprimer définitivement cette image ?")) return; api("media/" + it.id + "/delete", { method: "POST" }).then(function (j) { if (j.ok) { mmsg("Image supprimée.", "ok"); loadMedia(); } else mmsg(j.message || "Suppression refusée.", "err"); }).catch(accessError); });
+    a.appendChild(pick); a.appendChild(ed); a.appendChild(del); b.appendChild(a); c.appendChild(b); return c;
+  }
+  function loadMedia() {
+    return api("media").then(function (j) {
+      var g = $("md-grid"); g.textContent = ""; $("md-go").disabled = j.storage === false;
+      if (j.storage === false) { mmsg("Le stockage d'images n'est pas encore configuré : le bucket R2 MAIORIS_MEDIA doit être lié au projet (voir le README).", "err"); return; }
+      if (!j.items || !j.items.length) { g.appendChild(el("p", { "class": "hint" }, "Aucune image pour l'instant.")); return; }
+      j.items.forEach(function (it) { g.appendChild(mediaCard(it)); });
+    }).catch(accessError);
+  }
+  function openMedia(cb) { PICK = cb || null; mmsg(""); $("media-dlg").showModal(); loadMedia(); $("md-file").focus(); }
+  $("md-close").addEventListener("click", function () { $("media-dlg").close(); });
+  $("md-form").addEventListener("submit", function (e) {
+    e.preventDefault(); var f = $("md-file").files[0], alt = $("md-alt").value.trim();
+    if (!f) { mmsg("Choisissez une image.", "err"); return; } if (f.size > 5 * 1024 * 1024) { mmsg("Image trop lourde : 5 Mo au maximum.", "err"); return; } if (alt.length < 3) { mmsg("Décrivez l'image (texte alternatif obligatoire).", "err"); $("md-alt").focus(); return; }
+    var fd = new FormData(); fd.append("file", f); fd.append("alt", alt); $("md-go").disabled = true; mmsg("Téléversement…");
+    fetch("/api/admin/editorial/media", { method: "POST", credentials: "same-origin", body: fd }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { j._s = r.status; return j; }); }).then(function (j) {
+      $("md-go").disabled = false; if (j.ok) { mmsg(j.media.duplicate ? "Cette image existe déjà dans la bibliothèque." : "Image téléversée.", "ok"); $("md-file").value = ""; $("md-alt").value = ""; loadMedia(); } else if (j._s === 401 || j._s === 403 || j._s === 503 && j.error === "admin_not_configured") mmsg("Accès refusé.", "err"); else mmsg(j.message || "Téléversement refusé.", "err");
+    }).catch(function () { $("md-go").disabled = false; mmsg("Une erreur est survenue. Réessayez.", "err"); });
+  });
   function route() { var id = location.hash.replace("#", ""); if (id) open(id); else { $("editor").hidden = true; $("list").hidden = false; CUR = null; loadList().catch(accessError); } }
 
   $("f-go").addEventListener("click", function () { loadList().catch(accessError); }); $("f-q").addEventListener("keydown", function (e) { if (e.key === "Enter") loadList().catch(accessError); });

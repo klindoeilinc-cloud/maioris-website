@@ -8,7 +8,7 @@ export const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", 
 export function slugify(s) { return String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60) || "section"; }
 
 const safeUrl = (u) => { u = String(u).trim(); if (/^https?:\/\/[^\s"'<>]+$/i.test(u) || /^\/(?!\/)[^\s"'<>]*$/.test(u)) return u; return null; };
-const safeImg = (u) => { u = String(u).trim(); return /^\/assets\/[^\s"'<>]+$/.test(u) || /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : null; };
+const safeImg = (u) => { u = String(u).trim(); return /^\/assets\/[^\s"'<>]+$/.test(u) || /^\/media\/[A-Za-z0-9_-]{16,40}$/.test(u) || /^https:\/\/[^\s"'<>]+$/i.test(u) ? u : null; };
 
 function inline(text, ctx) {
   let out = "", i = 0, s = String(text);
