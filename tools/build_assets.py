@@ -25,6 +25,16 @@ for ext, h, src in (("css", hc, css), ("js", hj, js)):
         if not old.endswith("site.%s.%s" % (h, ext)): os.remove(old)
     write(os.path.join(A, "site.%s.%s" % (h, ext)), src)
 
+# Outil Creative Operations Intelligence : sources dans src/coi, publiées en un seul JS et un seul CSS versionnés
+SRC = os.path.join(SITE, "..", "src", "coi")
+coi_js = "\n;\n".join(read(os.path.join(SRC, n)) for n in ("data.js", "calc.js", "report.js", "app.js"))
+coi_css = read(os.path.join(SRC, "coi.css"))
+hcj, hcc = digest(coi_js), digest(coi_css)
+for ext, h, src_ in (("js", hcj, coi_js), ("css", hcc, coi_css)):
+    for old in glob.glob(os.path.join(A, "coi.*.%s" % ext)):
+        if not old.endswith("coi.%s.%s" % (h, ext)): os.remove(old)
+    write(os.path.join(A, "coi.%s.%s" % (h, ext)), src_)
+
 LINK = '<link href="/assets/site.%s.css" rel="stylesheet"/>' % hc
 SCRIPT = '<script defer="" src="/assets/site.%s.js"></script>' % hj
 changed = 0
@@ -36,5 +46,7 @@ for f in sorted(glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True)):
     if m and m.group(1) == js: t = t.replace(m.group(0), SCRIPT)
     t = re.sub(r"/assets/site\.[0-9a-f]{8}\.css", "/assets/site.%s.css" % hc, t)
     t = re.sub(r"/assets/site\.[0-9a-f]{8}\.js", "/assets/site.%s.js" % hj, t)
+    t = re.sub(r"/assets/coi\.[0-9a-f]{8}\.css", "/assets/coi.%s.css" % hcc, t)
+    t = re.sub(r"/assets/coi\.[0-9a-f]{8}\.js", "/assets/coi.%s.js" % hcj, t)
     if t != o: write(f, t); changed += 1
-print("site.%s.css  site.%s.js  |  %d pages mises à jour" % (hc, hj, changed))
+print("site.%s.css  site.%s.js  coi.%s.css  coi.%s.js  |  %d pages mises à jour" % (hc, hj, hcc, hcj, changed))

@@ -134,6 +134,20 @@ for ext in ("css", "js"):
         if refs and refs != {h}: err("%s: référence périmée à site.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
         if not refs and ext == "css": err("%s: aucune feuille de style partagée" % p)
 
+# Outil Creative Operations Intelligence : sources dans src/coi, publiées en coi.<empreinte>.js et .css
+SRC_COI = os.path.join(SITE, "..", "src", "coi")
+def dig_coi(ext):
+    names = ("data.js", "calc.js", "report.js", "app.js") if ext == "js" else ("coi.css",)
+    txt = "\n;\n".join(open(os.path.join(SRC_COI, n), encoding="utf8").read() for n in names)
+    return hashlib.sha256(txt.encode("utf8")).hexdigest()[:8]
+for ext in ("css", "js"):
+    h = dig_coi(ext)
+    if not os.path.isfile(os.path.join(SITE, "assets", "coi.%s.%s" % (h, ext))):
+        err("src/coi à jour mais assets/coi.%s.%s est absent : lancez python3 tools/build_assets.py" % (h, ext))
+    for p, t in pages.items():
+        refs = set(re.findall(r"/assets/coi\.([0-9a-f]{8})\.%s" % ext, t))
+        if refs and refs != {h}: err("%s: référence périmée à coi.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
+
 print(f"{len(pages)} pages analysées")
 for w in warnings: print("AVERTISSEMENT", w)
 for e in errors: print("ERREUR", e)
