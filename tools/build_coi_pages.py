@@ -21,8 +21,8 @@ CFG = {
    cta_p="Ce Snapshot s'appuie sur vos déclarations. Le Creative Audit™ de MAIORIS Group va plus loin : une mission indépendante de diagnostic stratégique qui examine, à partir de vos documents et de vos pratiques réelles, pourquoi votre système créatif produit, ou non, les résultats attendus.",
    facts=[("Durée", "5 à 7 jours ouvrés"), ("Restitution", "60 à 90 minutes"), ("Livrables", "5 documents stratégiques")], price_l="Tarif", price="750\u00a0000 FCFA",
    cta1=("Découvrir le Creative Audit™", "accompagnement/creative-audit.html"), cta2=("Échanger avec MAIORIS", "contact.html"),
-   send_t="Transmettre mon Snapshot à MAIORIS (facultatif)", send_p="Vous recevrez un accusé de réception et nous vous répondrons par e-mail.",
-   f_name="Nom", f_email="Adresse e-mail", f_co="Organisation (facultatif)", consent="J'accepte que MAIORIS reçoive mes réponses et mon Snapshot afin de me répondre.", submit="Transmettre mon Snapshot",
+   send_t="Transmettre mon Snapshot à MAIORIS (facultatif)", send_p="Vous recevrez un accusé de réception et nous vous répondrons par e-mail. Vos données sont conservées 12 mois ; pour les faire effacer, écrivez à hello@maioris.net.",
+   f_name="Nom", f_email="Adresse e-mail", f_co="Organisation (facultatif)", consent="J'accepte que MAIORIS reçoive mes réponses et mon Snapshot, les conserve 12 mois et les utilise pour me répondre.", submit="Transmettre mon Snapshot",
    msgs=dict(invalid="Indiquez votre nom et une adresse e-mail valide.", noconsent="Cochez la case de consentement pour transmettre votre Snapshot.", sending="Envoi en cours…", sent="Merci, votre Snapshot a bien été transmis.", fail="L'envoi a échoué. Réessayez, ou écrivez-nous à hello@maioris.net."),
    head_lbl="Progression"),
  "en": dict(src="en/index.html", out="en/creative-operations-intelligence.html", url="https://maioris.net/en/creative-operations-intelligence", other="../fr/creative-operations-intelligence.html", otherurl="https://maioris.net/fr/creative-operations-intelligence",
@@ -40,8 +40,8 @@ CFG = {
    cta_p="This Snapshot relies on what you declared. MAIORIS Group's Creative Audit™ goes further: an independent strategic diagnostic engagement that examines, from your documents and real practices, why your creative system does or does not deliver the expected results.",
    facts=[("Duration", "5 to 7 working days"), ("Debrief", "60 to 90 minutes"), ("Deliverables", "5 strategic documents")], price_l="Fee", price="750\u00a0000 FCFA",
    cta1=("Discover the Creative Audit™", "advisory/creative-audit.html"), cta2=("Talk to MAIORIS", "contact.html"),
-   send_t="Send my Snapshot to MAIORIS (optional)", send_p="You will receive an acknowledgement and we will reply by email.",
-   f_name="Name", f_email="Email address", f_co="Organisation (optional)", consent="I agree that MAIORIS receives my answers and my Snapshot in order to reply to me.", submit="Send my Snapshot",
+   send_t="Send my Snapshot to MAIORIS (optional)", send_p="You will receive an acknowledgement and we will reply by email. Your data is kept for 12 months; to have it deleted, write to hello@maioris.net.",
+   f_name="Name", f_email="Email address", f_co="Organisation (optional)", consent="I agree that MAIORIS receives my answers and my Snapshot, keeps them for 12 months and uses them to reply to me.", submit="Send my Snapshot",
    msgs=dict(invalid="Enter your name and a valid email address.", noconsent="Tick the consent box to send your Snapshot.", sending="Sending…", sent="Thank you, your Snapshot has been sent.", fail="Sending failed. Please try again, or write to hello@maioris.net."),
    head_lbl="Progress"),
 }
@@ -81,7 +81,7 @@ def build(lang):
             '<section class="coi-cta" id="coi-cta" hidden aria-labelledby="coi-cta-t"><h3 id="coi-cta-t">%s</h3><p>%s</p><ul class="coi-facts">%s<li>%s<b class="coi-price">%s</b></li></ul>'
             '<div class="actions"><a class="btn" data-track="cta_click" data-rank="primary" data-label="coi-audit" href="%s">%s</a><a class="link" data-track="cta_click" data-rank="secondary" data-label="coi-contact" href="%s">%s</a></div>\n'
             '<h3 style="margin-top:34px;font-size:20px">%s</h3><p style="font-size:15px">%s</p>\n'
-            '<form class="coi-send" id="coi-send" novalidate data-invalid="%s" data-noconsent="%s" data-sending="%s" data-sent="%s" data-fail="%s">'
+            '<form class="coi-send" id="coi-send" novalidate data-consent="tx-coi-%s-v1" data-invalid="%s" data-noconsent="%s" data-sending="%s" data-sent="%s" data-fail="%s">'
             '<label>%s<input type="text" name="name" autocomplete="name" required/></label><label>%s<input type="email" name="email" autocomplete="email" required/></label><label>%s<input type="text" name="company" autocomplete="organization"/></label>'
             '<div class="coi-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"/></label></div>'
             '<label class="coi-consent"><input type="checkbox" name="consent"/><span>%s <a href="%s">%s</a>.</span></label><button class="btn" type="submit">%s</button><p class="coi-send-status" id="coi-send-status" role="status"></p></form></section>\n'
@@ -91,7 +91,7 @@ def build(lang):
             lang, c["head_lbl"],
             E(c["cta_t"]), E(c["cta_p"]), "".join("<li>%s%s<b>%s</b></li>" % (E(a), " : " if lang == "fr" else ": ", E(b)) for a, b in c["facts"]), E(c["price_l"]) + (" : " if lang == "fr" else ": "), E(c["price"]),
             c["cta1"][1], E(c["cta1"][0]), c["cta2"][1], E(c["cta2"][0]),
-            E(c["send_t"]), E(c["send_p"]), E(c["msgs"]["invalid"]), E(c["msgs"]["noconsent"]), E(c["msgs"]["sending"]), E(c["msgs"]["sent"]), E(c["msgs"]["fail"]),
+            E(c["send_t"]), E(c["send_p"]), lang, E(c["msgs"]["invalid"]), E(c["msgs"]["noconsent"]), E(c["msgs"]["sending"]), E(c["msgs"]["sent"]), E(c["msgs"]["fail"]),
             E(c["f_name"]), E(c["f_email"]), E(c["f_co"]), E(c["consent"]), c["privL"][0], E(c["privL"][1].replace("Lire la politique","Politique").replace("Read the privacy policy","Privacy policy")), E(c["submit"]))
     # le texte de consentement devient un lien vers la politique de confidentialité
     scripts = '<script defer="" src="/assets/coi.00000000.js"></script>'

@@ -71,6 +71,7 @@ async function maturity(browser, lang, profile, scenario) {
     await page.waitForTimeout(15500); await page.check("#mat-send [name=consent]"); await page.click("#mat-send button[type=submit]");
     await page.waitForFunction(() => document.querySelector("#mat-send button").disabled);
     ok(posts.length === 1 && posts[0].tool === "maturity" && posts[0].consent === true && posts[0].answers.q1 !== undefined && /MATURIT|MATURITY/i.test(posts[0].report), "envoi consenti : un POST outil maturity avec rapport");
+    ok(posts[0].consent_text_id === `tx-maturity-${lang}-v1` && posts[0].version === "1.0" && /^[0-9a-f-]{20,}$/i.test(posts[0].idempotency_key) && posts[0].summary && posts[0].summary.score === 70 && posts[0].context !== undefined, "charge utile v2 : libellé de consentement, version, clé d'idempotence, résumé, contexte");
   }
   ok((await overflow(page)) <= 0, "aucun défilement horizontal");
   ok(problems.length === 0, "aucune erreur console ni violation CSP " + JSON.stringify(problems));
@@ -144,6 +145,7 @@ async function brand(browser, lang, profile) {
   await page.waitForFunction(() => document.querySelector("#brand-send button").disabled);
   const body = posts[0] || {};
   ok(posts.length === 1 && body.tool === "brand" && /BRAND REVIEW REPORT/i.test(body.report || "") && !JSON.stringify(body).includes("data:") && !("file" in body), "envoi consenti : rapport texte seulement, aucun fichier");
+  ok(body.consent_text_id === `tx-brand-${lang}-v1` && body.version === "1.0" && !!body.idempotency_key && body.summary && /1\/6|0\/6/.test(body.summary.headline) || body.summary.headline.includes("/6"), "charge utile v2 de la revue de marque");
   ok((await overflow(page)) <= 0, "aucun défilement horizontal");
   ok(problems.length === 0, "aucune erreur console ni violation CSP " + JSON.stringify(problems));
   await ctx.close();
@@ -184,11 +186,23 @@ async function sync(browser) {
   await page.waitForSelector("#mat-result[data-ready]");
   hist = await page.evaluate(() => JSON.parse(sessionStorage.getItem("maioris.core.v1")).history);
   ok(hist.length === 2 && hist[0].score !== hist[1].score, "historique conservé : deux évaluations distinctes");
+  // envoi consenti : le serveur renvoie un profil et un jeton, conservés dans l'onglet ; l'effacement distant passe par ce jeton
+  await page.route("**/api/diagnostic", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, persisted: true, evaluation_id: "E1", profile_id: "P1", resume_token: "TOKEN-SECRET" }) }));
+  await page.route("**/api/erase", (r) => r.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) }));
+  await page.fill("#mat-send [name=name]", "Test"); await page.fill("#mat-send [name=email]", "t@example.com"); await page.check("#mat-send [name=consent]"); await page.click("#mat-send button[type=submit]");
+  await page.waitForFunction(() => { try { return !!JSON.parse(sessionStorage.getItem("maioris.core.v1")).remote; } catch (e) { return false; } });
+  const sent = posts[posts.length - 1]; ok(sent.profile === undefined, "premier envoi : aucun profil existant référencé");
+  ok((await page.evaluate(() => JSON.parse(sessionStorage.getItem("maioris.core.v1")).remote.id)) === "P1", "référence du profil conservée dans l'onglet");
+  await page.goto(`${BASE}/fr/creative-maturity-assessment`); await page.waitForSelector("#core-panel .core-rh");
+  ok((await page.textContent("#core-panel")).includes("Données transmises à MAIORIS"), "panneau : données transmises signalées");
+  await page.click('#core-panel button:has-text("Effacer mes données transmises")');
+  await page.waitForFunction(() => { try { return !JSON.parse(sessionStorage.getItem("maioris.core.v1")).remote; } catch (e) { return false; } });
+  ok(posts.some((x) => x.profile_id === "P1" && x.token === "TOKEN-SECRET"), "effacement distant : demande envoyée avec le jeton");
   // effacement
   await page.goto(`${BASE}/fr/creative-maturity-assessment`); await page.waitForSelector("#core-panel button.link");
   await page.click("#core-panel button.link");
   ok(await page.evaluate(() => sessionStorage.getItem("maioris.core.v1")) === null, "effacement complet sur demande");
-  ok(posts.length === 0, "rien n'est envoyé par la synchronisation");
+  ok(posts.every((x) => x.consent === true || x.token), "rien n'est envoyé par la synchronisation sans action explicite");
   ok(problems.length === 0, "aucune erreur console " + JSON.stringify(problems));
   await ctx.close();
   // isolation : un autre contexte de navigation ne voit rien
@@ -216,6 +230,7 @@ async function existing(browser, lang) {
 
 (async () => {
   const b = await chromium.launch();
+  if (process.env.ONLY === "sync") { await sync(b); await b.close(); console.log(fails ? `\n${fails} ÉCHEC(S)` : "\nTOUT PASSE"); process.exit(fails ? 1 : 0); }
   if (process.env.ONLY === "existing") { await existing(b, "fr"); await existing(b, "en"); await b.close(); console.log(fails ? `\n${fails} ÉCHEC(S)` : "\nTOUT PASSE"); process.exit(fails ? 1 : 0); }
   for (const lang of ["fr", "en"]) { await maturity(b, lang, "desktop", "complete"); }
   await maturity(b, "fr", "desktop", "partial");

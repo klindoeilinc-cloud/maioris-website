@@ -77,17 +77,49 @@ python3 tools/qa.py
 - Les outils reprennent le profil au lieu de le redemander, l'historique est conservé (une entrée par évaluation) et le panneau « Vos résultats dans cet onglet » consolide les cinq outils. Chaque outil garde sa méthodologie, ses réponses et sa version, et fonctionne sans le noyau.
 - Ce n'est **pas** un stockage sécurisé et rien n'est conservé côté serveur.
 
-## Ce qui n'existe pas encore (et ce qu'il faudrait configurer)
+## Base de données D1 `maioris-intelligence` (binding `MAIORIS_DB`)
 
-Le site n'a ni base de données, ni stockage de fichiers, ni authentification. Les fonctions suivantes de la spécification ne sont donc **pas** opérationnelles :
+**Ce qui est enregistré** : seulement les évaluations transmises avec consentement (`/api/diagnostic`) : profil et contact (tables séparées), libellé exact du consentement, évaluation (version du questionnaire, réponses, indicateurs), rapport texte. Aucune adresse IP. Les trois outils concernés sont Creative Operations Intelligence™, Creative Maturity Assessment™ et Brand Consistency Review™. Le brief et l'autodiagnostic n'envoient rien (le schéma est prêt à les accueillir).
 
-- profil organisationnel et historique durables côté serveur, consolidation entre appareils ;
-- dépôt et conservation de documents clients, avec contrôle d'accès ;
-- espace d'administration de consultation des évaluations (aujourd'hui : l'e-mail reçu via `/api/diagnostic`, avec consentement) ;
-- politique de conservation et suppression automatisées côté serveur ;
-- analyse automatique de documents (aucune intégration IA documentaire).
+**Fichiers**
+- `d1/migrations/0001_core.sql` : schéma (13 tables), strictement additif (`CREATE ... IF NOT EXISTS`).
+- `d1/migrations/0002_reference_data.sql` : outils, versions de questionnaires avec empreinte, libellés de consentement, durées de conservation. **Généré** par `node tools/export_d1_seed.js` ; ne jamais le modifier à la main ni le régénérer après application. Une nouvelle version de questionnaire ou de libellé s'ajoute par une **nouvelle** migration (`0003_...`, `INSERT OR IGNORE`).
+- `site/functions/_lib/` : code commun (identifiants ULID, persistance, effacement, purge, contrôle d'accès). `site/functions/api/erase.js` et `site/functions/api/admin/[[path]].js` : effacement par le visiteur et API d'administration.
 
-Pour les construire : Cloudflare R2 (fichiers) et D1 (profils, évaluations), Cloudflare Access (administration), un identifiant de profil signé, et un service d'analyse documentaire si souhaité. Tant que ce n'est pas configuré, le site ne prétend pas disposer de cette infrastructure.
+**Appliquer les migrations** (une seule fois, dans l'ordre). Deux possibilités :
+1. Tableau de bord Cloudflare > Storage & Databases > D1 > `maioris-intelligence` > Console : coller le contenu de `0001_core.sql`, exécuter, puis `0002_reference_data.sql`.
+2. En ligne de commande : renseigner `database_id` dans `d1/wrangler.toml`, puis `cd d1 && npx wrangler d1 migrations apply maioris-intelligence --remote`. Ce fichier est dans un sous-dossier : il n'est pas lu par Cloudflare Pages, dont les bindings du tableau de bord restent la référence.
+
+Vérification : `SELECT id, version FROM questionnaire_versions;` doit renvoyer cinq lignes.
+
+**Environnements.** Production : binding `MAIORIS_DB` lié. Prévisualisation (branches) : sans binding, `/api/diagnostic` envoie seulement l'e-mail, comme avant (rien n'est conservé). Pour tester la conservation en prévisualisation, créer une seconde base (par exemple `maioris-intelligence-preview`) et la lier à l'environnement Preview : ne pas réutiliser la base de production.
+
+## Administration (`/admin`)
+
+Page `site/admin/index.html` et API `/api/admin/*`. L'API vérifie elle-même le jeton signé de Cloudflare Access : **sans configuration, tout est refusé (503), jamais ouvert.** Configuration :
+1. Zero Trust > Access > Applications > Add > Self-hosted : domaine `maioris.net`, chemins `/admin` et `/api/admin`. Politique : Allow, adresses e-mail des administrateurs.
+2. Relever le **Application Audience (AUD) Tag** de l'application et le **domaine d'équipe** (`xxx.cloudflareaccess.com`).
+3. Pages > Settings > Environment variables (Production) : `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, et facultativement `ADMIN_EMAILS` (liste séparée par des virgules, restreint en plus à ces adresses).
+
+Chaque consultation de détail, export, effacement et purge est inscrit dans `audit_events` (adresse de l'administrateur, date, objet).
+
+## Conservation et purge
+
+Durées dans `retention_policies` (initialement 365 jours pour les évaluations, les rapports et les documents, 730 jours pour le journal). L'effacement garde une ligne technique (identifiants, outil, dates) sans donnée personnelle. Le visiteur peut effacer ses données (`/api/erase`, avec le jeton de reprise reçu à l'envoi) ; un administrateur peut effacer un profil ou purger depuis `/admin`.
+
+**Purge planifiée.** Cloudflare Pages ne lance pas de tâche planifiée : `workers/purge/` est un petit Worker (cron quotidien, 03h17 UTC) à déployer à part : renseigner `database_id` dans `workers/purge/wrangler.toml`, puis `cd workers/purge && npx wrangler deploy`. Sans lui, la purge reste possible manuellement depuis `/admin`.
+
+## État des fonctions de la spécification
+
+| Fonction | État |
+|---|---|
+| Profil et historique durables côté serveur (consentis) | Opérationnel après application des migrations (testé sur SQLite local, pas sur le D1 de Cloudflare) |
+| Consultation par MAIORIS (administration, export, journal) | Opérationnel après configuration de Cloudflare Access |
+| Effacement par le visiteur, purge à l'expiration | Opérationnel (la purge automatique demande le Worker ci-dessus) |
+| Consolidation entre appareils, lien de reprise par e-mail | **Non réalisé** (le jeton existe, pas l'envoi du lien) |
+| Brief et autodiagnostic conservés côté serveur | **Non réalisé** (pas de consentement ni de contact dans ces outils) |
+| Dépôt et conservation de documents clients (R2) | **Non réalisé** (la table `documents` est prête, aucun fichier n'est reçu) |
+| Analyse automatique de documents | **Non réalisé** et non prévu sans décision explicite |
 
 ## Avant chaque mise en ligne
 

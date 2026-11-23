@@ -86,11 +86,11 @@ def build(key, lang):
         '<section class="coi-cta" id="{r}-cta" hidden aria-labelledby="{r}-cta-t"><h3 id="{r}-cta-t">{ct}</h3><p>{cp}</p><ul class="coi-facts">{facts}<li>{pl_}<b class="coi-price">{price}</b></li></ul>'
         '<div class="actions"><a class="btn" data-track="cta_click" data-rank="primary" data-label="{r}-audit" href="{h1}">{t1}</a><a class="link" data-track="cta_click" data-rank="secondary" data-label="{r}-contact" href="{h2}">{t2}</a></div>\n'
         '<h3 style="margin-top:34px;font-size:20px">{st}</h3><p style="font-size:15px">{sp}</p>\n'
-        '<form class="coi-send" id="{r}-send" novalidate data-invalid="{m_inv}" data-noconsent="{m_nc}" data-sending="{m_sd}" data-sent="{m_ok}" data-fail="{m_ko}">'
+        '<form class="coi-send" id="{r}-send" novalidate data-consent="tx-{tid}-{lang}-v1" data-invalid="{m_inv}" data-noconsent="{m_nc}" data-sending="{m_sd}" data-sent="{m_ok}" data-fail="{m_ko}">'
         '<label>{f1}<input type="text" name="name" autocomplete="name" required/></label><label>{f2}<input type="email" name="email" autocomplete="email" required/></label><label>{f3}<input type="text" name="company" autocomplete="organization"/></label>'
         '<div class="coi-trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"/></label></div>'
         '<label class="coi-consent"><input type="checkbox" name="consent"/><span>{cons} <a href="{ph}">{pl}</a>.</span></label><button class="btn" type="submit">{sub}</button><p class="coi-send-status" id="{r}-send-status" role="status"></p></form></section>\n'
-    ).format(r=r, ct=E(T["cta_t"][lang]), cp=E(CTA_P[lang]), facts=facts, pl_=E(c["price_l"]) + sep, price=E(c["price"]), h1=c["cta1"][1], t1=E(c["cta1"][0]), h2=c["cta2"][1], t2=E(c["cta2"][0]),
+    ).format(r=r, tid=("maturity" if key == "mat" else key), lang=lang, ct=E(T["cta_t"][lang]), cp=E(CTA_P[lang]), facts=facts, pl_=E(c["price_l"]) + sep, price=E(c["price"]), h1=c["cta1"][1], t1=E(c["cta1"][0]), h2=c["cta2"][1], t2=E(c["cta2"][0]),
              st=E(L["send_t"]), sp=E(c["send_p"]), m_inv=E(c["msgs"]["invalid"]), m_nc=E(c["msgs"]["noconsent"]), m_sd=E(c["msgs"]["sending"]), m_ok=E(L["sent"]), m_ko=E(c["msgs"]["fail"]),
              f1=E(c["f_name"]), f2=E(c["f_email"]), f3=E(c["f_co"]), cons=E(L["consent"]), ph=privL[0], pl=E(L["pl"]), sub=E(L["submit"]))
     main = ('<main id="main">\n<section class="hero sub" data-reveal=""><div class="wrap g12"><div class="crumb"><p class="lbl"><a href="%s">%s</a> / %s</p></div><h1 class="thesis s">%s</h1><p class="lead">%s</p><p class="lbl">%s</p></div></section>\n'

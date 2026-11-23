@@ -18,7 +18,7 @@ PRESELECT = {"diagnostic", "brand", "growth", "cos", "t90", "claas"}
 def err(m): errors.append(m)
 def warn(m): warnings.append(m)
 
-files = sorted(glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True))
+files = sorted(f for f in glob.glob(os.path.join(SITE, "**", "*.html"), recursive=True) if os.sep + "admin" + os.sep not in f)  # l'administration est privée : hors contrôles éditoriaux
 rel = lambda f: os.path.relpath(f, SITE).replace(os.sep, "/")
 pages = {rel(f): open(f, encoding="utf8").read() for f in files}
 

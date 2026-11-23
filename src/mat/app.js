@@ -4,7 +4,7 @@
   var D = window.MATData, C = window.MATCalc, R = window.MATReport, Core = window.MaiorisCore, OPT = window.MaiorisOptions;
   var root = document.getElementById("mat"); if (!root) return;
   var lang = root.getAttribute("data-lang") === "en" ? "en" : "fr", t = R.T[lang];
-  var answers = {}, ctx = { org: "", sector: "", size: "", market: "" }, step = 0, started = false, startedAt = Date.now(), fromCore = {};
+  var answers = {}, ctx = { org: "", sector: "", size: "", market: "" }, step = 0, started = false, startedAt = Date.now(), fromCore = {}, idemKey = null;
   var el = { head: root.querySelector("[data-head]"), body: root.querySelector("[data-body]"), nav: root.querySelector("[data-nav]"), result: document.getElementById("mat-result") };
   var TOTAL = D.DIMS.length + 1; // contexte + six dimensions
 
@@ -146,7 +146,7 @@
     again.addEventListener("click", function () { box.hidden = true; root.hidden = false; var c = document.getElementById("mat-cta"); if (c) c.hidden = true; step = 0; go(); });
     box.appendChild(h("p", { class: "coi-again" }, [again]));
     var pv = document.getElementById("mat-priv"); if (pv) box.appendChild(pv);
-    window.MATLast = { rep: rep, text: reportText(rep) }; box.dataset.ready = "1";
+    window.MATLast = { rep: rep, text: reportText(rep) }; box.dataset.ready = "1"; idemKey = Core ? Core.newKey() : String(Date.now());
     if (Core && Core.enabled()) { Core.record("maturity", { version: D.VERSION, headline: rep.global !== null ? rep.level.name + " · " + rep.global + "/100" : t.partialT, score: rep.global, level: rep.level ? String(rep.level.n) : "" }); var cp = document.getElementById("core-panel"); if (cp) cp.dispatchEvent(new Event("core:refresh")); }
     track("mat_result", { complete: rep.res.complete ? "1" : "0" });
     window.scrollTo({ top: box.getBoundingClientRect().top + window.pageYOffset - 90 }); title.focus({ preventScroll: true });
@@ -164,10 +164,12 @@
       var last = window.MATLast, rep = last.rep; btn.disabled = true; status.textContent = form.dataset.sending;
       var ind = { global: rep.global, level: rep.level ? rep.level.n : null }; rep.rows.forEach(function (x) { ind[x.id] = x.score; });
       var body = { tool: "maturity", version: D.VERSION, lang: lang, name: name, email: email, company: String(d.get("company") || "").trim() || ctx.org, consent: true, website: String(d.get("website") || ""), elapsed: Date.now() - startedAt,
-                   answers: Object.assign({}, answers, { ctxSector: ctx.sector, ctxSize: ctx.size, ctxMarket: ctx.market }), indicators: ind, report: last.text, confidence: rep.res.complete ? "complete" : "partial" };
+                   answers: Object.assign({}, answers, { ctxSector: ctx.sector, ctxSize: ctx.size, ctxMarket: ctx.market }), indicators: ind, report: last.text, confidence: rep.res.complete ? "complete" : "partial",
+                   consent_text_id: form.getAttribute("data-consent") || "", idempotency_key: idemKey, profile: (Core && Core.enabled() && Core.remote()) || undefined, context: { sector: ctx.sector, size: ctx.size, market: ctx.market },
+                   summary: { headline: rep.global !== null ? rep.level.name + " · " + rep.global + "/100" : t.partialT, score: rep.global, level: rep.level ? String(rep.level.n) : "", completeness: rep.res.complete ? "complete" : "partial" } };
       fetch("/api/diagnostic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (x) { if (x.ok) { status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("mat_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
+        .then(function (x) { if (x.ok) { if (Core && Core.enabled() && x.j && x.j.resume_token) { Core.setRemote(x.j.profile_id, x.j.resume_token); var cp2 = document.getElementById("core-panel"); if (cp2) cp2.dispatchEvent(new Event("core:refresh")); } status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("mat_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
         .catch(function () { btn.disabled = false; status.textContent = form.dataset.fail; });
     });
   }
