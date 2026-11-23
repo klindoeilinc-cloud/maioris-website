@@ -145,3 +145,14 @@ test("effacement : un mauvais jeton ne supprime rien et un autre profil n'est ja
 test("aucune route publique de lecture : seules des méthodes POST existent", async () => {
   for (const f of ["api/diagnostic.js", "api/erase.js"]) { const m = await FN(f); assert.equal(m.onRequestGet, undefined); assert.equal(m.onRequest, undefined); assert.equal(typeof m.onRequestPost, "function"); }
 });
+
+test("immuabilité : aucun code n'écrit dans consents, consent_texts ou questionnaire_versions hors insertion (retrait du consentement et retrait d'une version exceptés)", () => {
+  const dir = path.join(__dirname, "../site/functions"), files = [];
+  (function walk(d) { for (const f of fs.readdirSync(d, { withFileTypes: true })) f.isDirectory() ? walk(path.join(d, f.name)) : files.push(path.join(d, f.name)); })(dir);
+  for (const f of files) {
+    const src = fs.readFileSync(f, "utf8");
+    assert.ok(!/UPDATE\s+(consent_texts|questionnaire_versions)\b/i.test(src), f);
+    assert.ok(!/DELETE\s+FROM\s+(consents|consent_texts|questionnaire_versions|evaluations|profiles|contacts)\b/i.test(src), "suppression de ligne : " + f);
+    assert.ok(!/UPDATE\s+consents\b(?![^;`"]*withdrawn_at)/i.test(src), f);
+  }
+});
