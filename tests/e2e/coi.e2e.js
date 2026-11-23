@@ -72,7 +72,7 @@ async function run(browser, lang, profile) {
   ok(res.includes(lang === "fr" ? "Délais de production trop longs" : "Production lead times too long"), "principal enjeu");
   ok(!/\b250[\s ,]?000\b/.test(res) && !(await page.textContent("#coi-cta")).match(/\b250[\s ,]000\b/), "250 000 jamais affiché");
   const cta = await page.textContent("#coi-cta");
-  ok(nb(cta).includes("750 000 FCFA"), "prix officiel 750 000 FCFA");
+  ok(nb(cta).includes("800 000 FCFA"), "prix officiel 800 000 FCFA");
   ok(await page.locator("#coi-cta a.btn").getAttribute("href") === (lang === "fr" ? "accompagnement/creative-audit.html" : "advisory/creative-audit.html"), "lien Creative Audit");
   ok(posts.length === 0, "aucune requête POST avant action explicite");
   // envoi facultatif

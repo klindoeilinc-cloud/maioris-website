@@ -140,7 +140,7 @@ Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspect
 
 **Rédaction.** Markdown restreint, sans HTML brut (tout est échappé) : `##` et `###`, listes, citations, `**gras**`, liens http(s) ou internes, images de `/assets/` ou https avec texte alternatif, `[^n]` pour les sources, et les blocs `:::facts`, `:::analysis`, `:::hypotheses`, `:::questions`, `:::insight` fermés par `:::`.
 
-**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit™ n'apparaît qu'en mention discrète (tarif officiel de 750 000 FCFA).
+**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit™ n'apparaît qu'en mention discrète (tarif officiel de 800 000 FCFA).
 
 **Mise en route.** Appliquer `d1/migrations/0003_editorial.sql` (comme les deux premières, voir la section D1). Sans cette migration, `/fr/perspectives` s'affiche sans publication et renvoie vers les archives. Les exemples fictifs (`d1/demo/editorial_demo.sql`, marqués `is_demo`) **ne se chargent jamais en production** : ils servent à une base de test ou de prévisualisation (bandeau « Exemple éditorial fictif », jamais indexés, absents du plan du site). Plan du site : `/sitemap-perspectives.xml`, déclaré dans `robots.txt`.
 
