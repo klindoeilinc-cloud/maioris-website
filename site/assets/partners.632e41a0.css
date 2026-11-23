@@ -145,3 +145,5 @@
 @media (max-width: 1000px) { .pt-contact .qualify, .pt-contact .done, .pt-contact .pt-alt { margin-left: 0; } }
 .pt-wdw .no li { text-decoration: none; display: flex; gap: 12px; }
 .pt-wdw .no li::before { content: "\00d7"; color: var(--ink); font-weight: 600; }
+
+.pt-scope { margin: 14px 0 0; font-size: 13px; color: var(--mute); }
