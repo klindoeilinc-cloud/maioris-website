@@ -147,3 +147,4 @@
 .pt-wdw .no li::before { content: "\00d7"; color: var(--ink); font-weight: 600; }
 
 .pt-scope { margin: 14px 0 0; font-size: 13px; color: var(--mute); }
+.pt-del { grid-template-columns: 1fr; }
