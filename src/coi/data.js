@@ -9,6 +9,7 @@
   // fourchettes en pourcentage : lo et hi sont les bornes de la réponse, unknown signale « impossible à estimer »
   function pc(id, fr, en, lo, hi) { return o(id, fr, en, { lo: lo, hi: hi }); }
 
+  var VERSION = "1.0";
   var STEPS = [
     { id: "context", q: ["sector", "size", "model"],
       t: { fr: "Organisation et contexte", en: "Organisation and context" },
@@ -143,5 +144,5 @@
   var ORDER = [];
   STEPS.forEach(function (s) { s.q.forEach(function (id) { ORDER.push(id); }); });
 
-  return { STEPS: STEPS, Q: Q, ORDER: ORDER, COUNT: ORDER.length };
+  return { VERSION: VERSION, STEPS: STEPS, Q: Q, ORDER: ORDER, COUNT: ORDER.length };
 });

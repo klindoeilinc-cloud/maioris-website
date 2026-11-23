@@ -45,11 +45,13 @@
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
           note: "Facultatif. Les données restent dans cet onglet, ne sont jamais envoyées automatiquement et disparaissent à sa fermeture. Ce n'est pas un stockage sécurisé : ne saisissez pas d'information sensible.",
           none: "Pas encore réalisé", on: "Réalisé le", clear: "Effacer mon profil et mes résultats", off: "Activez la conservation pour consolider vos résultats ici.", cleared: "Profil et résultats effacés.",
-          profile: "Profil commun", basis: "Données autodéclarées", count: "résultat(s) dans cet onglet" },
+          profile: "Profil commun", basis: "Données autodéclarées", count: "résultat(s) dans cet onglet",
+          remoteT: "Données transmises à MAIORIS", remoteP: "Vous avez transmis un résultat. Il est conservé 12 mois. Effacer votre profil local ne supprime pas ce que MAIORIS a reçu : utilisez le bouton ci-dessous, ou écrivez à hello@maioris.net.", erase: "Effacer mes données transmises à MAIORIS", erasing: "Effacement en cours…", erased: "Vos données transmises ont été effacées.", eraseFail: "L'effacement n'a pas abouti. Écrivez-nous à hello@maioris.net." },
     en: { title: "Your results in this tab", keep: "Keep my profile and results in this tab to link the tools together",
           note: "Optional. The data stays in this tab, is never sent automatically and disappears when it is closed. This is not secure storage: do not enter sensitive information.",
           none: "Not done yet", on: "Done on", clear: "Clear my profile and results", off: "Turn on keeping to consolidate your results here.", cleared: "Profile and results cleared.",
-          profile: "Shared profile", basis: "Self declared data", count: "result(s) in this tab" }
+          profile: "Shared profile", basis: "Self declared data", count: "result(s) in this tab",
+          remoteT: "Data sent to MAIORIS", remoteP: "You have sent a result. It is kept for 12 months. Clearing your local profile does not delete what MAIORIS received: use the button below, or write to hello@maioris.net.", erase: "Delete my data sent to MAIORIS", erasing: "Deleting…", erased: "Your data sent to MAIORIS has been deleted.", eraseFail: "Deletion did not complete. Write to us at hello@maioris.net." }
   };
 
   function create(deps) {
@@ -97,6 +99,16 @@
         if (st.history.length > MAXHIST) st.history = st.history.slice(-MAXHIST);
         return save(st);
       },
+      /** Référence du profil conservé par MAIORIS après un envoi consenti : identifiant et jeton de reprise (le jeton n'est jamais stocké côté serveur). */
+      remote: function () { var st = load(); return st && st.remote ? { id: st.remote.id, token: st.remote.token } : null; },
+      setRemote: function (id, token) {
+        var st = load(); id = clean(id); token = clean(token);
+        if (!st || !id || !token || id.length > 40 || token.length > 100) return false;
+        st.remote = { id: id, token: token }; return save(st);
+      },
+      clearRemote: function () { var st = load(); if (!st || !st.remote) return false; delete st.remote; return save(st); },
+      /** Clé d'idempotence : une par résultat, réutilisée en cas de nouvel essai d'envoi. */
+      newKey: function () { return (G.crypto && G.crypto.randomUUID) ? G.crypto.randomUUID() : "k" + rnd() + rnd(); },
       history: function () { var st = load(); return st ? st.history.slice() : []; },
       latest: function (tool) { var h = api.history().filter(function (e) { return e.tool === tool; }); return h.length ? h[h.length - 1] : null; },
       /** Résultats consolidés : un élément par outil, null si l'outil n'a pas été réalisé. */
@@ -128,6 +140,17 @@
         });
         host.appendChild(ul);
         host.appendChild(h("p", { class: "core-note", text: t.basis }));
+        var rem = core.remote();
+        if (rem) {
+          var eb = h("button", { type: "button", class: "btn btn-sm btn-ghost", text: t.erase });
+          eb.addEventListener("click", function () {
+            eb.disabled = true; var msgEl = host.querySelector(".core-msg"); if (msgEl) msgEl.textContent = t.erasing;
+            fetch("/api/erase", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile_id: rem.id, token: rem.token }) })
+              .then(function (r) { if (r.ok) { core.clearRemote(); draw(t.erased); } else { eb.disabled = false; draw(t.eraseFail); } })
+              .catch(function () { eb.disabled = false; draw(t.eraseFail); });
+          });
+          host.appendChild(h("h4", { class: "core-rh", text: t.remoteT })); host.appendChild(h("p", { class: "core-note", text: t.remoteP })); host.appendChild(eb);
+        }
         var b = h("button", { type: "button", class: "link", text: t.clear }); b.addEventListener("click", function () { core.clear(); draw(t.cleared); }); host.appendChild(b);
       } else host.appendChild(h("p", { class: "core-note", text: t.off }));
       host.appendChild(h("p", { class: "core-msg", role: "status", text: msg || "" }));

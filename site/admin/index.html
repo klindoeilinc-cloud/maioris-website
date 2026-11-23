@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Administration MAIORIS Intelligence</title>
+<style>
+:root{--ink:#0B1650;--red:#243AFF;--paper:#fff;--paper2:#F2F4FF;--line:#D9DDF2;--mute:#4A5280}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:baseline;justify-content:space-between;padding:20px 28px;border-bottom:2px solid var(--ink)}
+h1{margin:0;font-size:20px;letter-spacing:-.01em}.who{font-size:14px;color:var(--mute)}
+main{padding:24px 28px;max-width:1280px;margin:0 auto}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 22px}.stat{padding:14px 18px;border:1px solid var(--ink);background:#fff;min-width:150px}.stat b{display:block;font-size:26px}.stat span{font-size:13px;color:var(--mute)}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 18px}.bar input,.bar select,button{min-height:42px;padding:0 12px;border:1px solid var(--ink);border-radius:6px;background:#fff;color:var(--ink);font:inherit}
+button{cursor:pointer;background:var(--ink);color:#fff}button.ghost{background:#fff;color:var(--ink)}button.danger{background:#8A2310;border-color:#8A2310}button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.scroll{overflow-x:auto;border:1px solid var(--line)}table{width:100%;border-collapse:collapse;font-size:14px;min-width:900px}th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute);background:var(--paper2)}
+tr.row{cursor:pointer}tr.row:hover{background:var(--paper2)}tr.deleted{color:var(--mute);text-decoration:line-through}
+.detail{margin:26px 0 0;padding:22px;border:1px solid var(--ink);background:#fff}.detail h2{margin:0 0 12px;font-size:18px}.detail h3{margin:18px 0 6px;font-size:14px;text-transform:uppercase;letter-spacing:.05em;color:var(--mute)}
+pre{margin:0;padding:12px;background:var(--paper2);white-space:pre-wrap;word-break:break-word;font:13px/1.5 ui-monospace,Menlo,monospace;max-height:340px;overflow:auto}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 18px;margin:0}dt{color:var(--mute)}dd{margin:0}
+.msg{min-height:1.4em;margin:10px 0;font-weight:600;color:var(--red)}.err{color:#8A2310}
+.note{font-size:14px;color:var(--mute);max-width:760px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<header><h1>MAIORIS Intelligence · Administration</h1><p class="who" id="who">Vérification de l'accès…</p></header>
+<main id="main">
+<p class="note"><a href="/admin/editorial.html">Back-office éditorial</a> · Évaluations transmises avec consentement. Chaque consultation de détail, chaque export, chaque effacement et chaque purge est enregistré dans le journal. Les données personnelles ne sortent pas de cette page.</p>
+<div class="stats" id="stats" aria-live="polite"></div>
+<div class="bar">
+  <label class="sr" for="tool">Outil</label>
+  <select id="tool"><option value="">Tous les outils</option><option value="coi">Creative Operations Intelligence</option><option value="maturity">Creative Maturity Assessment</option><option value="brand">Brand Consistency Review</option><option value="brief">Évaluez votre brief</option><option value="diag">Où est votre contrainte ?</option></select>
+  <label class="sr" for="q">Recherche</label><input id="q" type="search" placeholder="Organisation, nom ou e-mail" maxlength="80"/>
+  <button id="go" type="button">Filtrer</button>
+  <button id="csv" type="button" class="ghost">Exporter en CSV</button>
+  <button id="purge" type="button" class="ghost">Purger les données expirées</button>
+</div>
+<p class="msg" id="msg" role="status"></p>
+<div class="scroll"><table><caption class="sr">Évaluations</caption><thead><tr><th scope="col">Date</th><th scope="col">Outil</th><th scope="col">Organisation</th><th scope="col">Contact</th><th scope="col">Résultat</th><th scope="col">E-mail</th><th scope="col">Expire</th></tr></thead><tbody id="rows"></tbody></table></div>
+<section class="detail" id="detail" hidden aria-live="polite"></section>
+</main>
+<script src="/admin/admin.js" defer></script>
+</body>
+</html>

@@ -4,7 +4,7 @@
   var D = window.BRData, C = window.BRCalc, R = window.BRReport, Core = window.MaiorisCore;
   var root = document.getElementById("brand"); if (!root) return;
   var lang = root.getAttribute("data-lang") === "en" ? "en" : "fr", t = R.T[lang];
-  var state = { profile: { channels: [] }, supports: [], reviews: {} }, step = 0, started = false, startedAt = Date.now(), fromCore = false;
+  var state = { profile: { channels: [] }, supports: [], reviews: {} }, step = 0, started = false, startedAt = Date.now(), fromCore = false, idemKey = null;
   var TOTAL = 2 + D.DIMS.length;
   var el = { head: root.querySelector("[data-head]"), body: root.querySelector("[data-body]"), nav: root.querySelector("[data-nav]"), result: document.getElementById("brand-result") };
 
@@ -192,7 +192,7 @@
     var again = h("button", { type: "button", class: "link", text: t.restart });
     again.addEventListener("click", function () { box.hidden = true; root.hidden = false; var cc = document.getElementById("brand-cta"); if (cc) cc.hidden = true; step = 0; go(); });
     box.appendChild(h("p", { class: "coi-again" }, [again])); var pv = document.getElementById("brand-priv"); if (pv) box.appendChild(pv);
-    window.BRLast = { rep: rep, text: R.toText(rep) }; box.dataset.ready = "1";
+    window.BRLast = { rep: rep, text: R.toText(rep) }; box.dataset.ready = "1"; idemKey = Core ? Core.newKey() : String(Date.now());
     if (Core && Core.enabled()) { Core.record("brand", { version: D.VERSION, headline: rep.summary.scored + "/" + rep.summary.total + (lang === "fr" ? " dimensions documentées" : " dimensions documented"), detail: rep.summary.supports + " supports" }); var cpn = document.getElementById("core-panel"); if (cpn) cpn.dispatchEvent(new Event("core:refresh")); }
     track("br_report", { scored: String(rep.summary.scored) });
     window.scrollTo({ top: box.getBoundingClientRect().top + window.pageYOffset - 90 }); title.focus({ preventScroll: true }); wireSend();
@@ -209,10 +209,12 @@
       var last = window.BRLast, rep = last.rep; btn.disabled = true; status.textContent = form.dataset.sending;
       var ind = {}; rep.B.forEach(function (x) { ind[x.id] = x.index; });
       var body = { tool: "brand", version: D.VERSION, lang: lang, name: name, email: email, company: String(d.get("company") || "").trim() || state.profile.name || "", consent: true, website: String(d.get("website") || ""), elapsed: Date.now() - startedAt,
-                   answers: { brand: state.profile.name || "", sector: state.profile.sector || "", market: state.profile.market || "", supports: state.supports.length }, indicators: ind, report: last.text, confidence: rep.summary.scored + "/" + rep.summary.total };
+                   answers: { brand: state.profile.name || "", sector: state.profile.sector || "", market: state.profile.market || "", supports: state.supports.length }, indicators: ind, report: last.text, confidence: rep.summary.scored + "/" + rep.summary.total,
+                   consent_text_id: form.getAttribute("data-consent") || "", idempotency_key: idemKey, profile: (Core && Core.enabled() && Core.remote()) || undefined, context: { sector: state.profile.sector, market: state.profile.market },
+                   summary: { headline: rep.summary.scored + "/" + rep.summary.total + (lang === "fr" ? " dimensions documentées" : " dimensions documented"), completeness: rep.summary.scored === rep.summary.total ? "complete" : "partial" } };
       fetch("/api/diagnostic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (x) { if (x.ok) { status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("br_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
+        .then(function (x) { if (x.ok) { if (Core && Core.enabled() && x.j && x.j.resume_token) { Core.setRemote(x.j.profile_id, x.j.resume_token); var cp2 = document.getElementById("core-panel"); if (cp2) cp2.dispatchEvent(new Event("core:refresh")); } status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("br_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
         .catch(function () { btn.disabled = false; status.textContent = form.dataset.fail; });
     });
   }

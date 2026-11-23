@@ -5,7 +5,7 @@
   var D = window.COIData, C = window.COICalc, R = window.COIReport;
   var root = document.getElementById("coi"); if (!root) return;
   var lang = root.getAttribute("data-lang") === "en" ? "en" : "fr", t = R.T[lang];
-  var answers = {}, stepIdx = 0, mode = "form", startedAt = Date.now(), started = false;
+  var answers = {}, stepIdx = 0, mode = "form", startedAt = Date.now(), started = false, idemKey = null;
   D.Q.weeks && (answers.weeks = D.Q.weeks.init);
   var Core = window.MaiorisCore;
   if (Core && Core.enabled()) { var kn = Core.known(["sector", "size"]); if (kn.sector) answers.sector = kn.sector; if (kn.size) answers.size = kn.size; }
@@ -162,7 +162,7 @@
     var rep = R.build(answers, lang);
     if (Object.keys(rep.errors).length) { mode = "form"; stepIdx = 0; go(); return; }
     track("coi_result"); renderResult(rep);
-    if (Core && Core.enabled()) { var tot = rep.indicators.filter(function (i) { return i.id === "total"; })[0]; Core.record("coi", { version: "1.0", headline: tot && tot.ok ? tot.mid + " " + (lang === "fr" ? "par an (valeur centrale)" : "per year (central value)") : (lang === "fr" ? "Estimation partielle" : "Partial estimate"), level: rep.profile.confidence.level }); var cp = document.getElementById("core-panel"); if (cp) cp.dispatchEvent(new Event("core:refresh")); }
+    if (Core && Core.enabled()) { var tot = rep.indicators.filter(function (i) { return i.id === "total"; })[0]; Core.record("coi", { version: D.VERSION, headline: tot && tot.ok ? tot.mid + " " + (lang === "fr" ? "par an (valeur centrale)" : "per year (central value)") : (lang === "fr" ? "Estimation partielle" : "Partial estimate"), level: rep.profile.confidence.level }); var cp = document.getElementById("core-panel"); if (cp) cp.dispatchEvent(new Event("core:refresh")); }
   }
 
   function renderResult(rep) {
@@ -195,7 +195,7 @@
     again.addEventListener("click", function () { box.hidden = true; root.hidden = false; var pv2 = document.getElementById("coi-priv"); if (pv2) root.parentNode.insertBefore(pv2, root); var c = document.getElementById("coi-cta"); if (c) c.hidden = true; mode = "form"; stepIdx = 0; go(); });
     box.appendChild(h("p", { class: "coi-again" }, [again]));
     var pv = document.getElementById("coi-priv"); if (pv) box.appendChild(pv);
-    window.COILast = rep; box.dataset.ready = "1";
+    window.COILast = rep; box.dataset.ready = "1"; idemKey = (window.MaiorisCore || { newKey: function () { return String(Date.now()); } }).newKey();
     window.scrollTo({ top: box.getBoundingClientRect().top + window.pageYOffset - 90 }); title.focus({ preventScroll: true });
     wireSend(rep);
   }
@@ -210,12 +210,15 @@
       if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { status.textContent = form.dataset.invalid; return; }
       if (!form.querySelector("[name=consent]").checked) { status.textContent = form.dataset.noconsent; return; }
       var last = window.COILast || rep; btn.disabled = true; status.textContent = form.dataset.sending;
-      var ind = {}; last.indicators.forEach(function (i) { ind[i.id] = i.ok ? { lo: i.lo, mid: i.mid, hi: i.hi } : null; });
-      var body = { lang: lang, name: name, email: email, company: String(d.get("company") || "").trim(), consent: true, website: String(d.get("website") || ""), elapsed: Date.now() - startedAt,
-                   answers: answers, indicators: ind, confidence: last.profile.confidence.level };
+      var ind = {}; last.indicators.forEach(function (i) { ind[i.id] = i.ok ? { lo: i.lo, mid: i.mid, hi: i.hi, lo_n: i.lo_n, mid_n: i.mid_n, hi_n: i.hi_n } : null; });
+      var tot = last.indicators.filter(function (i) { return i.id === "total"; })[0];
+      var body = { tool: "coi", version: D.VERSION, lang: lang, name: name, email: email, company: String(d.get("company") || "").trim(), consent: true, website: String(d.get("website") || ""), elapsed: Date.now() - startedAt,
+                   answers: answers, indicators: ind, confidence: last.profile.confidence.level, consent_text_id: form.getAttribute("data-consent") || "", idempotency_key: idemKey,
+                   profile: (Core && Core.enabled() && Core.remote()) || undefined, context: { sector: answers.sector, size: answers.size },
+                   summary: { headline: tot && tot.ok ? tot.mid : "", completeness: tot && tot.ok ? "complete" : "partial", level: last.profile.confidence.level } };
       fetch("/api/diagnostic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (x) { if (x.ok) { status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("coi_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
+        .then(function (x) { if (x.ok) { if (Core && Core.enabled() && x.j && x.j.resume_token) { Core.setRemote(x.j.profile_id, x.j.resume_token); var cp2 = document.getElementById("core-panel"); if (cp2) cp2.dispatchEvent(new Event("core:refresh")); } status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("coi_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
         .catch(function () { btn.disabled = false; status.textContent = form.dataset.fail; });
     });
   }

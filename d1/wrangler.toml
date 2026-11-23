@@ -1,0 +1,10 @@
+# Sert UNIQUEMENT à appliquer les migrations depuis un poste de travail : cd d1 && npx wrangler d1 migrations apply maioris-intelligence --remote
+# Ce fichier est dans un sous-dossier : il n'est pas lu par le projet Cloudflare Pages (les bindings du tableau de bord restent la référence).
+name = "maioris-d1-migrations"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "MAIORIS_DB"
+database_name = "maioris-intelligence"
+database_id = "REMPLACER_PAR_L_IDENTIFIANT_DE_LA_BASE"
+migrations_dir = "migrations"

@@ -115,6 +115,7 @@
       var st = r.status;
       if (st === "ok" || st === "complete" || st === "partial_external" || st === "partial_internal") {
         row.ok = true;
+        row.lo_n = r.lo; row.mid_n = r.mid; row.hi_n = r.hi;
         if (kind === "hours") { row.lo = C.formatNumber(r.lo, lang); row.hi = C.formatNumber(r.hi, lang); row.mid = C.formatNumber(r.mid, lang); row.unit = t.hoursUnit; }
         else { var f = fmtRange(r, lang); row.lo = f.lo; row.hi = f.hi; row.mid = f.mid; row.unit = t.perYear; }
         if (id === "total") row.note = t.totalNote[st];

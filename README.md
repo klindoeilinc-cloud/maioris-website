@@ -13,6 +13,8 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `src/coi/` : sources de l'outil **Creative Operations Intelligence™** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
 - `tools/build_coi_pages.py` et `tools/build_tool_pages.py` : génèrent les pages FR et EN des trois outils modulaires à partir du gabarit du site.
 - `tools/sync_tools.py` : insère le bloc partagé « Poursuivre votre diagnostic » sur les trois outils et sur Insights (à relancer après `build_coi_pages.py`).
+- `site/functions/_lib/editorial/`, `site/functions/[lang]/perspectives/[[path]].js`, `site/admin/editorial.html` : section éditoriale **STRATEGIC CASES & PERSPECTIVES** (voir plus bas). `tools/build_editorial_shell.py` génère ses gabarits statiques (`site/editorial-shell/`), `tools/build_editorial_demo.js` ses exemples fictifs (`d1/demo/`).
+- `site/functions/_lib/editorial/image.js` (analyse et nettoyage des images), `media.js` (R2 et registre), `site/functions/media/[id].js` (lecture publique), `d1/migrations/0004_media.sql`.
 - `site/functions/api/diagnostic.js` : envoi facultatif du Snapshot (Resend), uniquement avec le consentement du visiteur.
 - `tests/` : tests automatiques (`node --test tests/*.test.js`) et test de bout en bout (`tests/e2e/coi.e2e.js`, nécessite Playwright et un serveur local).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
@@ -49,6 +51,7 @@ Après toute modification de `src/coi/` ou de `tools/build_coi_pages.py` :
 python3 tools/build_coi_pages.py
 python3 tools/build_tool_pages.py
 python3 tools/sync_tools.py
+python3 tools/build_editorial_shell.py
 python3 tools/build_assets.py
 node --test tests/*.test.js
 python3 tools/qa.py
@@ -77,17 +80,87 @@ python3 tools/qa.py
 - Les outils reprennent le profil au lieu de le redemander, l'historique est conservé (une entrée par évaluation) et le panneau « Vos résultats dans cet onglet » consolide les cinq outils. Chaque outil garde sa méthodologie, ses réponses et sa version, et fonctionne sans le noyau.
 - Ce n'est **pas** un stockage sécurisé et rien n'est conservé côté serveur.
 
-## Ce qui n'existe pas encore (et ce qu'il faudrait configurer)
+## Base de données D1 `maioris-intelligence` (binding `MAIORIS_DB`)
 
-Le site n'a ni base de données, ni stockage de fichiers, ni authentification. Les fonctions suivantes de la spécification ne sont donc **pas** opérationnelles :
+**Ce qui est enregistré** : seulement les évaluations transmises avec consentement (`/api/diagnostic`) : profil et contact (tables séparées), libellé exact du consentement, évaluation (version du questionnaire, réponses, indicateurs), rapport texte. Aucune adresse IP. Les trois outils concernés sont Creative Operations Intelligence™, Creative Maturity Assessment™ et Brand Consistency Review™. Le brief et l'autodiagnostic n'envoient rien (le schéma est prêt à les accueillir).
 
-- profil organisationnel et historique durables côté serveur, consolidation entre appareils ;
-- dépôt et conservation de documents clients, avec contrôle d'accès ;
-- espace d'administration de consultation des évaluations (aujourd'hui : l'e-mail reçu via `/api/diagnostic`, avec consentement) ;
-- politique de conservation et suppression automatisées côté serveur ;
-- analyse automatique de documents (aucune intégration IA documentaire).
+**Fichiers**
+- `d1/migrations/0001_core.sql` : schéma (13 tables), strictement additif (`CREATE ... IF NOT EXISTS`).
+- `d1/migrations/0002_reference_data.sql` : outils, versions de questionnaires avec empreinte, libellés de consentement, durées de conservation. **Généré** par `node tools/export_d1_seed.js` ; ne jamais le modifier à la main ni le régénérer après application. Une nouvelle version de questionnaire ou de libellé s'ajoute par une **nouvelle** migration (`0003_...`, `INSERT OR IGNORE`).
+- `site/functions/_lib/` : code commun (identifiants ULID, persistance, effacement, purge, contrôle d'accès). `site/functions/api/erase.js` et `site/functions/api/admin/[[path]].js` : effacement par le visiteur et API d'administration.
 
-Pour les construire : Cloudflare R2 (fichiers) et D1 (profils, évaluations), Cloudflare Access (administration), un identifiant de profil signé, et un service d'analyse documentaire si souhaité. Tant que ce n'est pas configuré, le site ne prétend pas disposer de cette infrastructure.
+**Appliquer les migrations** (une seule fois, dans l'ordre). Deux possibilités :
+1. Tableau de bord Cloudflare > Storage & Databases > D1 > `maioris-intelligence` > Console : coller le contenu de `0001_core.sql`, exécuter, puis `0002_reference_data.sql`.
+2. En ligne de commande : renseigner `database_id` dans `d1/wrangler.toml`, puis `cd d1 && npx wrangler d1 migrations apply maioris-intelligence --remote`. Ce fichier est dans un sous-dossier : il n'est pas lu par Cloudflare Pages, dont les bindings du tableau de bord restent la référence.
+
+Vérification : `SELECT id, version FROM questionnaire_versions;` doit renvoyer cinq lignes.
+
+**Environnements.** Production : binding `MAIORIS_DB` lié. Prévisualisation (branches) : sans binding, `/api/diagnostic` envoie seulement l'e-mail, comme avant (rien n'est conservé). Pour tester la conservation en prévisualisation, créer une seconde base (par exemple `maioris-intelligence-preview`) et la lier à l'environnement Preview : ne pas réutiliser la base de production.
+
+## Administration (`/admin`)
+
+Page `site/admin/index.html` et API `/api/admin/*`. L'API vérifie elle-même le jeton signé de Cloudflare Access : **sans configuration, tout est refusé (503), jamais ouvert.** Configuration :
+1. Zero Trust > Access > Applications > Add > Self-hosted : domaine `maioris.net`, chemins `/admin` et `/api/admin`. Politique : Allow, adresses e-mail des administrateurs.
+2. Relever le **Application Audience (AUD) Tag** de l'application et le **domaine d'équipe** (`xxx.cloudflareaccess.com`).
+3. Pages > Settings > Environment variables (Production) : `ACCESS_TEAM_DOMAIN`, `ACCESS_AUD`, et facultativement `ADMIN_EMAILS` (liste séparée par des virgules, restreint en plus à ces adresses).
+
+Chaque consultation de détail, export, effacement et purge est inscrit dans `audit_events` (adresse de l'administrateur, date, objet).
+
+## Conservation et purge
+
+Durées dans `retention_policies` (initialement 365 jours pour les évaluations, les rapports et les documents, 730 jours pour le journal). L'effacement garde une ligne technique (identifiants, outil, dates) sans donnée personnelle. Le visiteur peut effacer ses données (`/api/erase`, avec le jeton de reprise reçu à l'envoi) ; un administrateur peut effacer un profil ou purger depuis `/admin`.
+
+**Purge planifiée.** Cloudflare Pages ne lance pas de tâche planifiée : `workers/purge/` est un petit Worker (cron quotidien, 03h17 UTC) à déployer à part : renseigner `database_id` dans `workers/purge/wrangler.toml`, puis `cd workers/purge && npx wrangler deploy`. Sans lui, la purge reste possible manuellement depuis `/admin`.
+
+## État des fonctions de la spécification
+
+| Fonction | État |
+|---|---|
+| Profil et historique durables côté serveur (consentis) | Opérationnel après application des migrations (testé sur SQLite local, pas sur le D1 de Cloudflare) |
+| Consultation par MAIORIS (administration, export, journal) | Opérationnel après configuration de Cloudflare Access |
+| Effacement par le visiteur, purge à l'expiration | Opérationnel (la purge automatique demande le Worker ci-dessus) |
+| Consolidation entre appareils, lien de reprise par e-mail | **Non réalisé** (le jeton existe, pas l'envoi du lien) |
+| Brief et autodiagnostic conservés côté serveur | **Non réalisé** (pas de consentement ni de contact dans ces outils) |
+| Dépôt et conservation de documents clients (R2) | **Non réalisé** (la table `documents` est prête, aucun fichier n'est reçu) |
+| Analyse automatique de documents | **Non réalisé** et non prévu sans décision explicite |
+
+## STRATEGIC CASES & PERSPECTIVES (plateforme éditoriale)
+
+Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspectives`, `/en/perspectives`, rubriques et articles), avec l'en-tête et le pied de page du site. Identité propre à la section (palette Soft Cream, Deep Navy, Cobalt, Solar Yellow, Coral, Emerald ; Poppins auto-hébergée) : `src/editorial/editorial.css`, limitée à la classe `.ed`. Le reste du site ne change pas.
+
+**Contenu.** Cinq rubriques permanentes et six formats (Strategic Case, Executive Brief, Deep Perspective, Market Signals, Strategic Framework, Future Outlook), définis dans `site/functions/_lib/editorial/taxonomy.js` et contrôlés en base. Ils s'attribuent aux publications, ils ne se créent pas depuis l'interface. Chaque publication affiche son format et son temps de lecture (calculé à 220 mots par minute).
+
+**Back-office** : `/admin/editorial.html` (protégé par Cloudflare Access, voir la section Administration). Statuts Draft, In Review, Approved, Published, Archived ; transitions contrôlées (on ne publie qu'un contenu approuvé) ; brouillons enregistrés avec historique des versions ; aperçu non indexable ; publication programmée (une date future rend le contenu visible à l'échéance, sans tâche planifiée) ; dépublication immédiate ; versions française et anglaise ; sources numérotées ; articles associés ; à la une et Strategic Selection ; métadonnées SEO.
+
+**Règles de publication** (`gate.js`) : la mise en ligne est refusée tant que la grille de qualité interne n'atteint pas **85 sur 100** (jamais affichée au public), que les métadonnées sont incomplètes, qu'un chiffre n'est ni sourcé ni présenté comme hypothèse, qu'une citation `[^n]` n'a pas de source, qu'une source n'est pas consultable (https) ou, pour une étude de cas, qu'il manque les blocs faits vérifiés, analyse, hypothèses et questions ouvertes ou deux sources. Une publication en ligne reste soumise à ces règles à chaque modification, et son adresse ne change plus.
+
+**Rédaction.** Markdown restreint, sans HTML brut (tout est échappé) : `##` et `###`, listes, citations, `**gras**`, liens http(s) ou internes, images de `/assets/` ou https avec texte alternatif, `[^n]` pour les sources, et les blocs `:::facts`, `:::analysis`, `:::hypotheses`, `:::questions`, `:::insight` fermés par `:::`.
+
+**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit™ n'apparaît qu'en mention discrète (tarif officiel de 750 000 FCFA).
+
+**Mise en route.** Appliquer `d1/migrations/0003_editorial.sql` (comme les deux premières, voir la section D1). Sans cette migration, `/fr/perspectives` s'affiche sans publication et renvoie vers les archives. Les exemples fictifs (`d1/demo/editorial_demo.sql`, marqués `is_demo`) **ne se chargent jamais en production** : ils servent à une base de test ou de prévisualisation (bandeau « Exemple éditorial fictif », jamais indexés, absents du plan du site). Plan du site : `/sitemap-perspectives.xml`, déclaré dans `robots.txt`.
+
+**Limites connues.** Une seule personne ou plusieurs adresses autorisées avec les mêmes droits : pas de rôles distincts (rédacteur, relecteur, éditeur). La lettre éditoriale utilise le même formulaire et la même audience Resend que la lettre existante. Les images se gèrent dans la bibliothèque (section suivante).
+
+## Images éditoriales (stockage R2)
+
+Les images se téléversent depuis le back-office (bouton « Choisir ou téléverser l'image principale » et bouton « Image » de la barre d'outils du texte). Elles sont stockées dans un bucket **R2 privé** et servies par la fonction `/media/<id>`.
+
+**Mise en route.**
+1. Cloudflare > Storage & Databases > R2 > Create bucket (par exemple `maioris-media`). **Ne pas activer l'accès public ni le domaine r2.dev** : le bucket reste privé, seule la fonction le lit.
+2. Pages > Settings > Bindings (Functions) > Add > R2 bucket : nom de variable **`MAIORIS_MEDIA`**, bucket choisi, en Production. Pour la prévisualisation, lier un second bucket de test plutôt que celui de production.
+3. Appliquer `d1/migrations/0004_media.sql` (registre des images, voir la section D1).
+Sans le binding, la bibliothèque s'ouvre mais le téléversement est refusé avec un message clair, et les publications sans image continuent de fonctionner.
+
+**Règles (côté serveur, non contournables depuis l'interface).**
+- Formats JPEG, PNG, WebP. Le type est déterminé sur les **octets du fichier** : l'extension et le type déclaré par le navigateur sont ignorés. **SVG et GIF refusés** (le SVG peut contenir du script).
+- 5 Mo au maximum, 6000 pixels au maximum sur un côté, 30 millions de pixels au maximum. Un fichier tronqué, corrompu ou suivi de données parasites est refusé.
+- **Métadonnées retirées avant stockage** (EXIF et GPS, commentaires, IPTC, XMP, textes PNG) sans ré-encoder l'image : aucune perte de qualité. Profils colorimétriques conservés.
+- **Texte alternatif obligatoire** (3 à 300 caractères). Un doublon exact (même fichier) n'est stocké qu'une fois. 1000 images au plus.
+- Identifiants aléatoires et non devinables. Seul un identifiant du registre est lisible : jamais de chemin libre. Une image supprimée disparaît de R2 et du registre ; la suppression est **refusée tant qu'une publication l'utilise** (image principale ou texte).
+- Tout est journalisé (`audit_events`) avec l'adresse de l'administrateur. Réponses publiques : `Cache-Control` d'un an en `immutable`, `nosniff`, politique de sécurité qui interdit toute exécution.
+
+**À savoir.** Une image téléversée mais encore utilisée par un brouillon est lisible par quiconque connaît son adresse (non devinable, jamais indexée) : n'y mettez pas d'information confidentielle. Pas de redimensionnement automatique : téléversez une image à la bonne taille (1600 à 2400 px de large suffisent pour l'image principale). Les en-têtes de sécurité des pages dynamiques sont posés par les fonctions (`_lib/security.js`), car Cloudflare n'applique pas `_headers` aux réponses des Functions.
 
 ## Avant chaque mise en ligne
 

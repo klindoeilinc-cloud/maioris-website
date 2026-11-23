@@ -1,0 +1,12 @@
+# Worker de purge planifiée (indépendant du projet Pages). Déployer depuis ce dossier : npx wrangler deploy
+name = "maioris-purge"
+main = "index.js"
+compatibility_date = "2025-01-01"
+
+[triggers]
+crons = ["17 3 * * *"]   # chaque nuit à 03h17 UTC
+
+[[d1_databases]]
+binding = "MAIORIS_DB"
+database_name = "maioris-intelligence"
+database_id = "REMPLACER_PAR_L_IDENTIFIANT_DE_LA_BASE"   # tableau de bord Cloudflare > D1 > maioris-intelligence

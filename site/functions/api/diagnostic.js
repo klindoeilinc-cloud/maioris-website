@@ -7,13 +7,15 @@
  * Variables d'environnement (les mêmes que /api/contact) :
  *   RESEND_API_KEY, CONTACT_TO, CONTACT_FROM
  * Optionnel : RATE_KV (KV lié) pour limiter à 5 envois par heure et par adresse IP.
+ * Optionnel : MAIORIS_DB (binding D1). Présent, l'évaluation est d'abord enregistrée (profil, consentement, évaluation, indicateurs, rapport),
+ *   puis l'e-mail part. Absent (ex. déploiement de prévisualisation), seul l'e-mail est envoyé, comme avant.
  */
+import { json, clean, cleanText } from "../_lib/util.js";
+import { persistSubmission, markEmail } from "../_lib/persist.js";
+
 const ALLOWED_ORIGINS = ["https://maioris.net", "https://www.maioris.net"];
-const json = (b, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" } });
-const clean = (v, max) => String(v ?? "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, max);
 const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const TOOLS = { coi: "Creative Operations Snapshot", maturity: "Creative Maturity Assessment", brand: "Brand Consistency Review" };
-const cleanText = (v, max) => String(v ?? "").replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, " ").trim().slice(0, max);
 const BOOKING = "https://cal.com/maioris";
 
 const ACK = {
@@ -45,7 +47,8 @@ export async function onRequestPost({ request, env }) {
     if (n >= 5) return json({ ok: false, error: "rate" }, 429);
     await env.RATE_KV.put(key, String(n + 1), { expirationTtl: 3600 });
   }
-  if (!env.RESEND_API_KEY || !env.CONTACT_TO || !env.CONTACT_FROM) return json({ ok: false, error: "config" }, 500);
+  const mailReady = !!(env.RESEND_API_KEY && env.CONTACT_TO && env.CONTACT_FROM);
+  if (!mailReady && !env.MAIORIS_DB) return json({ ok: false, error: "config" }, 500);
 
   // seules des valeurs simples sont retenues : texte court, nombre ou liste de textes courts
   const answers = {};
@@ -53,6 +56,22 @@ export async function onRequestPost({ request, env }) {
     for (const k of Object.keys(data.answers).slice(0, 40)) {
       const v = data.answers[k];
       answers[clean(k, 30)] = Array.isArray(v) ? v.slice(0, 15).map((x) => clean(x, 40)).join(", ") : clean(v, 40);
+    }
+  }
+  // version destinée à la base : listes conservées, valeurs simples seulement
+  const answersDb = {};
+  if (data.answers && typeof data.answers === "object") {
+    for (const k of Object.keys(data.answers).slice(0, 60)) {
+      const v = data.answers[k];
+      answersDb[clean(k, 30)] = Array.isArray(v) ? v.slice(0, 40).map((x) => clean(x, 80)) : typeof v === "number" && Number.isFinite(v) ? v : clean(v, 200);
+    }
+  }
+  const num = (x) => (typeof x === "number" && Number.isFinite(x) ? x : null);
+  const indicatorsDb = {};
+  if (data.indicators && typeof data.indicators === "object") {
+    for (const k of Object.keys(data.indicators).slice(0, 30)) {
+      const v = data.indicators[k], key = clean(k, 30);
+      indicatorsDb[key] = v === null || v === undefined ? null : typeof v === "number" ? num(v) : typeof v === "object" ? { lo_n: num(v.lo_n), mid_n: num(v.mid_n), hi_n: num(v.hi_n) } : null;
     }
   }
   const ind = data.indicators && typeof data.indicators === "object" ? data.indicators : {};
@@ -67,9 +86,29 @@ export async function onRequestPost({ request, env }) {
   const html = `<h2>${esc(toolName)}</h2><p>Évaluation déclarative calculée dans le navigateur du visiteur. Consentement donné. Aucun fichier n'est transmis.</p><table cellpadding='6'>` +
     rows.map(([k, v]) => `<tr><td><b>${esc(k)}</b></td><td>${esc(v)}</td></tr>`).join("") + "</table>" + (report ? `<h3>Rapport</h3><pre style="white-space:pre-wrap;font:14px/1.5 sans-serif">${esc(report)}</pre>` : "");
 
+  // 1. enregistrement (si la base est liée) ; une erreur de base n'empêche pas l'e-mail
+  let saved = { persisted: false, reason: "no_binding" };
+  try {
+    saved = await persistSubmission(env, {
+      tool: toolKey, version: clean(data.version, 20), lang, name, email, company, consentTextId: clean(data.consent_text_id, 60), idempotencyKey: clean(data.idempotency_key, 80),
+      elapsed: data.elapsed, answers: answersDb, indicators: indicatorsDb, report, summary: data.summary && typeof data.summary === "object" ? data.summary : {},
+      profileRef: data.profile && typeof data.profile === "object" ? { id: clean(data.profile.id, 40), token: clean(data.profile.token, 100) } : null,
+      context: data.context && typeof data.context === "object" ? data.context : {},
+    });
+  } catch (e) { console.error("persist", e && e.message); saved = { persisted: false, reason: "db_error" }; }
+  const idInfo = saved.persisted ? { persisted: true, evaluation_id: saved.evaluationId, profile_id: saved.profileId, ...(saved.resumeToken ? { resume_token: saved.resumeToken } : {}) } : { persisted: false };
+  if (saved.duplicate) return json({ ok: true, duplicate: true, ...idInfo });
+
   const send = (body) => fetch("https://api.resend.com/emails", { method: "POST", headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  const res = await send({ from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: email, subject: `[MAIORIS] ${toolName} | ${company || name}`, html, text });
-  if (!res.ok) return json({ ok: false, error: "send" }, 502);
+  // 2. e-mail à l'équipe, puis accusé au visiteur
+  if (!mailReady) { await markEmail(env, saved.evaluationId, "skipped"); return json({ ok: true, emailed: false, ...idInfo }); }
+  let res;
+  try { res = await send({ from: env.CONTACT_FROM, to: [env.CONTACT_TO], reply_to: email, subject: `[MAIORIS] ${toolName} | ${company || name}`, html, text }); } catch { res = { ok: false }; }
+  if (!res.ok) {
+    await markEmail(env, saved.evaluationId, "failed");
+    return saved.persisted ? json({ ok: true, emailed: false, ...idInfo }) : json({ ok: false, error: "send" }, 502);
+  }
+  await markEmail(env, saved.evaluationId, "sent");
   try { const a = ACK[lang]; await send({ from: env.CONTACT_FROM, to: [email], reply_to: env.CONTACT_TO, subject: a.subject(toolName), text: a.text(name, toolName) }); } catch { /* ignoré */ }
-  return json({ ok: true });
+  return json({ ok: true, ...idInfo });
 }

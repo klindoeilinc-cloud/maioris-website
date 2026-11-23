@@ -45,11 +45,13 @@
     fr: { title: "Vos résultats dans cet onglet", keep: "Conserver mon profil et mes résultats dans cet onglet pour les relier entre les outils",
           note: "Facultatif. Les données restent dans cet onglet, ne sont jamais envoyées automatiquement et disparaissent à sa fermeture. Ce n'est pas un stockage sécurisé : ne saisissez pas d'information sensible.",
           none: "Pas encore réalisé", on: "Réalisé le", clear: "Effacer mon profil et mes résultats", off: "Activez la conservation pour consolider vos résultats ici.", cleared: "Profil et résultats effacés.",
-          profile: "Profil commun", basis: "Données autodéclarées", count: "résultat(s) dans cet onglet" },
+          profile: "Profil commun", basis: "Données autodéclarées", count: "résultat(s) dans cet onglet",
+          remoteT: "Données transmises à MAIORIS", remoteP: "Vous avez transmis un résultat. Il est conservé 12 mois. Effacer votre profil local ne supprime pas ce que MAIORIS a reçu : utilisez le bouton ci-dessous, ou écrivez à hello@maioris.net.", erase: "Effacer mes données transmises à MAIORIS", erasing: "Effacement en cours…", erased: "Vos données transmises ont été effacées.", eraseFail: "L'effacement n'a pas abouti. Écrivez-nous à hello@maioris.net." },
     en: { title: "Your results in this tab", keep: "Keep my profile and results in this tab to link the tools together",
           note: "Optional. The data stays in this tab, is never sent automatically and disappears when it is closed. This is not secure storage: do not enter sensitive information.",
           none: "Not done yet", on: "Done on", clear: "Clear my profile and results", off: "Turn on keeping to consolidate your results here.", cleared: "Profile and results cleared.",
-          profile: "Shared profile", basis: "Self declared data", count: "result(s) in this tab" }
+          profile: "Shared profile", basis: "Self declared data", count: "result(s) in this tab",
+          remoteT: "Data sent to MAIORIS", remoteP: "You have sent a result. It is kept for 12 months. Clearing your local profile does not delete what MAIORIS received: use the button below, or write to hello@maioris.net.", erase: "Delete my data sent to MAIORIS", erasing: "Deleting…", erased: "Your data sent to MAIORIS has been deleted.", eraseFail: "Deletion did not complete. Write to us at hello@maioris.net." }
   };
 
   function create(deps) {
@@ -97,6 +99,16 @@
         if (st.history.length > MAXHIST) st.history = st.history.slice(-MAXHIST);
         return save(st);
       },
+      /** Référence du profil conservé par MAIORIS après un envoi consenti : identifiant et jeton de reprise (le jeton n'est jamais stocké côté serveur). */
+      remote: function () { var st = load(); return st && st.remote ? { id: st.remote.id, token: st.remote.token } : null; },
+      setRemote: function (id, token) {
+        var st = load(); id = clean(id); token = clean(token);
+        if (!st || !id || !token || id.length > 40 || token.length > 100) return false;
+        st.remote = { id: id, token: token }; return save(st);
+      },
+      clearRemote: function () { var st = load(); if (!st || !st.remote) return false; delete st.remote; return save(st); },
+      /** Clé d'idempotence : une par résultat, réutilisée en cas de nouvel essai d'envoi. */
+      newKey: function () { return (G.crypto && G.crypto.randomUUID) ? G.crypto.randomUUID() : "k" + rnd() + rnd(); },
       history: function () { var st = load(); return st ? st.history.slice() : []; },
       latest: function (tool) { var h = api.history().filter(function (e) { return e.tool === tool; }); return h.length ? h[h.length - 1] : null; },
       /** Résultats consolidés : un élément par outil, null si l'outil n'a pas été réalisé. */
@@ -128,6 +140,17 @@
         });
         host.appendChild(ul);
         host.appendChild(h("p", { class: "core-note", text: t.basis }));
+        var rem = core.remote();
+        if (rem) {
+          var eb = h("button", { type: "button", class: "btn btn-sm btn-ghost", text: t.erase });
+          eb.addEventListener("click", function () {
+            eb.disabled = true; var msgEl = host.querySelector(".core-msg"); if (msgEl) msgEl.textContent = t.erasing;
+            fetch("/api/erase", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ profile_id: rem.id, token: rem.token }) })
+              .then(function (r) { if (r.ok) { core.clearRemote(); draw(t.erased); } else { eb.disabled = false; draw(t.eraseFail); } })
+              .catch(function () { eb.disabled = false; draw(t.eraseFail); });
+          });
+          host.appendChild(h("h4", { class: "core-rh", text: t.remoteT })); host.appendChild(h("p", { class: "core-note", text: t.remoteP })); host.appendChild(eb);
+        }
         var b = h("button", { type: "button", class: "link", text: t.clear }); b.addEventListener("click", function () { core.clear(); draw(t.cleared); }); host.appendChild(b);
       } else host.appendChild(h("p", { class: "core-note", text: t.off }));
       host.appendChild(h("p", { class: "core-msg", role: "status", text: msg || "" }));
@@ -500,7 +523,7 @@
   var D = window.BRData, C = window.BRCalc, R = window.BRReport, Core = window.MaiorisCore;
   var root = document.getElementById("brand"); if (!root) return;
   var lang = root.getAttribute("data-lang") === "en" ? "en" : "fr", t = R.T[lang];
-  var state = { profile: { channels: [] }, supports: [], reviews: {} }, step = 0, started = false, startedAt = Date.now(), fromCore = false;
+  var state = { profile: { channels: [] }, supports: [], reviews: {} }, step = 0, started = false, startedAt = Date.now(), fromCore = false, idemKey = null;
   var TOTAL = 2 + D.DIMS.length;
   var el = { head: root.querySelector("[data-head]"), body: root.querySelector("[data-body]"), nav: root.querySelector("[data-nav]"), result: document.getElementById("brand-result") };
 
@@ -688,7 +711,7 @@
     var again = h("button", { type: "button", class: "link", text: t.restart });
     again.addEventListener("click", function () { box.hidden = true; root.hidden = false; var cc = document.getElementById("brand-cta"); if (cc) cc.hidden = true; step = 0; go(); });
     box.appendChild(h("p", { class: "coi-again" }, [again])); var pv = document.getElementById("brand-priv"); if (pv) box.appendChild(pv);
-    window.BRLast = { rep: rep, text: R.toText(rep) }; box.dataset.ready = "1";
+    window.BRLast = { rep: rep, text: R.toText(rep) }; box.dataset.ready = "1"; idemKey = Core ? Core.newKey() : String(Date.now());
     if (Core && Core.enabled()) { Core.record("brand", { version: D.VERSION, headline: rep.summary.scored + "/" + rep.summary.total + (lang === "fr" ? " dimensions documentées" : " dimensions documented"), detail: rep.summary.supports + " supports" }); var cpn = document.getElementById("core-panel"); if (cpn) cpn.dispatchEvent(new Event("core:refresh")); }
     track("br_report", { scored: String(rep.summary.scored) });
     window.scrollTo({ top: box.getBoundingClientRect().top + window.pageYOffset - 90 }); title.focus({ preventScroll: true }); wireSend();
@@ -705,10 +728,12 @@
       var last = window.BRLast, rep = last.rep; btn.disabled = true; status.textContent = form.dataset.sending;
       var ind = {}; rep.B.forEach(function (x) { ind[x.id] = x.index; });
       var body = { tool: "brand", version: D.VERSION, lang: lang, name: name, email: email, company: String(d.get("company") || "").trim() || state.profile.name || "", consent: true, website: String(d.get("website") || ""), elapsed: Date.now() - startedAt,
-                   answers: { brand: state.profile.name || "", sector: state.profile.sector || "", market: state.profile.market || "", supports: state.supports.length }, indicators: ind, report: last.text, confidence: rep.summary.scored + "/" + rep.summary.total };
+                   answers: { brand: state.profile.name || "", sector: state.profile.sector || "", market: state.profile.market || "", supports: state.supports.length }, indicators: ind, report: last.text, confidence: rep.summary.scored + "/" + rep.summary.total,
+                   consent_text_id: form.getAttribute("data-consent") || "", idempotency_key: idemKey, profile: (Core && Core.enabled() && Core.remote()) || undefined, context: { sector: state.profile.sector, market: state.profile.market },
+                   summary: { headline: rep.summary.scored + "/" + rep.summary.total + (lang === "fr" ? " dimensions documentées" : " dimensions documented"), completeness: rep.summary.scored === rep.summary.total ? "complete" : "partial" } };
       fetch("/api/diagnostic", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
         .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, j: j }; }); })
-        .then(function (x) { if (x.ok) { status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("br_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
+        .then(function (x) { if (x.ok) { if (Core && Core.enabled() && x.j && x.j.resume_token) { Core.setRemote(x.j.profile_id, x.j.resume_token); var cp2 = document.getElementById("core-panel"); if (cp2) cp2.dispatchEvent(new Event("core:refresh")); } status.textContent = form.dataset.sent; form.querySelectorAll("input,button").forEach(function (n) { n.disabled = true; }); track("br_send"); } else { btn.disabled = false; status.textContent = form.dataset.fail; } })
         .catch(function () { btn.disabled = false; status.textContent = form.dataset.fail; });
     });
   }
