@@ -201,11 +201,11 @@ Combien vous coûtent vos reprises ?
 
 Retouches, versions refaites, validations qui se répètent : la plupart des organisations ne chiffrent jamais cette ligne.
 
-Nous avons créé un calculateur : vous saisissez vos propres chiffres (budget créatif, part de reprises, heures de validation, coût horaire) et vous obtenez une estimation annuelle, avec les formules affichées.
+Nous avons créé un outil de diagnostic, Creative Operations Intelligence™ : vingt questions en cinq étapes sur vos budgets, vos validations et vos reprises, et une estimation indicative de ce que cela vous coûte chaque année, avec les hypothèses affichées.
 
-Précisions : c'est une estimation fondée uniquement sur vos données, pas une statistique de marché. Le calcul se fait dans votre navigateur, rien n'est envoyé.
+Précisions : c'est une estimation fondée uniquement sur vos réponses, pas une statistique de marché. Le calcul se fait dans votre navigateur : rien n'est envoyé, sauf si vous choisissez de nous transmettre votre résultat.
 
-À essayer : https://maioris.net/fr/cout-inefficacite-creative?utm_source=linkedin&utm_medium=social&utm_campaign=insights-s05-k1
+À essayer : https://maioris.net/fr/creative-operations-intelligence?utm_source=linkedin&utm_medium=social&utm_campaign=insights-s05-k1
 
 #PerformanceCréative #Marketing #Production
 

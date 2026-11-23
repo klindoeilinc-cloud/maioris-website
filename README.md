@@ -7,6 +7,10 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `site/` : le site publié. **C'est la source de vérité.** Les pages HTML sont éditées directement.
 - `tools/build_assets.py` : publie le CSS et le JavaScript partagés (nom versionné).
 - `tools/qa.py` : contrôle qualité automatique (liens, ancres, titres uniques, hreflang réciproques, JSON-LD, images sans alt, tirets, sitemap, redirections).
+- `src/coi/` : sources de l'outil **Creative Operations Intelligence™** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
+- `tools/build_coi_pages.py` : génère les deux pages de l'outil (FR et EN) à partir du gabarit du site.
+- `site/functions/api/diagnostic.js` : envoi facultatif du Snapshot (Resend), uniquement avec le consentement du visiteur.
+- `tests/` : tests automatiques (`node --test tests/*.test.js`) et test de bout en bout (`tests/e2e/coi.e2e.js`, nécessite Playwright et un serveur local).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
 
 ## Avertissement : ne pas régénérer le site depuis un ancien générateur
@@ -24,9 +28,30 @@ python3 tools/qa.py
 
 Le premier met à jour le nom des fichiers publiés (`site.<empreinte>.css` et `.js`) et leur référence dans toutes les pages. Le second vérifie que rien n'a été oublié. Ne jamais éditer directement les fichiers `site.<empreinte>.*`.
 
+## Outil Creative Operations Intelligence™
+
+Les formules sont centralisées dans `compute()` (`src/coi/calc.js`) :
+
+- A, coût externe des reprises = budget annuel × part de reprises
+- B, heures évitables par an = heures hebdomadaires × semaines travaillées × part évitable
+- C, coût interne des frictions = B × coût horaire interne (facultatif)
+- D, coût annuel des inefficiences = A + C
+
+Les parts sont des fourchettes (bas, valeur centrale, haut). Une donnée inconnue n'est jamais remplacée par zéro : l'indicateur est déclaré non calculable et le total devient partiel. Les surcoûts externes déclarés enrichissent le profil sans être ajoutés au calcul, pour éviter tout double comptage.
+
+Après toute modification de `src/coi/` ou de `tools/build_coi_pages.py` :
+
+```bash
+python3 tools/build_coi_pages.py
+python3 tools/build_assets.py
+node --test tests/*.test.js
+python3 tools/qa.py
+```
+
 ## Avant chaque mise en ligne
 
 ```bash
+node --test tests/*.test.js
 python3 tools/qa.py
 ```
 

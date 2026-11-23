@@ -201,11 +201,11 @@ How much does your rework cost you?
 
 Retouching, versions redone, approvals that repeat: most organisations never put a figure on that line.
 
-We built a calculator: you enter your own figures (creative budget, share of rework, approval hours, hourly cost) and get an annual estimate, with the formulas shown.
+We built a diagnostic tool, Creative Operations Intelligence™: twenty questions in five steps about your budgets, approvals and rework, and an indicative estimate of what that costs you every year, with the assumptions shown.
 
-To be clear: it is an estimate based only on your data, not a market statistic. The calculation runs in your browser, nothing is sent.
+To be clear: it is an estimate based only on your answers, not a market statistic. The calculation runs in your browser: nothing is sent unless you choose to send us your result.
 
-Try it: https://maioris.net/en/creative-inefficiency-cost?utm_source=linkedin&utm_medium=social&utm_campaign=insights-s05-k1
+Try it: https://maioris.net/en/creative-operations-intelligence?utm_source=linkedin&utm_medium=social&utm_campaign=insights-s05-k1
 
 #CreativePerformance #Marketing #Production
 
