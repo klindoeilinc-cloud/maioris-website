@@ -1,0 +1,18 @@
+/* MAIORIS Creative Maturity Assessment™ : styles propres à l'outil (les composants .coi-* du site sont réutilisés). */
+.mat-ctx{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 22px;max-width:760px}
+.mat-f label{display:block;margin:0 0 6px;font-weight:600;font-size:16px}.mat-f input,.mat-f select{width:100%;min-height:50px;padding:0 14px;border:1px solid #B9B6AE;border-radius:6px;background:#fff;font:17px var(--sans);color:var(--ink)}
+.mat-f input:focus-visible,.mat-f select:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.mat-scale{display:grid;gap:8px}.mat-lv{align-items:flex-start}.mat-lv>span{display:flex;flex-direction:column;gap:3px}.mat-lv b{font-weight:600;font-size:16px}.mat-lv small{font-size:14px;line-height:1.4;color:var(--mute)}
+.mat-lv.na{border-style:dashed}
+@media(min-width:900px){.mat-scale{grid-template-columns:repeat(3,minmax(0,1fr))}.mat-lv.na{grid-column:1/-1}}
+.mat-global{margin:0 0 18px}.mat-synth{max-width:760px;margin:0 0 34px;font-size:19px;line-height:1.55;font-weight:500}
+.mat-viz{margin:0 0 34px;padding-top:22px;border-top:2px solid var(--ink)}.mat-viz h3{margin:0 0 16px;font:600 24px/1.2 var(--sans)}
+.mat-viz-in{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:28px;align-items:center}
+.mat-radar{width:100%;height:auto;max-width:520px}.mat-radar .ring{fill:none;stroke:var(--line);stroke-width:1}.mat-radar .axis{stroke:var(--line);stroke-width:1}
+.mat-radar .lab{font:500 13px var(--mono);fill:var(--ink)}.mat-radar .shape{fill:rgba(36,58,255,.14);stroke:var(--red);stroke-width:2}.mat-radar .shape.part{stroke-dasharray:5 4}.mat-radar .dot{fill:var(--red)}
+.mat-table{width:100%;border-collapse:collapse;font-size:15px}.mat-table th,.mat-table td{padding:10px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.mat-table thead th{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.mat-table tbody th{font-weight:600}.mat-table tbody th small{display:block;margin-top:2px;font-weight:400;font-size:13px;color:var(--mute)}.mat-table td{font-variant-numeric:tabular-nums}
+.mat-prio{margin:0;padding-left:22px;max-width:760px}.mat-prio li{margin:0 0 12px;font-size:16.5px;line-height:1.55}.mat-prio b{display:block}
+.mat-ip{margin:0 0 6px;max-width:760px;font-size:16px;line-height:1.55}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media(max-width:800px){.mat-ctx{grid-template-columns:1fr}.mat-viz-in{grid-template-columns:1fr}}

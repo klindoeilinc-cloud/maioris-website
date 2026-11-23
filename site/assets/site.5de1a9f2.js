@@ -459,6 +459,7 @@
       enter();
       try { sessionStorage.setItem("maioris-diag", max > 1 ? ch.t : ""); } catch (e) {}
       track("diag_result", { top: max > 1 ? ch.id : "none" });
+      if (window.MaiorisCore && MaiorisCore.enabled()) { MaiorisCore.record("diag", { version: "1.0", headline: max > 1 ? ch.t : D.t.low }); const cp = document.getElementById("core-panel"); if (cp) cp.dispatchEvent(new Event("core:refresh")); }
       const h = dg.querySelector(".dg-rt"); if (h) { h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true }); }
       dg.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     };

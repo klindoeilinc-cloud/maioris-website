@@ -134,19 +134,24 @@ for ext in ("css", "js"):
         if refs and refs != {h}: err("%s: référence périmée à site.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
         if not refs and ext == "css": err("%s: aucune feuille de style partagée" % p)
 
-# Outil Creative Operations Intelligence : sources dans src/coi, publiées en coi.<empreinte>.js et .css
-SRC_COI = os.path.join(SITE, "..", "src", "coi")
-def dig_coi(ext):
-    names = ("data.js", "calc.js", "report.js", "app.js") if ext == "js" else ("coi.css",)
-    txt = "\n;\n".join(open(os.path.join(SRC_COI, n), encoding="utf8").read() for n in names)
-    return hashlib.sha256(txt.encode("utf8")).hexdigest()[:8]
-for ext in ("css", "js"):
-    h = dig_coi(ext)
-    if not os.path.isfile(os.path.join(SITE, "assets", "coi.%s.%s" % (h, ext))):
-        err("src/coi à jour mais assets/coi.%s.%s est absent : lancez python3 tools/build_assets.py" % (h, ext))
+# Outils : bundles définis dans tools/bundles.py, publiés en <nom>.<empreinte>.js ou .css
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import bundles
+for name, (src_, ext) in bundles.all_bundles().items():
+    h = hashlib.sha256(src_.encode("utf8")).hexdigest()[:8]
+    if not os.path.isfile(os.path.join(SITE, "assets", "%s.%s.%s" % (name, h, ext))):
+        err("src/ à jour mais assets/%s.%s.%s est absent : lancez python3 tools/build_assets.py" % (name, h, ext))
     for p, t in pages.items():
-        refs = set(re.findall(r"/assets/coi\.([0-9a-f]{8})\.%s" % ext, t))
-        if refs and refs != {h}: err("%s: référence périmée à coi.%s : lancez python3 tools/build_assets.py" % (p, "/".join(sorted(refs))))
+        refs = set(re.findall(r"/assets/%s\.([0-9a-f]{8})\.%s" % (name, ext), t))
+        if refs and refs != {h}: err("%s: référence périmée à %s.%s : lancez python3 tools/build_assets.py" % (p, name, "/".join(sorted(refs))))
+
+# Bloc partagé des outils (tools/sync_tools.py) : présent et identique sur les pages d'outils et sur Insights
+for lang, names in (("fr", ("evaluer-votre-brief", "autodiagnostic", "creative-operations-intelligence", "creative-maturity-assessment", "brand-consistency-review", "analyses")), ("en", ("brief-check", "self-assessment", "creative-operations-intelligence", "creative-maturity-assessment", "brand-consistency-review", "insights"))):
+    for n in names:
+        t = pages.get("%s/%s.html" % (lang, n), "")
+        if "<!--tools-next-->" not in t: err("%s/%s.html: bloc « outils » absent : lancez python3 tools/sync_tools.py" % (lang, n)); continue
+        for target in ("evaluer-votre-brief" if lang == "fr" else "brief-check", "autodiagnostic" if lang == "fr" else "self-assessment", "creative-operations-intelligence", "creative-maturity-assessment", "brand-consistency-review"):
+            if n != target and (target + ".html") not in t.split("<!--tools-next-->")[1]: err("%s/%s.html: le bloc « outils » ne mène pas vers %s" % (lang, n, target))
 
 print(f"{len(pages)} pages analysées")
 for w in warnings: print("AVERTISSEMENT", w)

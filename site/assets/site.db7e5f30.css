@@ -1237,3 +1237,18 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 .bf-res .actions { margin-top: 28px; }
 .bf-res button.link { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; }
 @media (max-width: 640px) { .bf-p, .bf-o { margin-left: 0; } .bf-q legend { flex-direction: column; gap: 6px; } }
+
+/* Bloc partagé « Poursuivre votre diagnostic » (tools/sync_tools.py) */
+.tnx-lead { max-width: 640px; margin: 0 0 28px; font-size: 17px; line-height: 1.55; color: var(--mute); }
+.tnx-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 14px; margin: 0; padding: 0; list-style: none; }
+.tnx-i > a, .tnx-i > div { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 22px; border: 1px solid var(--ink); background: #fff; color: var(--ink); text-decoration: none; }
+.tnx-i > a:hover { background: var(--ink); color: var(--paper); }
+.tnx-i > a:hover .tnx-k, .tnx-i > a:hover .tnx-q { color: var(--on-dark); }
+.tnx-i > a:focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+.tnx-i.cur > div { border-style: dashed; background: transparent; }
+.tnx-k { font: 500 12px/1.3 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--red); }
+.tnx-i b { font: 600 20px/1.25 var(--sans); letter-spacing: -.01em; }
+.tnx-q { font-size: 15px; line-height: 1.5; color: var(--mute); }
+.tnx-go, .tnx-here { margin-top: auto; padding-top: 10px; font: 600 14px/1.2 var(--sans); }
+.tnx-here { font: 500 12px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--mute); }
+@media (max-width: 600px) { .tnx-list { grid-template-columns: 1fr; } }

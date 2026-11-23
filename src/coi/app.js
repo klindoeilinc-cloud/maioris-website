@@ -7,6 +7,8 @@
   var lang = root.getAttribute("data-lang") === "en" ? "en" : "fr", t = R.T[lang];
   var answers = {}, stepIdx = 0, mode = "form", startedAt = Date.now(), started = false;
   D.Q.weeks && (answers.weeks = D.Q.weeks.init);
+  var Core = window.MaiorisCore;
+  if (Core && Core.enabled()) { var kn = Core.known(["sector", "size"]); if (kn.sector) answers.sector = kn.sector; if (kn.size) answers.size = kn.size; }
   var el = { head: root.querySelector("[data-coi-head]"), body: root.querySelector("[data-coi-body]"), nav: root.querySelector("[data-coi-nav]"), result: document.getElementById("coi-result") };
 
   function h(tag, attrs, kids) {
@@ -126,6 +128,7 @@
       var hd = renderStep(v.errors, v.warnings), first = D.STEPS[stepIdx].q.filter(function (id) { return v.errors[id]; })[0], box = document.getElementById("q-" + first + "-box");
       var f = box && box.querySelector("input"); (f || hd).focus(); if (box) box.scrollIntoView({ block: "center" }); return;
     }
+    if (stepIdx === 0 && Core && Core.enabled()) Core.setProfile({ sector: answers.sector, size: answers.size });
     track("coi_step", { step: String(stepIdx + 1) });
     if (stepIdx < D.STEPS.length - 1) { stepIdx++; go(); } else { mode = "recap"; renderRecap(); }
   }
@@ -159,6 +162,7 @@
     var rep = R.build(answers, lang);
     if (Object.keys(rep.errors).length) { mode = "form"; stepIdx = 0; go(); return; }
     track("coi_result"); renderResult(rep);
+    if (Core && Core.enabled()) { var tot = rep.indicators.filter(function (i) { return i.id === "total"; })[0]; Core.record("coi", { version: "1.0", headline: tot && tot.ok ? tot.mid + " " + (lang === "fr" ? "par an (valeur centrale)" : "per year (central value)") : (lang === "fr" ? "Estimation partielle" : "Partial estimate"), level: rep.profile.confidence.level }); var cp = document.getElementById("core-panel"); if (cp) cp.dispatchEvent(new Event("core:refresh")); }
   }
 
   function renderResult(rep) {
