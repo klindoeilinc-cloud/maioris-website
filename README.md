@@ -184,3 +184,12 @@ Variables d'environnement : `RESEND_API_KEY` (clé en Full access), `CONTACT_TO`
 ## Mesure d'audience
 
 Chaque page charge le script Plausible (sans cookie). Il faut créer le site `maioris.net` dans le compte Plausible pour recevoir les données.
+
+## MAIORIS Partners (agences indépendantes)
+
+Page d'offre `/en/partners` et `/fr/partenaires`, ajoutée à la navigation et au pied de page de toutes les pages publiques. Quatre offres (Agency Creative Audit 800 000 FCFA, Creative Operating System 2 300 000 FCFA, Fractional Creative Leadership 1 000 000 FCFA par mois avec engagement initial de trois mois, AI Creative Transformation 1 650 000 FCFA), trois parcours (Diagnose & Decide, Restructure & Optimize à 3 000 000 FCFA au lieu de 3 100 000, Strategic Partner), trois modèles de collaboration, périmètre « ce que nous faisons / ne faisons pas ». Aucun client, résultat chiffré ni témoignage inventé ; aucun symbole ™ (retiré du site à la demande).
+
+- Source : `tools/build_partners_pages.py` (contenu FR et EN, tarifs dans `PRICES`, vérifiés par `tests/partners.test.js`), style `src/partners/partners.css` (bundle `partners.<empreinte>.css`, Poppins hébergée). Régénérer : `python3 tools/build_partners_pages.py && python3 tools/build_assets.py`.
+- Formulaire : `POST /api/partners` (`site/functions/api/partners.js`). Mêmes variables que le formulaire de contact (`RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`, `RATE_KV` en option). L'équipe reçoit l'e-mail avec le PDF structuré joint, le visiteur un accusé avec le lien de réservation existant. Un échec d'envoi renvoie une erreur : le formulaire ne confirme jamais une demande non transmise.
+- Tests : `tests/partners.test.js`, `tests/partners-api.test.js`, e2e `node tests/e2e/partners.e2e.js`.
+- Le menu principal passe en mode « burger » sous 1240 px (au lieu de 1100) pour absorber le nouvel élément.

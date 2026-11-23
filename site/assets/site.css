@@ -89,7 +89,7 @@ mark.todo { background: #FBE2D9; color: #8A2310; border: 1px dashed var(--red-in
 .burger[aria-expanded="true"] span[aria-hidden] { background: transparent; }
 .burger[aria-expanded="true"] span[aria-hidden]::before { transform: translateY(7px) rotate(45deg); }
 .burger[aria-expanded="true"] span[aria-hidden]::after { transform: translateY(-7px) rotate(-45deg); }
-@media (max-width: 1100px) {
+@media (max-width: 1240px) {
   .burger { display: block; }
   /* backdrop-filter fait de .hd le bloc conteneur du menu fixe : le panneau ne couvrait que l'en-tête */
   .hd { -webkit-backdrop-filter: none; backdrop-filter: none; background: #FFFFFF; }
@@ -629,7 +629,7 @@ a { transition: color .2s, text-underline-offset .25s, text-decoration-color .25
 .hd-tel span { font: 500 10px/1.2 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--mute); }
 .hd-tel:hover { color: var(--red); }
 @media (min-width: 1380px) { .hd-tel { display: flex; } }
-@media (max-width: 1100px) { .hd-tel { display: flex; font-size: 15px; } }
+@media (max-width: 1240px) { .hd-tel { display: flex; font-size: 15px; } }
 
 .proof .pf { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 2px solid var(--red); margin-top: 8px; }
 .pf-c { padding: 28px 24px 26px 0; border-right: 1px solid var(--line); }

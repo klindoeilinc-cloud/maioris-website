@@ -288,6 +288,12 @@
     const map = { diagnostic: "diagnostic", brand: "project", growth: "project", cos: "project", t90: "t90", claas: "claas" };
     if (map[pre]) { const r = form.querySelector('input[name=support][value="' + map[pre] + '"]'); if (r) r.checked = true; }
 
+    // MAIORIS Partners : un bouton d'offre pré-sélectionne l'offre dans le formulaire
+    document.querySelectorAll("[data-offer]").forEach((a) => a.addEventListener("click", () => {
+      const r = form.querySelector('input[name=offer][value="' + a.dataset.offer + '"]');
+      if (r) r.checked = true;
+    }));
+
     let lastStep = 0;
     const show = (i) => {
       steps.forEach((s, k) => { s.hidden = k !== i; s.classList.toggle("back", i < lastStep); });
