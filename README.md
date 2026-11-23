@@ -9,6 +9,7 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `tools/qa.py` : contrôle qualité automatique (liens, ancres, titres uniques, hreflang réciproques, JSON-LD, images sans alt, tirets, sitemap, redirections).
 - `src/coi/` : sources de l'outil **Creative Operations Intelligence™** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
 - `tools/build_coi_pages.py` : génère les deux pages de l'outil (FR et EN) à partir du gabarit du site.
+- `tools/sync_tools.py` : insère le bloc partagé « Poursuivre votre diagnostic » sur les trois outils et sur Insights (à relancer après `build_coi_pages.py`).
 - `site/functions/api/diagnostic.js` : envoi facultatif du Snapshot (Resend), uniquement avec le consentement du visiteur.
 - `tests/` : tests automatiques (`node --test tests/*.test.js`) et test de bout en bout (`tests/e2e/coi.e2e.js`, nécessite Playwright et un serveur local).
 - `newsletter/` : mode d'emploi et modèles de la lettre MAIORIS Insights (non publié).
@@ -43,6 +44,7 @@ Après toute modification de `src/coi/` ou de `tools/build_coi_pages.py` :
 
 ```bash
 python3 tools/build_coi_pages.py
+python3 tools/sync_tools.py
 python3 tools/build_assets.py
 node --test tests/*.test.js
 python3 tools/qa.py
