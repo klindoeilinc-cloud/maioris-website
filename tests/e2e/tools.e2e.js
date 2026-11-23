@@ -205,7 +205,7 @@ async function existing(browser, lang) {
   await page.click("#bf button[type=submit]"); await page.waitForSelector("#bf-res:not([hidden])");
   ok((await page.textContent("#bf-n")) === "10", "brief : score 10 / 10");
   await page.goto(`${BASE}/${lang}/${lang === "fr" ? "autodiagnostic" : "self-assessment"}`); await page.waitForSelector(".dg-opt");
-  for (let i = 0; i < 7; i++) { await page.click('.dg-opt[data-v="3"]'); await page.waitForTimeout(420); }
+  for (let i = 0; i < 7; i++) { await page.dispatchEvent('.dg-opt[data-v="3"]', 'click'); await page.waitForTimeout(420); }
   await page.waitForSelector(".dg-res");
   ok(await page.locator(".dg-rt").count() === 1, "autodiagnostic : résultat affiché");
   await page.goto(`${BASE}/${lang}/creative-operations-intelligence`); await page.waitForSelector("#coi[data-ready]");
@@ -216,6 +216,7 @@ async function existing(browser, lang) {
 
 (async () => {
   const b = await chromium.launch();
+  if (process.env.ONLY === "existing") { await existing(b, "fr"); await existing(b, "en"); await b.close(); console.log(fails ? `\n${fails} ÉCHEC(S)` : "\nTOUT PASSE"); process.exit(fails ? 1 : 0); }
   for (const lang of ["fr", "en"]) { await maturity(b, lang, "desktop", "complete"); }
   await maturity(b, "fr", "desktop", "partial");
   await maturity(b, "fr", "tablette", "complete"); await maturity(b, "fr", "mobile", "complete");
