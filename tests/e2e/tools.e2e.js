@@ -118,9 +118,9 @@ async function brand(browser, lang, profile) {
   const st = ["conform", "partial", "non", "conform", "conform", "unobservable"], keys = ["colors", "type", "logo", "graphics", "rules", "variations"];
   for (let i = 0; i < 6; i++) {
     await page.check(`#br-c-visual-${keys[i]}-${st[i]}`, { force: true });
-    if (st[i] !== "unobservable") { await page.selectOption(`#br-c-visual-${keys[i]}-doc`, i % 2 ? "S2" : "S1"); await page.fill(`#br-c-visual-${keys[i]}-loc`, "p." + (i + 1)); await page.fill(`#br-c-visual-${keys[i]}-fact`, "Constat factuel décrit numéro " + (i + 1)); }
+    if (st[i] !== "unobservable") { await page.selectOption(`#br-c-visual-${keys[i]}-doc`, i % 2 ? "S2" : "S1"); await page.fill(`#br-c-visual-${keys[i]}-fact`, "Constat factuel décrit numéro " + (i + 1)); }
   }
-  await page.fill("#br-c-visual-logo-interp", "Palette non fixée"); await page.fill("#br-c-visual-logo-hypo", "Guidelines absentes ?");
+  ok(await page.locator("#br-c-visual-logo-interp, #br-c-visual-logo-hypo, #br-c-visual-logo-loc").count() === 0, "formulaire simplifié : ni interprétation, ni hypothèse, ni localisation");
   await page.click(`button:has-text("${T.next}")`);
   // dimensions 2 à 6 : non observables
   const dimKeys = { verbal: ["tone", "vocab", "messages", "promise", "voices", "continuity"], positioning: ["match", "value", "commercial", "discourse"], distinct: ["codes", "territories", "diff", "conventions", "elements"], cross: ["websocial", "adsales", "instpromo", "formats", "territory"], governance: ["rules", "access", "adapt", "external", "standards", "validation"] };
@@ -135,7 +135,7 @@ async function brand(browser, lang, profile) {
   ok(res.includes("70 / 100"), "indice de cohérence 70 / 100 sur Visual Identity (dimension documentée)");
   ok((res.match(lang === "fr" ? /Aucun indice : dimension insuffisamment documentée/g : /No index: dimension insufficiently documented/g) || []).length === 5, "cinq dimensions sans indice (insuffisamment documentées)");
   ok(!/score global|overall score/i.test(res.replace(/Aucun score global[^.]*\./i, "").replace(/No overall score[^.]*\./i, "")), "aucun score global");
-  ok(res.includes("Palette non fixée") && res.includes("Guidelines absentes"), "interprétation et hypothèse distinguées du fait");
+  ok(res.includes("Constat factuel décrit numéro"), "le fait observé est repris dans le rapport");
   ok(res.includes(lang === "fr" ? "Aucun fichier n'a été lu ni analysé" : "No file was read or analysed"), "limites : aucun fichier analysé");
   ok(/Niveau de certitude|Level of certainty/.test(res) && !/élevé|high \(/i.test(res.split("F. Strategic risks")[1].split("G. Priority")[0]), "risque avec niveau de certitude non élevé");
   ok(await page.locator(".br-scroll").count() === 1, "registre des preuves en tableau défilant");

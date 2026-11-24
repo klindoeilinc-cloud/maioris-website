@@ -643,9 +643,8 @@
     state.supports.forEach(function (s) { var op = h("option", { value: s.id, text: s.id + " · " + s.title }); if (rv.doc === s.id) op.selected = true; sel.appendChild(op); });
     sel.addEventListener("change", function () { rv.doc = sel.value; msg.textContent = ""; });
     function ta(key, label, rows, hint) { var i = h("textarea", { id: id + "-" + key, rows: String(rows), maxlength: String(D.LIMITS.maxText) }, [rv[key] || ""]); i.addEventListener("input", function () { rv[key] = i.value; msg.textContent = ""; }); return h("div", { class: "mat-f wide" }, [h("label", { for: id + "-" + key, text: label }), hint ? h("p", { class: "coi-hint", text: hint }) : null, i]); }
-    var loc = h("input", { id: id + "-loc", type: "text", maxlength: "160", value: rv.loc || "" }); loc.addEventListener("input", function () { rv.loc = loc.value; });
-    detail.appendChild(h("div", { class: "br-add-grid" }, [h("div", { class: "mat-f" }, [h("label", { for: id + "-doc", text: t.doc }), sel]), h("div", { class: "mat-f" }, [h("label", { for: id + "-loc", text: t.loc + " (" + t.optional + ")" }), loc]),
-      ta("fact", t.fact, 3, t.factH), ta("interp", t.interp, 2), ta("hypo", t.hypo, 2)]));
+    detail.appendChild(h("div", { class: "br-add-grid" }, [h("div", { class: "mat-f" }, [h("label", { for: id + "-doc", text: t.doc }), sel]),
+      ta("fact", t.fact, 3, t.factH)]));
     var cur = D.STATUS.filter(function (s) { return s.id === rv.status; })[0]; detail.hidden = !(cur && cur.observed);
     fs.appendChild(grp); fs.appendChild(detail); fs.appendChild(msg); return fs;
   }
@@ -696,8 +695,8 @@
     box.appendChild(b);
     var c = h("section", { class: "coi-syn" }, [h("h3", { text: t.C })]);
     if (!rep.C.length) c.appendChild(h("p", { text: t.none })); else {
-      var tbl = h("table", { class: "mat-table br-table" }, [h("thead", null, [h("tr", null, [t.colCrit, t.colStatus, t.colSupport, t.colLoc, t.colFact, t.colInterp, t.colHypo].map(function (x) { return h("th", { scope: "col", text: x }); }))])]);
-      var tb = h("tbody"); rep.C.forEach(function (r) { tb.appendChild(h("tr", null, [h("th", { scope: "row" }, [r.criterion, h("small", { text: r.dim })]), h("td", { text: r.status }), h("td", { text: r.support || "—" }), h("td", { text: r.loc || "—" }), h("td", { text: r.fact || "—" }), h("td", { text: r.interp || "—" }), h("td", { text: r.hypo || "—" })])); });
+      var tbl = h("table", { class: "mat-table br-table" }, [h("thead", null, [h("tr", null, [t.colCrit, t.colStatus, t.colSupport, t.colFact].map(function (x) { return h("th", { scope: "col", text: x }); }))])]);
+      var tb = h("tbody"); rep.C.forEach(function (r) { tb.appendChild(h("tr", null, [h("th", { scope: "row" }, [r.criterion, h("small", { text: r.dim })]), h("td", { text: r.status }), h("td", { text: r.support || "—" }), h("td", { text: r.fact || "—" })])); });
       tbl.appendChild(tb); c.appendChild(h("div", { class: "br-scroll", tabindex: "0", role: "region", "aria-label": t.C }, [tbl]));
     }
     box.appendChild(c);
