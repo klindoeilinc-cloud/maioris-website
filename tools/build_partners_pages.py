@@ -47,20 +47,20 @@ C["en"] = dict(
     scope_note="A summary, not the full scope. The detailed scope is set out in the proposal.",
     d_label="Deliverables", inc_label="Included", out_label="Expected outcome", dur="Duration", pos="Positioning", eng="Initial commitment", fee="Reference fee",
     offers=[
-      dict(key="audit", n="Offer 01", name="Agency Creative Audit", pos="Strategic Diagnostic", dur="10 to 15 working days", price_sub="Fixed reference fee",
+      dict(key="audit", n="Offer 01", name="Agency Creative Audit", pos="Strategic Diagnostic", dur="10 to 15 working days", price_sub="Fixed reference fee", rate="Agency scope. The Creative Audit for brands is a separate engagement of 5 to 7 working days.",
            desc="An in depth diagnostic for agencies that want to understand the limits of their creative organisation, their commercial model and their operating processes.",
            lab="Deliverables", items=["A written diagnostic and a score out of 100", "Prioritised recommendations", "A 90 day roadmap"],
            out="A clear view of dysfunctions, improvement opportunities and strategic priorities.", cta="Request an Agency Audit", note=None),
-      dict(key="cos", n="Offer 02", name="Creative Operating System", pos="Creative Operations Transformation", dur="4 to 6 weeks", price_sub="Fixed reference fee",
+      dict(key="cos", n="Offer 02", name="Creative Operating System", pos="Creative Operations Transformation", dur="4 to 6 weeks", price_sub="Fixed reference fee", rate="Agency rate. For brands and groups, the scope and investment are set on request.",
            desc="Design of an operating system that lets the agency better organise, govern and steer its creative activity.",
            lab="Deliverables", items=["An operating model for the agency", "Governance rules and clear roles", "Tools to steer performance"],
            out="A more structured, consistent and measurable creative organisation.", cta="Build Your Creative Operating System", note=None),
-      dict(key="fractional", n="Offer 03", name="Fractional Creative Leadership", pos="External Strategic Creative Leadership", dur="Initial commitment of 3 months", price_sub="Billed monthly",
+      dict(key="fractional", n="Offer 03", name="Fractional Creative Leadership", pos="External Strategic Creative Leadership", dur="Initial commitment of 3 months", price_sub="Billed monthly", rate="Agency rate. The offer for brands and groups is priced separately.",
            desc="Recurring strategic support for agency founders and leaders who want senior expertise without hiring a full time strategy director.",
            lab="Included", items=["Two strategic sessions per month", "A monthly review with recommendations", "Decision support between sessions"],
            out="Better capacity for decision, direction and strategic steering.", cta="Explore Strategic Partnership",
            note="This service is not a daily art direction service, hierarchical management or creative production."),
-      dict(key="ai", n="Offer 04", name="AI Creative Transformation", pos="AI & Creative Infrastructure", dur="3 to 5 weeks", price_sub="Fixed reference fee",
+      dict(key="ai", n="Offer 04", name="AI Creative Transformation", pos="AI & Creative Infrastructure", dur="3 to 5 weeks", price_sub="Fixed reference fee", rate="",
            desc="Support for agencies that want to bring artificial intelligence into their creative organisation in a structured, controlled and effective way.",
            lab="Deliverables", items=["A reading of your AI maturity", "Governance and quality rules for AI use", "An adoption roadmap"],
            out="Moving from occasional use of AI tools to a structured creative infrastructure.", cta="Transform Your Creative Infrastructure", note=None),
@@ -118,20 +118,20 @@ C["fr"] = dict(
     scope_note="Un aperçu, pas le périmètre complet. Le périmètre détaillé est remis dans la proposition.",
     d_label="Livrables", inc_label="Inclus", out_label="Résultat attendu", dur="Durée", pos="Positionnement", eng="Engagement initial", fee="Tarif de référence",
     offers=[
-      dict(key="audit", n="Offre 01", name="Agency Creative Audit", pos="Diagnostic stratégique", dur="10 à 15 jours ouvrés", price_sub="Tarif forfaitaire de référence",
+      dict(key="audit", n="Offre 01", name="Agency Creative Audit", pos="Diagnostic stratégique", dur="10 à 15 jours ouvrés", price_sub="Tarif forfaitaire de référence", rate="Périmètre agence. Le Creative Audit pour les marques est une mission distincte de 5 à 7 jours ouvrés.",
            desc="Un diagnostic approfondi destiné aux agences qui souhaitent comprendre les limites de leur organisation créative, leur modèle commercial et leurs processus opérationnels.",
            lab="Livrables", items=["Un diagnostic écrit et une note sur 100", "Des recommandations hiérarchisées", "Une feuille de route à 90 jours"],
            out="Une vision claire des dysfonctionnements, des opportunités d'amélioration et des priorités stratégiques.", cta="Demander un Agency Audit", note=None),
-      dict(key="cos", n="Offre 02", name="Creative Operating System", pos="Transformation des opérations créatives", dur="4 à 6 semaines", price_sub="Tarif forfaitaire de référence",
+      dict(key="cos", n="Offre 02", name="Creative Operating System", pos="Transformation des opérations créatives", dur="4 à 6 semaines", price_sub="Tarif forfaitaire de référence", rate="Tarif agence. Pour les marques et groupes, le périmètre et l'investissement sont définis sur demande.",
            desc="Conception d'un système opérationnel permettant à l'agence de mieux organiser, gouverner et piloter ses activités créatives.",
            lab="Livrables", items=["Un modèle opérationnel pour l'agence", "Des règles de gouvernance et des rôles clairs", "Des outils de pilotage de la performance"],
            out="Une organisation créative plus structurée, cohérente et mesurable.", cta="Construire votre Creative Operating System", note=None),
-      dict(key="fractional", n="Offre 03", name="Fractional Creative Leadership", pos="Direction créative stratégique externe", dur="Engagement initial de 3 mois", price_sub="Facturation mensuelle",
+      dict(key="fractional", n="Offre 03", name="Fractional Creative Leadership", pos="Direction créative stratégique externe", dur="Engagement initial de 3 mois", price_sub="Facturation mensuelle", rate="Tarif agence. L'offre pour les marques et groupes est tarifée séparément.",
            desc="Un accompagnement stratégique récurrent destiné aux fondateurs et dirigeants d'agences qui souhaitent bénéficier d'une expertise senior sans recruter un directeur stratégique à temps plein.",
            lab="Inclus", items=["Deux sessions stratégiques par mois", "Un bilan mensuel assorti de recommandations", "Un appui à la décision entre les sessions"],
            out="Une meilleure capacité de décision, d'orientation et de pilotage stratégique.", cta="Explorer un partenariat stratégique",
            note="Ce service ne constitue pas une prestation de direction artistique quotidienne, de management hiérarchique ou de production créative."),
-      dict(key="ai", n="Offre 04", name="AI Creative Transformation", pos="IA et infrastructure créative", dur="3 à 5 semaines", price_sub="Tarif forfaitaire de référence",
+      dict(key="ai", n="Offre 04", name="AI Creative Transformation", pos="IA et infrastructure créative", dur="3 à 5 semaines", price_sub="Tarif forfaitaire de référence", rate="",
            desc="Accompagnement des agences souhaitant intégrer l'intelligence artificielle dans leur organisation créative de manière structurée, maîtrisée et performante.",
            lab="Livrables", items=["Une lecture de votre maturité en IA", "Des règles de gouvernance et de qualité pour l'usage de l'IA", "Une feuille de route d'adoption"],
            out="Passer d'une utilisation ponctuelle des outils d'IA à une infrastructure créative structurée.", cta="Transformer votre infrastructure créative", note=None),
@@ -232,9 +232,9 @@ def build(lang):
         meta = '<li><b>%s</b> : %s</li><li><b>%s</b> : %s</li>' % (E(c["dur"] if o["key"] != "fractional" else c["eng"]), E(o["dur"] if o["key"] != "fractional" else o["dur"].replace("Initial commitment of ", "").replace("Engagement initial de ", "")), E(c["pos"]), E(o["pos"]))
         return ('<li class="pt-offer" id="offer-%s"><div><p class="pt-num">%s</p><h3>%s</h3><p class="pt-pos">%s</p></div>'
                 '<div><p class="pt-desc">%s</p><h4>%s</h4><ul class="pt-del">%s</ul><p class="pt-scope">%s</p><p class="pt-out"><b>%s :</b> %s</p>%s</div>'
-                '<div class="pt-buy"><p class="pt-price">%s%s<small>%s</small></p><ul class="pt-meta">%s</ul><a class="btn btn-sm" data-offer="%s" data-track="cta_click" data-rank="primary" data-label="partners-%s" href="#contact">%s</a></div></li>') % (
+                '<div class="pt-buy"><p class="pt-price">%s%s<small>%s</small></p>%s<ul class="pt-meta">%s</ul><a class="btn btn-sm" data-offer="%s" data-track="cta_click" data-rank="primary" data-label="partners-%s" href="#contact">%s</a></div></li>') % (
             o["key"], E(o["n"]), E(o["name"]), E(o["pos"]), E(o["desc"]), E(o["lab"]), "".join("<li>%s</li>" % E(x) for x in o["items"]), E(c["scope_note"]), E(c["out_label"]), E(o["out"]),
-            ('<p class="pt-note">%s</p>' % E(o["note"])) if o["note"] else "", p, ("<br>" + E({"en": "per month", "fr": "par mois"}[lang])) if o["key"] == "fractional" else "", E(o["price_sub"]), meta, o["key"], o["key"], E(o["cta"]))
+            ('<p class="pt-note">%s</p>' % E(o["note"])) if o["note"] else "", p, ("<br>" + E({"en": "per month", "fr": "par mois"}[lang])) if o["key"] == "fractional" else "", E(o["price_sub"]), ('<p class="pt-rate">%s</p>' % E(o["rate"])) if o["rate"] else "", meta, o["key"], o["key"], E(o["cta"]))
     offers = ('<section class="pt-sec" id="offers" data-reveal="" aria-labelledby="off-t"><div class="wrap">' + sec_head(c["off_k"], c["off_h"], c["off_i"]).replace('<h2 class="pt-h2">', '<h2 class="pt-h2" id="off-t">') +
               '<ol class="pt-offers">%s</ol></div></section>') % "".join(offer_html(o) for o in c["offers"])
 
