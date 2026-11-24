@@ -1266,3 +1266,22 @@ body[data-page="veone"] .photo-band .photo { aspect-ratio: 3 / 1 !important; }
 .js [data-reveal] .au-item, .js [data-reveal] .au-ul li, .js [data-reveal] .au-ideal > div, .js [data-reveal] .au-facts > div, .js [data-reveal] ul.dash li, .js [data-reveal] .pt-offer, .js [data-reveal] .pt-model, .js [data-reveal] .pt-path, .js [data-reveal] .pt-eco > div, .js [data-reveal] .pt-list li, .js [data-reveal] .pt-wdw li, .js [data-reveal] .pb-row, .js [data-reveal] .pb-steps li, .js [data-reveal] .two-mk > div, .js [data-reveal] .pt-table tbody tr { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; transition-delay: calc(var(--i, 0) * 70ms); }
 .js [data-reveal].in .au-item, .js [data-reveal].in .au-ul li, .js [data-reveal].in .au-ideal > div, .js [data-reveal].in .au-facts > div, .js [data-reveal].in ul.dash li, .js [data-reveal].in .pt-offer, .js [data-reveal].in .pt-model, .js [data-reveal].in .pt-path, .js [data-reveal].in .pt-eco > div, .js [data-reveal].in .pt-list li, .js [data-reveal].in .pt-wdw li, .js [data-reveal].in .pb-row, .js [data-reveal].in .pb-steps li, .js [data-reveal].in .two-mk > div, .js [data-reveal].in .pt-table tbody tr { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .js [data-reveal] .au-item, .js [data-reveal] .au-ul li, .js [data-reveal] .au-ideal > div, .js [data-reveal] .au-facts > div, .js [data-reveal] ul.dash li, .js [data-reveal] .pt-offer, .js [data-reveal] .pt-model, .js [data-reveal] .pt-path, .js [data-reveal] .pt-eco > div, .js [data-reveal] .pt-list li, .js [data-reveal] .pt-wdw li, .js [data-reveal] .pb-row, .js [data-reveal] .pb-steps li, .js [data-reveal] .two-mk > div, .js [data-reveal] .pt-table tbody tr { opacity: 1; transform: none; transition: none; } }
+
+/* visionneuse de document (PDF présenté en pages) : le site reste visible, assombri, derrière */
+.pdfv { border: 0; padding: 0; width: min(1120px, 94vw); max-height: 92vh; margin: auto; background: var(--paper); color: var(--ink); border-radius: 10px; box-shadow: 0 40px 120px rgba(11, 22, 80, .45); overflow: hidden; }
+.pdfv[open] { display: flex; flex-direction: column; animation: pdfv-in .42s cubic-bezier(.2, .8, .2, 1) both; }
+.pdfv::backdrop { background: rgba(11, 22, 80, .58); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); animation: pdfv-fade .35s ease both; }
+.pdfv-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px clamp(16px, 2.4vw, 28px); border-bottom: 1px solid var(--line); background: var(--paper); flex: none; }
+.pdfv-t { margin: 0; font: 600 clamp(16px, 1.6vw, 20px)/1.25 var(--sans); letter-spacing: -.02em; }
+.pdfv-n { margin: 3px 0 0; font: 400 13px/1.4 var(--sans); color: var(--mute); }
+.pdfv-act { display: flex; align-items: center; gap: 18px; flex: none; }
+.pdfv-x { min-height: 44px; padding: 10px 18px; background: var(--ink); color: #fff; border: 0; border-radius: 999px; font: 500 14px/1 var(--sans); cursor: pointer; }
+.pdfv-x:hover { background: var(--red); }
+.pdfv-pages { overflow-y: auto; overscroll-behavior: contain; padding: clamp(12px, 2vw, 24px); display: grid; gap: clamp(12px, 2vw, 22px); background: var(--paper2); }
+.pdfv-pages img { width: 100%; height: auto; display: block; border-radius: 6px; box-shadow: 0 6px 24px rgba(11, 22, 80, .14); background: #fff; }
+.pdfv-pages:focus-visible { outline: 3px solid var(--red); outline-offset: -3px; }
+html.pdfv-open { overflow: hidden; }
+@keyframes pdfv-in { from { opacity: 0; transform: translateY(24px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes pdfv-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (max-width: 640px) { .pdfv { width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; } .pdfv-bar { flex-wrap: wrap; } .pdfv-act { width: 100%; justify-content: space-between; } }
+@media (prefers-reduced-motion: reduce) { .pdfv[open], .pdfv::backdrop { animation: none; } }

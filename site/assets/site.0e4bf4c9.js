@@ -374,6 +374,21 @@
     });
   }
 
+  /* ---- visionneuse de document : le PDF s'ouvre en pages, le site reste visible derrière ---- */
+  const pv = document.getElementById("pdfv");
+  if (pv && typeof pv.showModal === "function") {
+    let from = null;
+    const shut = () => { if (pv.open) pv.close(); };
+    document.querySelectorAll("[data-pdfv]").forEach((a) => a.addEventListener("click", (e) => {
+      e.preventDefault(); from = a; pv.showModal();
+      document.documentElement.classList.add("pdfv-open");
+      const sc = pv.querySelector(".pdfv-pages"); if (sc) sc.scrollTop = 0;
+    }));
+    pv.querySelector(".pdfv-x").addEventListener("click", shut);
+    pv.addEventListener("click", (e) => { if (e.target === pv) shut(); });
+    pv.addEventListener("close", () => { document.documentElement.classList.remove("pdfv-open"); if (from) from.focus({ preventScroll: true }); });
+  }
+
   /* ---- compteurs des chiffres de parcours ---- */
   const counters = document.querySelectorAll("[data-count]");
   if (!reduce && counters.length && "IntersectionObserver" in window) {
