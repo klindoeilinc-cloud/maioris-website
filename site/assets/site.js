@@ -391,6 +391,42 @@
     counters.forEach((el) => cio.observe(el));
   }
 
+  /* ---- MAIORIS Partners : titres mot à mot et montants qui se comptent ---- */
+  if (document.querySelector(".pt") && !reduce && "IntersectionObserver" in window) {
+    document.querySelectorAll(".pt h1, .pt .pt-h2, .pt .pt-quote").forEach((h) => {
+      let k = 0;
+      const walk = (n) => {
+        [...n.childNodes].forEach((c) => {
+          if (c.nodeType === 3) {
+            const f = document.createDocumentFragment();
+            c.nodeValue.split(/(\s+)/).forEach((part) => {
+              if (!part) return;
+              if (/^\s+$/.test(part)) { f.appendChild(document.createTextNode(part)); return; }
+              const w = document.createElement("span"), i = document.createElement("span");
+              w.className = "pw"; i.className = "pwi"; i.style.setProperty("--w", Math.min(k++, 14)); i.textContent = part;
+              w.appendChild(i); f.appendChild(w);
+            });
+            n.replaceChild(f, c);
+          } else if (c.nodeType === 1) walk(c);
+        });
+      };
+      walk(h); h.classList.add("pw-on");
+    });
+    const mio = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      mio.unobserve(e.target);
+      const el = e.target, end = parseInt(el.dataset.money, 10), final = el.dataset.final, sep = lang === "fr" ? "\u00a0" : ",", t0 = performance.now(), dur = 1400;
+      const fmt = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, sep);
+      const step = (t) => {
+        const q = Math.min(1, (t - t0) / dur), v = Math.round(end * (1 - Math.pow(1 - q, 4)));
+        el.textContent = q < 1 ? fmt(v) : final;
+        if (q < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }), { threshold: .8 });
+    document.querySelectorAll("[data-money]").forEach((el) => { el.dataset.final = el.textContent; el.textContent = "0"; mio.observe(el); });
+  }
+
   /* ---- mur de logos : rotation premium, case par case ---- */
   const wall = document.querySelector(".brands ul");
   if (wall && !reduce && "IntersectionObserver" in window) {
