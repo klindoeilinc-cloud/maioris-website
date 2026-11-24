@@ -92,3 +92,16 @@ test("contact : un contexte de 4000 caractères avec émojis et symboles produit
   assert.equal(c[0].body.attachments.length, 1); assert.ok(!/PDF non généré/.test(c[0].body.subject));
   if (hasPdftotext) assert.match(pdfText(c[0].body.attachments[0].content), /Lancement/);
 });
+
+test("inscription : API /contacts avec segment, repli sur l'ancien appel, aucun faux succès", async () => {
+  const { onRequestPost } = await imp("api/subscribe.js");
+  const run = async (plan) => { const urls = []; global.fetch = async (u, o) => { urls.push({ u: String(u), b: JSON.parse(o.body) }); return new Response("{}", { status: plan(String(u)) }); }; const r = await onRequestPost({ request: post("/api/subscribe", { email: "c@example.com", lang: "fr", consent: true }), env }); return { r, urls }; };
+  let x = await run(() => 200);
+  assert.equal(x.r.status, 200); assert.equal(x.urls[0].u, "https://api.resend.com/contacts"); assert.deepEqual(x.urls[0].b.segments, [{ id: "aud" }]);
+  assert.ok(!x.urls.some((c) => c.u.includes("/audiences/")), "pas de repli si la nouvelle API accepte");
+  x = await run((u) => (u.endsWith("/contacts") && !u.includes("/audiences/") ? 404 : 200));
+  assert.equal(x.r.status, 200); assert.ok(x.urls.some((c) => c.u.includes("/audiences/aud/contacts")), "repli utilisé");
+  x = await run((u) => (u.includes("/contacts") ? 500 : 200));
+  assert.equal(x.r.status, 502); assert.equal((await x.r.json()).ok, false);
+  assert.ok(!x.urls.some((c) => c.u.endsWith("/emails")), "pas d'e-mail de bienvenue sans inscription");
+});
