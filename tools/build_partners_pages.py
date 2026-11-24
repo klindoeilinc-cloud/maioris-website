@@ -220,7 +220,7 @@ def build(lang):
     c = C[lang]; f = c["f"]; url = URL[lang]; other = URL["en" if lang == "fr" else "fr"]
     src = rd("fr/faq.html" if lang == "fr" else "en/faq.html")
     keep = src[src.index('<link href="../assets/favicon.svg"'):src.index('<script type="application/ld+json">')]
-    keep = re.sub(r'<link href="/assets/site\.[0-9a-f]{8}\.css" rel="stylesheet"/>', lambda m: m.group(0) + '<link href="/assets/partners.00000000.css" rel="stylesheet"/>', keep)
+    keep = re.sub(r'<link href="/assets/site\.[0-9a-f]{8}\.css" rel="stylesheet"/>', lambda m: '<link as="font" crossorigin="" href="/assets/fonts/poppins-700-latin.woff2" rel="preload" type="font/woff2"/><link as="font" crossorigin="" href="/assets/fonts/poppins-400-latin.woff2" rel="preload" type="font/woff2"/>' + m.group(0) + '<link href="/assets/partners.00000000.css" rel="stylesheet"/>', keep)
     plaus = re.search(r'<script data-domain="maioris.net"[^>]*></script>', src).group(0)
     body_start = src.index('<body data-lang'); main_start = src.index('<main id="main">'); foot_start = src.index('</main>') + len('</main>')
     foot = src[foot_start:src.index('</footer>') + len('</footer>')]
