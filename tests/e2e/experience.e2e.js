@@ -24,6 +24,10 @@ let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log("  ECHEC", 
     await page.locator(".pdfv-pages img").first().waitFor();
     await page.waitForFunction(() => document.querySelector(".pdfv-pages img").complete && document.querySelector(".pdfv-pages img").naturalWidth > 0);
     ok(true, "première page chargée");
+    await page.waitForFunction(() => [...document.querySelectorAll(".pdfv-pages img")].every((i) => i.complete && i.naturalWidth > 0), null, { timeout: 5000 });
+    ok(true, "les cinq pages, dont la 2, sont chargées dès l'ouverture, sans défilement");
+    await page.evaluate(() => document.querySelectorAll(".pdfv-pages img")[1].scrollIntoView()); await page.waitForTimeout(500);
+    ok(await page.evaluate(() => { const i = document.querySelectorAll(".pdfv-pages img")[1], r = i.getBoundingClientRect(); return i.naturalWidth > 0 && r.height > 100; }), "la page 2 est visible et a une hauteur");
     await page.evaluate(() => document.querySelector(".pdfv-pages").scrollTo(0, 99999)); await page.waitForTimeout(800);
     ok(await page.evaluate(() => [...document.querySelectorAll(".pdfv-pages img")].every((i) => i.complete && i.naturalWidth > 0)), "les cinq pages se chargent au défilement");
     ok((await page.locator(".pdfv a[download]").getAttribute("href")).endsWith("cas-tcl-west-africa-2026-nasco-maioris.pdf"), "lien de téléchargement");
