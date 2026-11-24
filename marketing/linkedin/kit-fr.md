@@ -164,7 +164,7 @@ Une organisation n'a pas toujours besoin de recruter un cadre créatif senior à
 
 Selon son contexte, elle peut bénéficier d'un modèle de direction stratégique externe : accéder à une direction créative stratégique, à une capacité de coordination et à une réflexion organisationnelle, sans créer un département permanent supplémentaire.
 
-C'est le principe de Creative Leadership as a Service™.
+C'est le principe de Creative Leadership as a Service.
 
 MAIORIS ne cherche pas à remplacer les agences. Nous pensons que les organisations doivent d'abord apprendre à mieux diriger les compétences dont elles disposent déjà.
 
@@ -204,7 +204,7 @@ Combien vous coûtent vos reprises ?
 
 Retouches, versions refaites, validations qui se répètent : la plupart des organisations ne chiffrent jamais cette ligne.
 
-Nous avons créé un outil de diagnostic, Creative Operations Intelligence™ : vingt questions en cinq étapes sur vos budgets, vos validations et vos reprises, et une estimation indicative de ce que cela vous coûte chaque année, avec les hypothèses affichées.
+Nous avons créé un outil de diagnostic, Creative Operations Intelligence : vingt questions en cinq étapes sur vos budgets, vos validations et vos reprises, et une estimation indicative de ce que cela vous coûte chaque année, avec les hypothèses affichées.
 
 Précisions : c'est une estimation fondée uniquement sur vos réponses, pas une statistique de marché. Le calcul se fait dans votre navigateur : rien n'est envoyé, sauf si vous choisissez de nous transmettre votre résultat.
 

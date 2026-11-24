@@ -1,4 +1,4 @@
-# Questionnaire de cadrage : Creative Audit™
+# Questionnaire de cadrage : Creative Audit
 
 À remplir avant la réunion de lancement. Le client n'a pas besoin de répondre à tout ni de posséder tous les documents pour démarrer : les informations manquantes seront identifiées pendant le cadrage et signalées comme limites éventuelles du diagnostic.
 
@@ -149,4 +149,4 @@ Indiquez le nom, la fonction et la disponibilité de chacun. L'accès aux person
 
 - Ce questionnaire est un modèle de travail : il n'est pas publié sur le site.
 - Les engagements de confidentialité et les conditions de l'audit doivent figurer dans votre propre proposition commerciale : ils ne sont pas définis ici.
-- Ne pas annoncer de livrables ou de délais autres que ceux de la page Creative Audit™.
+- Ne pas annoncer de livrables ou de délais autres que ceux de la page Creative Audit.

@@ -46,7 +46,7 @@ test("article : structure éditoriale complète, format et temps de lecture, som
     assert.match(t, /Strategic Case<\/li><li>\d+ min de lecture/); assert.match(t, /<time datetime="2026-11-18T08:00:00Z">18 novembre 2026<\/time>/); assert.match(t, /Key Takeaways/); assert.match(t, /Sources et références/); assert.match(t, /id="src-1"/);
     assert.match(t, /class="ed-toc ed-inline"/); assert.match(t, /class="ed-side"/); assert.ok((t.match(/<h2 id=/g) || []).length >= 4);
     assert.equal((t.match(/class="ed-tool"/g) || []).length, 1); assert.match(t, /Maturity Assessment/); const box = /<aside class="ed-tool".*?<\/aside>/s.exec(t)[0]; for (const other of ["Évaluez votre brief", "Où est votre contrainte", "Brand Consistency Review", "Creative Operations Intelligence"]) assert.ok(!box.includes(other), other);
-    assert.match(t, /Le Creative Audit est une mission indépendante de diagnostic stratégique, au tarif officiel de 800 000 FCFA\./); assert.ok(!/250[\s ,.]?000/.test(t));
+    assert.match(t, /Le Creative Audit est une mission indépendante de diagnostic stratégique, au tarif officiel de 750 000 FCFA\./); assert.ok(!/250[\s ,.]?000/.test(t));
     assert.match(t, /Exemple éditorial fictif\. Ce contenu illustre le format/); assert.equal(r.h.get("x-robots-tag"), "noindex");
   } finally { await s.close(); }
 });
@@ -103,7 +103,7 @@ test("sans base liée (prévisualisation) : l'accueil et les rubriques réponden
 test("anglais : accueil et article rendus en anglais", async () => {
   const s = await start(); try {
     const h = (await get(s, "/en/perspectives")).text; assert.match(h, /A strategic intelligence platform/); assert.ok(!/Une plateforme d'intelligence/.test(h));
-    const a = (await get(s, "/en/perspectives/strategic-cases/maison-oree-a-three-level-framework")).text; assert.match(a, /min read/); assert.match(a, /Fictional editorial example/); assert.match(a, /official fee of 800 000 FCFA/); assert.match(a, /<html lang="en">/);
+    const a = (await get(s, "/en/perspectives/strategic-cases/maison-oree-a-three-level-framework")).text; assert.match(a, /min read/); assert.match(a, /Fictional editorial example/); assert.match(a, /official fee of 750 000 FCFA/); assert.match(a, /<html lang="en">/);
   } finally { await s.close(); }
 });
 test("palette et police de la section : jetons demandés présents, Poppins auto-hébergée, hors identité du reste du site", () => {

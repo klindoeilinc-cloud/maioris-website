@@ -7,10 +7,10 @@ Site statique bilingue (français principal, anglais), servi par Cloudflare Page
 - `site/` : le site publié. **C'est la source de vérité.** Les pages HTML sont éditées directement.
 - `tools/build_assets.py` : publie le CSS et le JavaScript partagés (nom versionné).
 - `tools/qa.py` : contrôle qualité automatique (liens, ancres, titres uniques, hreflang réciproques, JSON-LD, images sans alt, tirets, sitemap, redirections).
-- `src/core/` : **MAIORIS INTELLIGENCE CORE™**, le noyau commun aux outils (`options.js` secteurs et tailles, `core.js` profil, historique et consolidation, `core.css`).
-- `src/mat/` : **Creative Maturity Assessment™** (24 questions, six dimensions). `src/brand/` : **Brand Consistency Review™** (revue guidée, six dimensions, registre de preuves).
+- `src/core/` : **MAIORIS INTELLIGENCE CORE**, le noyau commun aux outils (`options.js` secteurs et tailles, `core.js` profil, historique et consolidation, `core.css`).
+- `src/mat/` : **Creative Maturity Assessment** (24 questions, six dimensions). `src/brand/` : **Brand Consistency Review** (revue guidée, six dimensions, registre de preuves).
 - `tools/bundles.py` : définit les bundles publiés (`coi`, `mat`, `brand`, `core` en JavaScript, `tools` en CSS), à partir des sources de `src/`.
-- `src/coi/` : sources de l'outil **Creative Operations Intelligence™** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
+- `src/coi/` : sources de l'outil **Creative Operations Intelligence** (`data.js` questions, `calc.js` formules et validations, `report.js` textes et rapport, `app.js` interface, `coi.css`). `build_assets.py` les assemble en `site/assets/coi.<empreinte>.js` et `.css`.
 - `tools/build_coi_pages.py` et `tools/build_tool_pages.py` : génèrent les pages FR et EN des trois outils modulaires à partir du gabarit du site.
 - `tools/sync_tools.py` : insère le bloc partagé « Poursuivre votre diagnostic » sur les trois outils et sur Insights (à relancer après `build_coi_pages.py`).
 - `site/functions/_lib/editorial/`, `site/functions/[lang]/perspectives/[[path]].js`, `site/admin/editorial.html` : section éditoriale **STRATEGIC CASES & PERSPECTIVES** (voir plus bas). `tools/build_editorial_shell.py` génère ses gabarits statiques (`site/editorial-shell/`), `tools/build_editorial_demo.js` ses exemples fictifs (`d1/demo/`).
@@ -34,7 +34,7 @@ python3 tools/qa.py
 
 Le premier met à jour le nom des fichiers publiés (`site.<empreinte>.css` et `.js`) et leur référence dans toutes les pages. Le second vérifie que rien n'a été oublié. Ne jamais éditer directement les fichiers `site.<empreinte>.*`.
 
-## Outil Creative Operations Intelligence™
+## Outil Creative Operations Intelligence
 
 Les formules sont centralisées dans `compute()` (`src/coi/calc.js`) :
 
@@ -57,7 +57,7 @@ node --test tests/*.test.js
 python3 tools/qa.py
 ```
 
-## Creative Maturity Assessment™ : méthode de scoring
+## Creative Maturity Assessment : méthode de scoring
 
 - Chaque question a cinq niveaux comportementaux (1 Absent à 5 Intégré) et « Je ne sais pas / Non applicable ». Cette dernière réponse, comme l'absence de réponse, sort du calcul : elle n'est jamais comptée zéro.
 - Score dimensionnel = moyenne des réponses valides / 5 × 100 (échelle de 20 à 100, le niveau le plus bas valant 1 sur 5).
@@ -67,14 +67,14 @@ python3 tools/qa.py
 - Forces : dimensions à 68 ou plus (niveau Intégré et au-delà). Attention particulière : dimensions sous 52 (sous le niveau Structuré), trois au plus. Priorités : les trois dimensions les plus faibles, chacune avec sa pratique la plus fragile.
 - Instrument propriétaire d'autoévaluation, pas une certification indépendante.
 
-## Brand Consistency Review™ : méthode et limites
+## Brand Consistency Review : méthode et limites
 
 - **Mode guidé.** Aucune capacité d'analyse automatique de documents n'existe sur le site : aucun fichier n'est lu, analysé ni envoyé. Le fichier choisi est seulement contrôlé (extension, type déclaré, 10 Mo maximum) et référencé dans un registre en mémoire. L'outil le dit explicitement.
 - Chaque constat (conforme, partiellement conforme, non conforme, non observable, non applicable) cite un support du registre et décrit un **fait observé** ; l'interprétation et l'hypothèse à vérifier sont des champs séparés.
 - Un indice de cohérence n'est produit pour une dimension que si elle compte au moins 3 critères observés avec preuve, au moins 2 supports distincts et au moins la moitié des critères applicables observés ; Creative Distinctiveness exige en plus une référence concurrentielle. Aucun score global.
 - Le rapport (A à H) n'affirme aucune certitude élevée, signale les catégories de supports non fournies et rappelle que l'observation de supports ne mesure pas la reconnaissance par les audiences.
 
-## MAIORIS INTELLIGENCE CORE™ : synchronisation
+## MAIORIS INTELLIGENCE CORE : synchronisation
 
 - Désactivée par défaut. Si le visiteur coche « Conserver mon profil et mes résultats dans cet onglet », un profil limité (organisation, secteur, taille, marché, contact) avec identifiant, date et consentement, et un résumé par évaluation (outil, version, base « declared », date) sont conservés dans le `sessionStorage` du navigateur.
 - Les outils reprennent le profil au lieu de le redemander, l'historique est conservé (une entrée par évaluation) et le panneau « Vos résultats dans cet onglet » consolide les cinq outils. Chaque outil garde sa méthodologie, ses réponses et sa version, et fonctionne sans le noyau.
@@ -82,7 +82,7 @@ python3 tools/qa.py
 
 ## Base de données D1 `maioris-intelligence` (binding `MAIORIS_DB`)
 
-**Ce qui est enregistré** : seulement les évaluations transmises avec consentement (`/api/diagnostic`) : profil et contact (tables séparées), libellé exact du consentement, évaluation (version du questionnaire, réponses, indicateurs), rapport texte. Aucune adresse IP. Les trois outils concernés sont Creative Operations Intelligence™, Creative Maturity Assessment™ et Brand Consistency Review™. Le brief et l'autodiagnostic n'envoient rien (le schéma est prêt à les accueillir).
+**Ce qui est enregistré** : seulement les évaluations transmises avec consentement (`/api/diagnostic`) : profil et contact (tables séparées), libellé exact du consentement, évaluation (version du questionnaire, réponses, indicateurs), rapport texte. Aucune adresse IP. Les trois outils concernés sont Creative Operations Intelligence, Creative Maturity Assessment et Brand Consistency Review. Le brief et l'autodiagnostic n'envoient rien (le schéma est prêt à les accueillir).
 
 **Fichiers**
 - `d1/migrations/0001_core.sql` : schéma (13 tables), strictement additif (`CREATE ... IF NOT EXISTS`).
@@ -140,7 +140,7 @@ Section servie en direct depuis la base D1 par une Pages Function (`/fr/perspect
 
 **Rédaction.** Markdown restreint, sans HTML brut (tout est échappé) : `##` et `###`, listes, citations, `**gras**`, liens http(s) ou internes, images de `/assets/` ou https avec texte alternatif, `[^n]` pour les sources, et les blocs `:::facts`, `:::analysis`, `:::hypotheses`, `:::questions`, `:::insight` fermés par `:::`.
 
-**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit™ n'apparaît qu'en mention discrète (tarif officiel de 800 000 FCFA).
+**Outils MAIORIS.** Chaque article peut suggérer **un seul** outil, choisi à la main, uniquement s'il répond au sujet traité. Le Creative Audit n'apparaît qu'en mention discrète (tarif officiel de 750 000 FCFA).
 
 **Mise en route.** Appliquer `d1/migrations/0003_editorial.sql` (comme les deux premières, voir la section D1). Sans cette migration, `/fr/perspectives` s'affiche sans publication et renvoie vers les archives. Les exemples fictifs (`d1/demo/editorial_demo.sql`, marqués `is_demo`) **ne se chargent jamais en production** : ils servent à une base de test ou de prévisualisation (bandeau « Exemple éditorial fictif », jamais indexés, absents du plan du site). Plan du site : `/sitemap-perspectives.xml`, déclaré dans `robots.txt`.
 
@@ -187,7 +187,7 @@ Chaque page charge le script Plausible (sans cookie). Il faut créer le site `ma
 
 ## MAIORIS Partners (agences indépendantes)
 
-Page d'offre `/en/partners` et `/fr/partenaires`, ajoutée à la navigation et au pied de page de toutes les pages publiques. Quatre offres (Agency Creative Audit 800 000 FCFA, Creative Operating System 2 300 000 FCFA, Fractional Creative Leadership 1 000 000 FCFA par mois avec engagement initial de trois mois, AI Creative Transformation 1 650 000 FCFA), trois parcours (Diagnose & Decide, Restructure & Optimize à 3 000 000 FCFA au lieu de 3 100 000, Strategic Partner), trois modèles de collaboration, périmètre « ce que nous faisons / ne faisons pas ». Aucun client, résultat chiffré ni témoignage inventé ; aucun symbole ™ (retiré du site à la demande).
+Page d'offre `/en/partners` et `/fr/partenaires`, ajoutée à la navigation et au pied de page de toutes les pages publiques. Quatre offres (Agency Creative Audit 800 000 FCFA, Creative Operating System 2 300 000 FCFA, Fractional Creative Leadership 1 000 000 FCFA par mois avec engagement initial de trois mois, AI Creative Transformation 1 650 000 FCFA), trois parcours (Diagnose & Decide, Restructure & Optimize à 3 000 000 FCFA au lieu de 3 100 000, Strategic Partner), trois modèles de collaboration, périmètre « ce que nous faisons / ne faisons pas ». Aucun client, résultat chiffré ni témoignage inventé ; aucun symbole  (retiré du site à la demande).
 
 - Source : `tools/build_partners_pages.py` (contenu FR et EN, tarifs dans `PRICES`, vérifiés par `tests/partners.test.js`), style `src/partners/partners.css` (bundle `partners.<empreinte>.css`, Poppins hébergée). Régénérer : `python3 tools/build_partners_pages.py && python3 tools/build_assets.py`.
 - Formulaire : `POST /api/partners` (`site/functions/api/partners.js`). Mêmes variables que le formulaire de contact (`RESEND_API_KEY`, `CONTACT_TO`, `CONTACT_FROM`, `RATE_KV` en option). L'équipe reçoit l'e-mail avec le PDF structuré joint, le visiteur un accusé avec le lien de réservation existant. Un échec d'envoi renvoie une erreur : le formulaire ne confirme jamais une demande non transmise.
