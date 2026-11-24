@@ -65,6 +65,9 @@
     [...list.children].forEach((el, k) => el.style.setProperty("--i", k));
   });
   document.querySelectorAll(".offer-row").forEach((el, k) => el.style.setProperty("--i", k % 3));
+  document.querySelectorAll(".au-list, .au-ul, .au-ideal, .au-facts, ul.dash, .pt-offers, .pt-models, .pt-paths, .pt-eco, .pt-list, .pt-wdw ul, .pb-list, .pb-steps, .two-mk, .pt-table tbody").forEach((list) => {
+    [...list.children].forEach((el, k) => el.style.setProperty("--i", Math.min(k, 6)));
+  });
   const t0 = performance.now(), hold = root.classList.contains("door-in") ? 900 : 0;
   const later = (fn) => { const w = hold - (performance.now() - t0); if (w > 0) setTimeout(fn, w); else fn(); };
   if (!reduce && "IntersectionObserver" in window) {
