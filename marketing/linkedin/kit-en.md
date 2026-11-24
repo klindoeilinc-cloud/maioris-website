@@ -164,7 +164,7 @@ An organisation does not always need to hire a full time senior creative executi
 
 Depending on its context, it can benefit from an external strategic direction model: access to strategic creative direction, coordination capability and organisational thinking, without creating an additional permanent department.
 
-This is the principle of Creative Leadership as a Service™.
+This is the principle of Creative Leadership as a Service.
 
 MAIORIS does not seek to replace agencies. We believe organisations must first learn to better direct the skills they already have.
 
@@ -204,7 +204,7 @@ How much does your rework cost you?
 
 Retouching, versions redone, approvals that repeat: most organisations never put a figure on that line.
 
-We built a diagnostic tool, Creative Operations Intelligence™: twenty questions in five steps about your budgets, approvals and rework, and an indicative estimate of what that costs you every year, with the assumptions shown.
+We built a diagnostic tool, Creative Operations Intelligence: twenty questions in five steps about your budgets, approvals and rework, and an indicative estimate of what that costs you every year, with the assumptions shown.
 
 To be clear: it is an estimate based only on your answers, not a market statistic. The calculation runs in your browser: nothing is sent unless you choose to send us your result.
 

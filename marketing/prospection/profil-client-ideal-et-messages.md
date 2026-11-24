@@ -1,10 +1,10 @@
 # Profil de client idéal et messages d'approche
 
-**Statut : hypothèses de travail.** Tout ce document est construit à partir du contenu déjà validé du site (FAQ, page Creative Audit™, page Secteurs, analyses). Rien n'y est inventé, mais l'ordre de priorité des segments et des secteurs est à décider par le fondateur. Ce dossier n'est pas publié sur le site.
+**Statut : hypothèses de travail.** Tout ce document est construit à partir du contenu déjà validé du site (FAQ, page Creative Audit, page Secteurs, analyses). Rien n'y est inventé, mais l'ordre de priorité des segments et des secteurs est à décider par le fondateur. Ce dossier n'est pas publié sur le site.
 
 ## 1. Qui cibler
 
-Quatre profils, issus de la page Creative Audit™.
+Quatre profils, issus de la page Creative Audit.
 
 | Profil | Description | Priorité |
 |---|---|---|
@@ -41,13 +41,13 @@ Les situations décrites dans votre FAQ comme révélatrices d'un besoin. Ce son
 
 ## 4. Qui contacter
 
-Directeur général, directeur marketing, directeur de la communication, responsable de marque. Ce sont les fonctions proposées dans le formulaire de contact du site et les interlocuteurs du Creative Audit™.
+Directeur général, directeur marketing, directeur de la communication, responsable de marque. Ce sont les fonctions proposées dans le formulaire de contact du site et les interlocuteurs du Creative Audit.
 
 ## 5. Qualifier avant de proposer
 
 **Bon signe :** une problématique marketing ou créative identifiable, des investissements en communication, un décideur accessible, la volonté de partager les informations nécessaires.
 
-**À écarter (d'après la page Creative Audit™) :**
+**À écarter (d'après la page Creative Audit) :**
 - les entreprises qui cherchent uniquement un graphiste ou un monteur vidéo ;
 - les clients qui veulent une production publicitaire immédiate ;
 - les structures sans problématique marketing ou créative identifiable ;

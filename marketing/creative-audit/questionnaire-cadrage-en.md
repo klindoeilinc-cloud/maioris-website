@@ -1,4 +1,4 @@
-# Scoping questionnaire: Creative Audit™
+# Scoping questionnaire: Creative Audit
 
 To be completed before the kick off meeting. The client does not need to answer everything or hold every document to start: missing information will be identified during scoping and flagged as possible limits of the diagnosis.
 
@@ -149,4 +149,4 @@ Give each person's name, role and availability. Access to the people who make th
 
 - This questionnaire is a working template: it is not published on the site.
 - Confidentiality commitments and the terms of the audit must appear in your own commercial proposal: they are not defined here.
-- Do not announce deliverables or timelines other than those on the Creative Audit™ page.
+- Do not announce deliverables or timelines other than those on the Creative Audit page.

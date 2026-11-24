@@ -1,0 +1,18 @@
+{
+  "_note": "Source unique des prix et durées de référence. Les prix MAIORIS Partners sont une proposition commerciale en attente de validation finale du propriétaire. tests/offers.test.js vérifie que toutes les pages publiques restent conformes.",
+  "currency": "FCFA",
+  "brands": {
+    "creative_audit": { "price": 750000, "duration": { "min": 7, "max": 10, "unit": "working_days" } },
+    "creative_direction": { "price_from": 1200000 },
+    "campaign_architect": { "price_from": 2500000 },
+    "claas_indication": { "price_from_per_month": 2500000 }
+  },
+  "partners": {
+    "audit": { "price": 800000, "duration": { "min": 10, "max": 15, "unit": "working_days" } },
+    "cos": { "price": 2300000, "duration": { "min": 4, "max": 6, "unit": "weeks" } },
+    "ai": { "price": 1650000, "duration": { "min": 3, "max": 5, "unit": "weeks" } },
+    "fractional": { "price_per_month": 1000000, "minimum_months": 3 }
+  },
+  "bundle": { "price": 3000000, "separate": 3100000 },
+  "forbidden": ["250 000"]
+}
