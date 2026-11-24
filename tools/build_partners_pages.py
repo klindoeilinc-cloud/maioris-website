@@ -252,9 +252,9 @@ def build(lang):
 
     hero = ('<section class="pt-hero" data-reveal=""><div class="wrap"><div><p class="lbl"><a href="%s">%s</a> / %s</p><p class="lbl pt-mono" style="margin-bottom:26px">%s</p>'
             '<h1 class="pt-h1">%s<span>%s</span></h1><p class="pt-lead">%s</p><div class="pt-cta"><a class="btn" data-track="cta_click" data-rank="primary" data-label="partners-discuss" href="#contact">%s</a><a class="link" data-track="cta_click" data-rank="secondary" data-label="partners-services" href="#offers">%s</a></div></div>'
-            '<div class="pt-branch"><b>%s</b><dl>%s</dl></div></div></section>') % (
+            '<div class="pt-branch"><b>%s</b><dl>%s</dl><p style="margin:16px 0 0"><a href="%s">%s</a></p></div></div></section>') % (
             "index.html", "MAIORIS", E(c["crumb"]), E(c["kicker"]), E(c["h1"][0]), E(c["h1"][1]), E(c["lead"]), E(c["cta1"]), E(c["cta2"]), E(c["branch_t"]),
-            "".join('<div><dt%s>%s</dt><dd>%s</dd></div>' % (' class="on"' if on else "", E(n), E(d)) for n, on, d in c["branch"]))
+            "".join('<div><dt%s>%s</dt><dd>%s</dd></div>' % (' class="on"' if on else "", E(n), E(d)) for n, on, d in c["branch"]), "brands-groups.html" if lang == "en" else "marques-et-groupes.html", E("Looking for the brands catalogue?" if lang == "en" else "Vous cherchez le catalogue marques ?"))
 
     eco = '<section class="pt-sec" data-reveal="" aria-labelledby="eco-t"><div class="wrap">' + sec_head(c["eco_k"], c["eco_h"], c["eco_i"]).replace('<h2 class="pt-h2">', '<h2 class="pt-h2" id="eco-t">') + '<div class="pt-eco">' + "".join(
         '<div%s><h3>%s</h3><p class="pt-pos">%s</p><p><b>%s</b></p><p>%s</p><p><a href="%s">%s</a></p></div>' % (' class="on"' if on else "", E(n), E(pos), E(aud), E(d), href, E(lk)) for n, on, pos, aud, d, href, lk in c["eco"]) + '</div><p class="pt-mcps">%s</p></div></section>' % E(c["mcps"])
