@@ -382,6 +382,8 @@
     document.querySelectorAll("[data-pdfv]").forEach((a) => a.addEventListener("click", (e) => {
       e.preventDefault(); from = a; pv.showModal();
       document.documentElement.classList.add("pdfv-open");
+      // toutes les pages sont demandées dès l'ouverture : le chargement différé dans une fenêtre défilante n'est pas fiable sur tous les navigateurs
+      pv.querySelectorAll("img").forEach((im) => { im.loading = "eager"; im.decoding = "sync"; if (!im.complete) im.src = im.src; });
       const sc = pv.querySelector(".pdfv-pages"); if (sc) sc.scrollTop = 0;
     }));
     pv.querySelector(".pdfv-x").addEventListener("click", shut);
