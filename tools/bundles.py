@@ -7,8 +7,9 @@ BUNDLES = {
     "brand": ["core/options.js", "core/core.js", "brand/data.js", "brand/calc.js", "brand/report.js", "brand/app.js"],
     "core": ["core/options.js", "core/core.js"],
     "edjs": ["editorial/editorial.js"],
+    "fcl": ["fcl/calc.js", "fcl/app.js"],
 }
-CSS_TOOLS = ["coi/coi.css", "core/core.css", "mat/mat.css", "brand/brand.css"]
+CSS_TOOLS = ["coi/coi.css", "core/core.css", "mat/mat.css", "brand/brand.css", "fcl/fcl.css"]
 CSS_EDITORIAL = ["editorial/editorial.css"]
 CSS_PARTNERS = ["partners/partners.css"]
 def _read(n): return open(os.path.join(SRC, n), encoding="utf8").read()

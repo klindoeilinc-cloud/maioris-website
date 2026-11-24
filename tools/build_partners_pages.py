@@ -320,13 +320,13 @@ def build(lang):
             '<p class="err" hidden="" role="alert"></p>\n<div class="form-nav"><button class="link" data-prev="" hidden="" type="button">%s</button><button class="btn" data-next="" type="button">%s</button><button class="btn" hidden="" type="submit">%s</button></div>\n'
             '<input name="lang" type="hidden" value="%s"/>\n</form>\n'
             '<div class="done" hidden="" id="done" tabindex="-1"><div aria-hidden="true" class="done-sym"><svg viewbox="385 213 1312 1311">%s</svg></div><p class="lbl">%s</p><p class="h2">%s</p><p>%s</p><p><a href="%s">%s</a></p></div>\n'
-            '<p class="pt-alt">%s <a data-track="cta_click" data-rank="secondary" data-label="partners-booking" href="https://cal.com/maioris" rel="noopener" target="_blank">%s →</a></p></div></section>') % (
+            '<p class="pt-alt">%s <a data-track="cta_click" data-rank="secondary" data-label="partners-booking" href="https://cal.com/maioris" rel="noopener" target="_blank">%s →</a> <span aria-hidden="true">·</span> <a href="%s">%s</a></p></div></section>') % (
         E({"en": "Form steps", "fr": "Étapes du formulaire"}[lang]), "".join("<li%s>%s</li>" % (' class="on"' if i == 0 else "", E(s)) for i, s in enumerate(c["steps"])),
         E(f["l1"]), E(f["agency"]), E(f["site"]), E(f["site_h"]), E(f["country"]), opts(c["o_country"], f["select"]), E(f["team"]), opts(c["o_team"], f["select"]), E(f["role"]), opts(c["o_role"], f["select"]),
         E(f["l2"]), E(f["need"]), radios("need", c["o_need"]), E(f["offer"]), radios("offer", c["o_offer"]),
         E(f["l3"]), E(f["ctx"]), E(f["ctx_h"]), {"en": "characters", "fr": "caractères"}[lang], {"en": "characters", "fr": "caractères"}[lang],
         E(f["l4"]), E(f["first"]), E(f["last"]), E(f["email"]), E(f["consent"]), c["priv_href"], E(f["priv"]), E(f["back"]), E(f["cont"]), E(f["send"]), lang,
-        LOGO_PATHS, E(c["done_l"]), E(c["done_h"]), E(c["done_p"]), c["done_href"], E(c["done_a"]), E(c["alt_p"]), E(c["alt_a"]))
+        LOGO_PATHS, E(c["done_l"]), E(c["done_h"]), E(c["done_p"]), c["done_href"], E(c["done_a"]), E(c["alt_p"]), E(c["alt_a"]), "how-engagement-works.html" if lang == "en" else "comment-se-deroule-une-mission.html", E("How engagement works →" if lang == "en" else "Comment se déroule une mission →"))
 
     main = '<main class="pt" id="main">\n' + hero + "\n" + eco + "\n" + who + "\n" + offers + "\n" + pricing + "\n" + compare + "\n" + models + "\n" + bound + "\n" + scope + "\n" + form + "\n</main>"
     out = head + pre + main + foot + "\n" + site_js + aside + "\n</body>\n</html>\n"
