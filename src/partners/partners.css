@@ -185,3 +185,11 @@
 .js .pt [data-reveal].in .pw-on .pwi { transform: none; opacity: 1; }
 .pt-amt { font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { .js .pt .pw-on .pwi { transform: none; opacity: 1; transition: none; } }
+
+/* modèles A, B, C : la lettre se dévoile (masque qui monte), puis réagit au survol */
+.js [data-reveal] .pt-model p.pt-letter { clip-path: inset(100% 0 0 0); transform: translateY(36px); transition: clip-path .95s cubic-bezier(.16, .84, .24, 1), transform .95s cubic-bezier(.16, .84, .24, 1); transition-delay: calc(var(--i, 0) * 160ms); will-change: clip-path, transform; }
+.js [data-reveal].in .pt-model p.pt-letter { clip-path: inset(-20% -10% -20% -10%); transform: none; }
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .js [data-reveal].in .pt-model:hover p.pt-letter { transform: translateX(10px); transition-duration: .35s; transition-delay: 0s; }
+}
+@media (prefers-reduced-motion: reduce) { .js [data-reveal] .pt-model p.pt-letter { clip-path: none; transform: none; transition: none; } }
