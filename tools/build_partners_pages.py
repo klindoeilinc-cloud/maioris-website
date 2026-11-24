@@ -33,8 +33,8 @@ def money_anim(n, lang):
 
 C = {}
 C["en"] = dict(
-    title="MAIORIS Partners: Strategic Advisory for Independent Agencies | MAIORIS",
-    desc="Agency strategic advisory by MAIORIS: Agency Creative Audit, Creative Operating System, Fractional Creative Leadership and AI Creative Transformation for independent agencies and consulting firms. Fixed fees in FCFA.",
+    title="MAIORIS Partners: advisory for independent agencies",
+    desc="MAIORIS Partners: Agency Creative Audit, Creative Operating System, Fractional Creative Leadership and AI Creative Transformation for agencies.",
     crumb="Partners", kicker="MAIORIS Partners · Strategic Advisory for Independent Agencies",
     h1=("We don't compete with agencies. ", "We strengthen their strategic capacity."),
     lead="MAIORIS Partners helps independent agencies and consulting firms strengthen their organisation, their strategic intelligence, their creative governance and their operational performance. We are a complementary strategic partner, not a production competitor.",
@@ -104,8 +104,8 @@ C["en"] = dict(
     svc_type="Agency strategic advisory", aud="Independent agencies and consulting firms",
 )
 C["fr"] = dict(
-    title="MAIORIS Partners : conseil stratégique pour agences indépendantes | MAIORIS",
-    desc="Le conseil stratégique de MAIORIS pour les agences : Agency Creative Audit, Creative Operating System, Fractional Creative Leadership et AI Creative Transformation, pour agences indépendantes et cabinets de conseil. Tarifs forfaitaires en FCFA.",
+    title="MAIORIS Partners : conseil pour agences indépendantes",
+    desc="MAIORIS Partners : Agency Creative Audit, Creative Operating System, Fractional Creative Leadership et AI Creative Transformation pour agences.",
     crumb="Partners", kicker="MAIORIS Partners · Conseil stratégique pour agences indépendantes",
     h1=("Nous ne concurrençons pas les agences. ", "Nous renforçons leur capacité stratégique."),
     lead="MAIORIS Partners aide les agences indépendantes et les cabinets de conseil à renforcer leur organisation, leur intelligence stratégique, leur gouvernance créative et leur performance opérationnelle. Nous sommes un partenaire stratégique complémentaire, pas un concurrent de production.",

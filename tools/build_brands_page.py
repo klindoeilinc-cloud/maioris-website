@@ -17,8 +17,8 @@ def offer(link, name, purpose, model):
 
 C = {}
 C["en"] = dict(
-    title="MAIORIS Direct: creative leadership for brands and groups | MAIORIS",
-    desc="MAIORIS Direct provides independent strategic and creative leadership to brands and groups: diagnostics, strategic architecture, creative systems and recurring creative leadership. Creative Audit at 750,000 FCFA in 7 to 10 working days.",
+    title="Creative leadership for brands and groups | MAIORIS",
+    desc="MAIORIS Direct: independent strategic and creative leadership for brands and groups. Creative Audit at 750,000 FCFA in 7 to 10 working days.",
     crumb="Brands and groups", kicker="MAIORIS Direct · Creative Leadership as a Service",
     h1=("Independent creative leadership ", "for brands and groups."),
     lead="MAIORIS provides independent strategic and creative leadership to organisations that want stronger brand intelligence, creative governance, operational efficiency and business performance. We direct the creative system. We do not produce the work.",
@@ -61,8 +61,8 @@ C["en"] = dict(
     contact="contact.html", bk="https://cal.com/maioris",
 )
 C["fr"] = dict(
-    title="MAIORIS Direct : leadership créatif pour marques et groupes | MAIORIS",
-    desc="MAIORIS Direct apporte un leadership stratégique et créatif indépendant aux marques et aux groupes : diagnostics, architecture stratégique, systèmes créatifs et leadership créatif récurrent. Creative Audit à 750 000 FCFA en 7 à 10 jours ouvrés.",
+    title="Leadership créatif pour marques et groupes | MAIORIS",
+    desc="MAIORIS Direct : leadership stratégique et créatif indépendant pour marques et groupes. Creative Audit à 750 000 FCFA en 7 à 10 jours ouvrés.",
     crumb="Marques et groupes", kicker="MAIORIS Direct · Creative Leadership as a Service",
     h1=("Un leadership créatif indépendant ", "pour les marques et les groupes."),
     lead="MAIORIS apporte un leadership stratégique et créatif indépendant aux organisations qui veulent renforcer leur intelligence de marque, leur gouvernance créative, leur efficacité opérationnelle et leur performance. Nous dirigeons le système créatif. Nous ne produisons pas le travail.",
