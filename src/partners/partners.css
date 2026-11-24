@@ -177,3 +177,11 @@
 .pb-steps p { margin: 0; color: var(--mute); }
 .pb-steps p.pt-num { color: var(--red); margin-bottom: 8px; }
 @media (max-width: 860px) { .pb-steps { grid-template-columns: 1fr; } .pb-steps li, .pb-steps li + li { padding: 22px 0; border-left: 0; } .pb-steps li + li { border-top: 1px solid var(--line); } }
+
+/* titres mot à mot */
+.js .pt .pw-on .pw { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .14em; margin-bottom: -.14em; }
+.js .pt .pw-on .pwi { display: inline-block; transform: translateY(110%); opacity: 0; transition: transform .8s cubic-bezier(.2, .7, .2, 1), opacity .5s ease; transition-delay: calc(var(--w, 0) * 55ms + .1s); }
+.js .pt [data-reveal].in .pw-on .pwi, .js .pt .pw-on.in .pwi, .js .pt [data-reveal].in .pw-on.pwi { transform: none; opacity: 1; }
+.js .pt [data-reveal].in .pw-on .pwi { transform: none; opacity: 1; }
+.pt-amt { font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: reduce) { .js .pt .pw-on .pwi { transform: none; opacity: 1; transition: none; } }

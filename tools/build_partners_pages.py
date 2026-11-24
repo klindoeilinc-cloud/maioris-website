@@ -26,6 +26,11 @@ def money(n, lang):
     s = "{:,}".format(n).replace(",", NB if lang == "fr" else ",")
     return s + NB + "FCFA"
 
+def money_anim(n, lang):
+    """Montant animé au défilement (compteur) ; le texte final est identique au texte statique."""
+    s = "{:,}".format(n).replace(",", NB if lang == "fr" else ",")
+    return '<span class="pt-amt" data-money="%d">%s</span>%sFCFA' % (n, s, NB)
+
 C = {}
 C["en"] = dict(
     title="MAIORIS Partners: Strategic Advisory for Independent Agencies | MAIORIS",
@@ -71,9 +76,9 @@ C["en"] = dict(
     tbl_cap="Reference fees by offer", th=("Offer", "Duration", "Reference fee"),
     rows=[("Agency Creative Audit", "10 to 15 working days", "audit", ""), ("Creative Operating System", "4 to 6 weeks", "cos", ""), ("Fractional Creative Leadership", "Initial commitment of 3 months", "fractional", " per month"), ("AI Creative Transformation", "3 to 5 weeks", "ai", "")],
     paths_t="Three ways to start",
-    paths=[dict(n="Path 01", name="Diagnose & Decide", price=money(PRICES["audit"], "en"), unit="", items=["Agency Creative Audit"], p="Understand where the agency stands before deciding what to change."),
-           dict(n="Path 02", name="Restructure & Optimize", price=money(BUNDLE["price"], "en"), unit="", items=["Agency Creative Audit", "Creative Operating System"], p="Separate prices: %s. You save %s." % (money(BUNDLE["separate"], "en"), money(BUNDLE["saving"], "en"))),
-           dict(n="Path 03", name="Strategic Partner", price=money(PRICES["fractional"], "en"), unit=" per month", items=["Fractional Creative Leadership"], p="Initial commitment of three months.")],
+    paths=[dict(n="Path 01", name="Diagnose & Decide", price=money_anim(PRICES["audit"], "en"), unit="", items=["Agency Creative Audit"], p="Understand where the agency stands before deciding what to change."),
+           dict(n="Path 02", name="Restructure & Optimize", price=money_anim(BUNDLE["price"], "en"), unit="", items=["Agency Creative Audit", "Creative Operating System"], p="Separate prices: %s. You save %s." % (money(BUNDLE["separate"], "en"), money(BUNDLE["saving"], "en"))),
+           dict(n="Path 03", name="Strategic Partner", price=money_anim(PRICES["fractional"], "en"), unit=" per month", items=["Fractional Creative Leadership"], p="Initial commitment of three months.")],
     fine="No other discount applies. Fixed fees stay fixed fees: they are not monthly amounts.",
     mod_k="06 / 09", mod_h="How we work with agencies", mod_i="Three collaboration models, depending on who the client is and where the strategic work sits. The scope of MAIORIS is always defined by contract.",
     mod=[("A", "Agency Advisory", "MAIORIS supports the founder or the leadership of the agency directly.", "The agency is MAIORIS's contractual client."),
@@ -142,9 +147,9 @@ C["fr"] = dict(
     tbl_cap="Tarifs de référence par offre", th=("Offre", "Durée", "Tarif de référence"),
     rows=[("Agency Creative Audit", "10 à 15 jours ouvrés", "audit", ""), ("Creative Operating System", "4 à 6 semaines", "cos", ""), ("Fractional Creative Leadership", "Engagement initial de 3 mois", "fractional", " par mois"), ("AI Creative Transformation", "3 à 5 semaines", "ai", "")],
     paths_t="Trois façons de commencer",
-    paths=[dict(n="Parcours 01", name="Diagnose & Decide", price=money(PRICES["audit"], "fr"), unit="", items=["Agency Creative Audit"], p="Comprendre où en est l'agence avant de décider ce qu'il faut changer."),
-           dict(n="Parcours 02", name="Restructure & Optimize", price=money(BUNDLE["price"], "fr"), unit="", items=["Agency Creative Audit", "Creative Operating System"], p="Prix séparés : %s. Économie : %s." % (money(BUNDLE["separate"], "fr"), money(BUNDLE["saving"], "fr"))),
-           dict(n="Parcours 03", name="Strategic Partner", price=money(PRICES["fractional"], "fr"), unit=" par mois", items=["Fractional Creative Leadership"], p="Engagement initial de trois mois.")],
+    paths=[dict(n="Parcours 01", name="Diagnose & Decide", price=money_anim(PRICES["audit"], "fr"), unit="", items=["Agency Creative Audit"], p="Comprendre où en est l'agence avant de décider ce qu'il faut changer."),
+           dict(n="Parcours 02", name="Restructure & Optimize", price=money_anim(BUNDLE["price"], "fr"), unit="", items=["Agency Creative Audit", "Creative Operating System"], p="Prix séparés : %s. Économie : %s." % (money(BUNDLE["separate"], "fr"), money(BUNDLE["saving"], "fr"))),
+           dict(n="Parcours 03", name="Strategic Partner", price=money_anim(PRICES["fractional"], "fr"), unit=" par mois", items=["Fractional Creative Leadership"], p="Engagement initial de trois mois.")],
     fine="Aucune autre remise ne s'applique. Un tarif forfaitaire reste un forfait : ce n'est pas un montant mensuel.",
     mod_k="06 / 09", mod_h="Comment nous travaillons avec les agences", mod_i="Trois modèles de collaboration, selon la nature du client et l'endroit où se situe le travail stratégique. Le périmètre de MAIORIS est toujours défini par contrat.",
     mod=[("A", "Agency Advisory", "MAIORIS accompagne directement le fondateur ou la direction de l'agence.", "L'agence est le client contractuel de MAIORIS."),
@@ -264,7 +269,7 @@ def build(lang):
            E(c["who_t"]), "".join("<li>%s</li>" % E(x) for x in c["who"]), E(c["mk"]), E(c["prob_t"]), "".join("<li>%s</li>" % E(x) for x in c["prob"]))
 
     def offer_html(o):
-        p = money(PRICES[o["key"]], lang)
+        p = money_anim(PRICES[o["key"]], lang)
         meta = '<li><b>%s</b> : %s</li><li><b>%s</b> : %s</li>' % (E(c["dur"] if o["key"] != "fractional" else c["eng"]), E(o["dur"] if o["key"] != "fractional" else o["dur"].replace("Initial commitment of ", "").replace("Engagement initial de ", "")), E(c["pos"]), E(o["pos"]))
         return ('<li class="pt-offer" id="offer-%s"><div><p class="pt-num">%s</p><h3>%s</h3><p class="pt-pos">%s</p></div>'
                 '<div><p class="pt-desc">%s</p><dl class="pt-facts"><div><dt>%s</dt><dd>%s</dd></div><div><dt>%s</dt><dd>%s</dd></div><div><dt>%s</dt><dd>%s</dd></div></dl><h4>%s</h4><ul class="pt-del">%s</ul><p class="pt-scope">%s</p><p class="pt-out"><b>%s :</b> %s</p>%s</div>'
@@ -276,7 +281,7 @@ def build(lang):
 
     table = '<table class="pt-table"><caption>%s</caption><thead><tr><th scope="col">%s</th><th scope="col">%s</th><th scope="col">%s</th></tr></thead><tbody>%s</tbody></table>' % (
         E(c["tbl_cap"]), E(c["th"][0]), E(c["th"][1]), E(c["th"][2]),
-        "".join('<tr><th scope="row">%s</th><td data-l="%s">%s</td><td data-l="%s" class="pt-price-c">%s%s</td></tr>' % (E(n), E(c["th"][1]), E(d), E(c["th"][2]), money(PRICES[k], lang), E(u)) for n, d, k, u in c["rows"]))
+        "".join('<tr><th scope="row">%s</th><td data-l="%s">%s</td><td data-l="%s" class="pt-price-c">%s%s</td></tr>' % (E(n), E(c["th"][1]), E(d), E(c["th"][2]), money_anim(PRICES[k], lang), E(u)) for n, d, k, u in c["rows"]))
     paths = '<div class="pt-paths" role="list" aria-label="%s">%s</div>' % (E(c["paths_t"]), "".join(
         '<div class="pt-path" role="listitem"><p class="pt-num">%s</p><h3>%s</h3><p class="pt-price">%s%s</p><ul>%s</ul><p style="margin-top:14px">%s</p></div>' % (
             E(p["n"]), E(p["name"]), p["price"], E(p["unit"]), "".join("<li>%s</li>" % E(i) for i in p["items"]), E(p["p"])) for p in c["paths"]))
