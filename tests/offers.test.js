@@ -59,3 +59,35 @@ test("chaque offre Partners a problème, public, périmètre, livrables, durée,
     assert.ok(h.includes('id="compare"') && h.includes('id="boundaries"'));
   }
 });
+
+test("méthode : MCPS partout, six étapes et Systems Thinking sur la page de la méthode", () => {
+  for (const f of PAGES) assert.ok(!/MAIORIS CPS/.test(fs.readFileSync(f, "utf8")), "ancien nom dans " + f);
+  for (const [f, name] of [["en/intelligence-system.html", "MAIORIS Creative Performance System"], ["fr/systeme-intelligence.html", "MAIORIS Creative Performance System"]]) {
+    const t = fs.readFileSync(path.join(SITE, f), "utf8");
+    assert.ok(t.includes(name));
+    for (const s of ["Creative Intelligence", "Creative Strategy", "Creative System", "Creative Operating System", "AI Creative Infrastructure", "Creative Performance", "Systems Thinking", "Theory of Constraints", "Six Sigma"]) assert.ok(t.includes(s), f + " : " + s);
+    assert.ok(/1 · Creative Intelligence/.test(t) && /6 · Creative Performance/.test(t));
+  }
+});
+test("page Marques et groupes : neuf offres en quatre familles, prix publiés seulement, lien vers Partners, aucun prix inventé", () => {
+  for (const [f, partner] of [["en/brands-groups.html", "partners.html"], ["fr/marques-et-groupes.html", "partenaires.html"]]) {
+    const raw = fs.readFileSync(path.join(SITE, f), "utf8"), t = norm(raw);
+    assert.equal((raw.match(/class="pb-row"/g) || []).length, 9);
+    assert.equal((raw.match(/class="pb-fam"/g) || []).length, 4);
+    for (const o of ["Creative Audit", "MCPS Diagnostic", "Brand Intelligence", "Growth Architecture", "Campaign Architect", "Creative Operating System", "Transformation 90", "Creative Direction", "Creative Leadership as a Service"]) assert.ok(t.includes(o), f + " : " + o);
+    assert.ok(t.includes("750 000 FCFA") || t.includes("750,000 FCFA"));
+    assert.ok(raw.includes(partner));
+    const prices = [...new Set((t.match(/\d{1,3}(?:[ ,]\d{3})+ FCFA/g) || []).map((x) => x.replace(/[ ,]/g, "").replace("FCFA", "")))].sort();
+    assert.deepEqual(prices, ["1200000", "2500000", "750000"], f + " : prix publiés uniquement " + prices);
+    assert.ok(!/800 000|800,000/.test(t));
+  }
+});
+test("pages d'offre : chaque offre explique en quoi elle diffère des autres (rubrique 08)", () => {
+  for (const f of ["en/advisory/mcps-diagnostic.html", "en/advisory/creative-operating-system.html", "en/advisory/transformation-90.html", "en/advisory/claas.html", "en/advisory/brand-intelligence.html", "en/advisory/growth-architecture.html", "en/advisory/creative-audit.html", "fr/accompagnement/diagnostic-mcps.html", "fr/accompagnement/creative-operating-system.html", "fr/accompagnement/transformation-90.html", "fr/accompagnement/claas.html", "fr/accompagnement/brand-intelligence.html", "fr/accompagnement/growth-architecture.html", "fr/accompagnement/creative-audit.html"]) {
+    const t = fs.readFileSync(path.join(SITE, f), "utf8");
+    assert.ok(/§ 08|Why this offer|Pourquoi cette offre/.test(t), f);
+  }
+});
+test("accueil : section des deux marchés avec liens vers Direct et Partners", () => {
+  for (const [f, d, p] of [["en/index.html", "brands-groups.html", "partners.html"], ["fr/index.html", "marques-et-groupes.html", "partenaires.html"]]) { const t = fs.readFileSync(path.join(SITE, f), "utf8"); assert.ok(t.includes('class="two-mk"') && t.includes(d) && t.includes(p), f); }
+});

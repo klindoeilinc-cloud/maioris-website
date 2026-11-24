@@ -158,3 +158,22 @@
 @media (max-width: 520px) { .pt-facts > div { grid-template-columns: 1fr; gap: 2px; } }
 .pt-cmp td:last-child, .pt-cmp th:last-child { text-align: left; white-space: normal; }
 .pt-cmp td { padding-right: 18px; }
+
+/* MAIORIS Direct : familles d'offres et parcours */
+.pb-fam { padding: clamp(24px, 3vw, 40px) 0; border-top: 2px solid var(--ink); }
+.pb-fam + .pb-fam { margin-top: clamp(8px, 2vw, 24px); }
+.pb-fam h3 { font-size: clamp(22px, 2.2vw, 30px); margin: 0 0 14px; }
+.pb-list { list-style: none; margin: 0; padding: 0; }
+.pb-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) auto; gap: 12px clamp(16px, 3vw, 48px); align-items: baseline; padding: 16px 0; border-top: 1px solid var(--line); }
+.pb-row h4 { font-family: var(--pop); font-weight: 600; font-size: 18px; margin: 0 0 4px; letter-spacing: -.01em; }
+.pb-row p { margin: 0; color: var(--mute); font-size: 15px; line-height: 1.5; }
+.pb-row p.pb-model { color: var(--ink); font-weight: 600; font-size: 15px; }
+.pb-diff { margin-top: 14px; }
+@media (max-width: 800px) { .pb-row { grid-template-columns: 1fr; } }
+.pb-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 2px solid var(--ink); }
+.pb-steps li { padding: 26px clamp(14px, 2vw, 30px) 30px 0; }
+.pb-steps li + li { padding-left: clamp(14px, 2vw, 30px); border-left: 1px solid var(--line); }
+.pb-steps h3 { font-size: 20px; margin: 0 0 8px; }
+.pb-steps p { margin: 0; color: var(--mute); }
+.pb-steps p.pt-num { color: var(--red); margin-bottom: 8px; }
+@media (max-width: 860px) { .pb-steps { grid-template-columns: 1fr; } .pb-steps li, .pb-steps li + li { padding: 22px 0; border-left: 0; } .pb-steps li + li { border-top: 1px solid var(--line); } }
