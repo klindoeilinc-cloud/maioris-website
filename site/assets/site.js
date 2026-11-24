@@ -65,7 +65,7 @@
     [...list.children].forEach((el, k) => el.style.setProperty("--i", k));
   });
   document.querySelectorAll(".offer-row").forEach((el, k) => el.style.setProperty("--i", k % 3));
-  document.querySelectorAll(".au-list, .au-ul, .au-ideal, .au-facts, ul.dash, .pt-offers, .pt-models, .pt-paths, .pt-eco, .pt-list, .pt-wdw ul, .pb-list, .pb-steps, .two-mk, .pt-table tbody").forEach((list) => {
+  document.querySelectorAll(".au-list, .au-ul, .au-ideal, .au-facts, ul.dash, .pt-offers, .pt-models, .pt-paths, .pt-eco, .pt-list, .pt-wdw ul, .pb-list, .pb-steps, .pj-list, .two-mk, .pt-table tbody").forEach((list) => {
     [...list.children].forEach((el, k) => el.style.setProperty("--i", Math.min(k, 6)));
   });
   const t0 = performance.now(), hold = root.classList.contains("door-in") ? 900 : 0;
@@ -288,7 +288,7 @@
 
     // pré-sélection depuis une page offre : contact.html#diagnostic
     const pre = (location.hash || "").slice(1);
-    const map = { diagnostic: "diagnostic", brand: "project", growth: "project", cos: "project", t90: "t90", claas: "claas" };
+    const map = { diagnostic: "diagnostic", audit: "audit", advice: "advice", brand: "project", growth: "project", cos: "project", t90: "t90", claas: "claas" };
     if (map[pre]) { const r = form.querySelector('input[name=support][value="' + map[pre] + '"]'); if (r) r.checked = true; }
 
     // MAIORIS Partners : un bouton d'offre pré-sélectionne l'offre dans le formulaire

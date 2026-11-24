@@ -56,7 +56,7 @@ C["en"] = dict(
     mod_for="Offers",
     jr_k="04 / 05", jr_h="How an engagement starts", jr_i="No catalogue purchase without a conversation. We start by understanding the decision to be taken.",
     jr=[("A strategic consultation", "A first conversation of about thirty minutes, without a sales presentation."), ("The right entry point", "Most organisations start with a diagnostic, because it shows what to change first."), ("A scoped proposal", "Scope, duration and fees are confirmed in writing before any work starts.")],
-    ag_k="05 / 05", ag_h="Are you an agency?", ag_i="Agencies have their own catalogue, with its own offers, fees and boundaries. MAIORIS strengthens agencies and never competes with their production.", ag_a="See MAIORIS Partners",
+    jr_link=("how-engagement-works.html", "How engagement works →"), ag_k="05 / 05", ag_h="Are you an agency?", ag_i="Agencies have their own catalogue, with its own offers, fees and boundaries. MAIORIS strengthens agencies and never competes with their production.", ag_a="See MAIORIS Partners",
     fin_t="Let's discuss the decision in front of you.", fin_p="A first conversation of about thirty minutes, without a sales presentation.", fin_a="Request a Strategic Consultation", fin_b="Book a 30 minute conversation",
     contact="contact.html", bk="https://cal.com/maioris",
 )
@@ -100,7 +100,7 @@ C["fr"] = dict(
     mod_for="Offres",
     jr_k="04 / 05", jr_h="Comment une mission commence", jr_i="Pas d'achat sur catalogue sans conversation. Nous commençons par comprendre la décision à prendre.",
     jr=[("Une consultation stratégique", "Un premier échange d'une trentaine de minutes, sans présentation commerciale."), ("Le bon point d'entrée", "La plupart des organisations commencent par un diagnostic, car il montre ce qu'il faut changer en premier."), ("Une proposition cadrée", "Périmètre, durée et tarifs sont confirmés par écrit avant tout démarrage.")],
-    ag_k="05 / 05", ag_h="Vous êtes une agence ?", ag_i="Les agences ont leur propre catalogue, avec ses offres, ses tarifs et ses limites. MAIORIS renforce les agences et ne concurrence jamais leur production.", ag_a="Voir MAIORIS Partners",
+    jr_link=("comment-se-deroule-une-mission.html", "Comment se déroule une mission →"), ag_k="05 / 05", ag_h="Vous êtes une agence ?", ag_i="Les agences ont leur propre catalogue, avec ses offres, ses tarifs et ses limites. MAIORIS renforce les agences et ne concurrence jamais leur production.", ag_a="Voir MAIORIS Partners",
     fin_t="Parlons de la décision qui est devant vous.", fin_p="Un premier échange d'une trentaine de minutes, sans présentation commerciale.", fin_a="Demander une consultation stratégique", fin_b="Réserver une conversation de 30 minutes",
     contact="contact.html", bk="https://cal.com/maioris",
 )
@@ -150,7 +150,7 @@ def build(lang):
     models = ('<section class="pt-sec" data-reveal="" aria-labelledby="mod-t"><div class="wrap">' + sec_head(c["mod_k"], c["mod_h"], c["mod_i"], "mod-t") +
               '<div class="pt-models">%s</div></div></section>') % "".join('<div class="pt-model"><p class="pt-letter" aria-hidden="true">%d</p><h3>%s</h3><p>%s</p><p class="pt-who">%s : %s</p></div>' % (i + 1, E(n), E(d), E(c["mod_for"]), E(w)) for i, (n, d, w) in enumerate(c["mod"]))
     journey = ('<section class="pt-sec alt" data-reveal="" aria-labelledby="jr-t"><div class="wrap">' + sec_head(c["jr_k"], c["jr_h"], c["jr_i"], "jr-t") +
-               '<ol class="pb-steps">%s</ol></div></section>') % "".join('<li><p class="pt-num">%02d</p><h3>%s</h3><p>%s</p></li>' % (i + 1, E(a), E(b)) for i, (a, b) in enumerate(c["jr"]))
+               '<ol class="pb-steps">%s</ol><p class="pt-mcps"><a href="%s">%s</a></p></div></section>') % ("".join('<li><p class="pt-num">%02d</p><h3>%s</h3><p>%s</p></li>' % (i + 1, E(a), E(b)) for i, (a, b) in enumerate(c["jr"])), c["jr_link"][0], E(c["jr_link"][1]))
     agency = ('<section class="pt-sec" data-reveal="" aria-labelledby="ag-t"><div class="wrap">' + sec_head(c["ag_k"], c["ag_h"], c["ag_i"], "ag-t") +
               '<p><a class="btn" data-track="cta_click" data-rank="secondary" data-label="brands-to-partners" href="%s">%s</a></p></div></section>') % (bp[0], E(c["ag_a"]))
     final = ('<section class="pt-sec alt" data-reveal=""><div class="wrap"><p class="pt-quote" style="margin-top:0;border-top:0;padding-top:0">%s</p><p class="pt-lead" style="margin-top:18px">%s</p><div class="pt-cta"><a class="btn" data-track="cta_click" data-rank="primary" data-label="brands-final" href="%s">%s</a>'

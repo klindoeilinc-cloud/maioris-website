@@ -14,7 +14,7 @@ from xml.dom import minidom
 SITE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "site")
 BASE = "https://maioris.net"
 errors, warnings = [], []
-PRESELECT = {"diagnostic", "brand", "growth", "cos", "t90", "claas"}
+PRESELECT = {"diagnostic", "audit", "advice", "brand", "growth", "cos", "t90", "claas"}
 def err(m): errors.append(m)
 def warn(m): warnings.append(m)
 
