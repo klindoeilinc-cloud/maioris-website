@@ -131,7 +131,7 @@
 .pt-contact .pt-alt { margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 16px; }
 .pt-row2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 20px; }
 @media (max-width: 640px) { .pt-row2 { grid-template-columns: 1fr; } }
-@media (prefers-reduced-motion: no-preference) { .pt-offer, .pt-model, .pt-path { transition: background-color .3s; } .pt-offer:hover { background: linear-gradient(90deg, transparent, rgba(36,58,255,.025)); } }
+@media (prefers-reduced-motion: no-preference) { .pt-offer:hover { background: linear-gradient(90deg, transparent, rgba(36,58,255,.025)); } }
 
 /* spécificité : les règles de colonne ne doivent pas écraser prix, lettres et repères */
 .pt-path p.pt-price { color: var(--ink); font-size: clamp(24px, 2.2vw, 30px); margin: 12px 0 8px; }
