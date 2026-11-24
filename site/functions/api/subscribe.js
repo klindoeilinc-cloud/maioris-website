@@ -63,13 +63,12 @@ export async function onRequestPost({ request, env }) {
 
   const headers = { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" };
 
-  let res;
-  try {
-    res = await fetch(`https://api.resend.com/audiences/${encodeURIComponent(audience)}/contacts`, {
-      method: "POST", headers, body: JSON.stringify({ email, unsubscribed: false }),
-    });
-  } catch { return json({ ok: false, error: "subscribe" }, 502); }
-  if (!res.ok) return json({ ok: false, error: "subscribe" }, 502);
+  // API actuelle de Resend : POST /contacts avec le segment (l'ancien identifiant d'audience reste valable comme identifiant de segment).
+  // Si elle refuse la demande, repli sur l'ancien appel /audiences/{id}/contacts. Aucun succès n'est annoncé sans acceptation par Resend.
+  const attempt = (url, body) => fetch(url, { method: "POST", headers, body: JSON.stringify(body) }).then((r) => r.ok, () => false);
+  const accepted = (await attempt("https://api.resend.com/contacts", { email, unsubscribed: false, segments: [{ id: audience }] }))
+    || (await attempt(`https://api.resend.com/audiences/${encodeURIComponent(audience)}/contacts`, { email, unsubscribed: false }));
+  if (!accepted) return json({ ok: false, error: "subscribe" }, 502);
 
   // e-mail de bienvenue : un échec d'envoi n'annule pas l'inscription
   try {
