@@ -1,5 +1,7 @@
 # Preuve de valeur et autorité de la méthode MCPS : synthèse (24 novembre 2026)
 
+> **Mise à jour du 25 novembre 2026 (protection de la méthode)** : à la demande du propriétaire, la page de la méthode ne publie plus que la finalité, la question stratégique et le résultat attendu de chaque étape ; les lignes « type d'intervention » et « preuve observable » ainsi que les six exemples illustratifs (tableaux de gouvernance, de flux, de classification des tâches d'IA, d'indicateurs) ont été retirés au profit d'une liste de six livrables par leur nom, dont le contenu est remis en mission. Les sections 6 et 7 ci-dessous sont à lire avec cette réserve.
+
 ## 1. Pages modifiées
 | Page | URL (inchangée) | Modification |
 |---|---|---|

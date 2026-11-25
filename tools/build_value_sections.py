@@ -114,6 +114,12 @@ EXH = {
          ("Cartographie des opportunités d'IA", ("Tâche", "Classification", "Responsable humain"), [("Déclinaison de formats", "Automatisable", "Responsable production"), ("Premières pistes de texte", "Assistée par IA", "Responsable créatif"), ("Décision de positionnement de marque", "Expertise humaine", "Direction marketing"), ("Allégations sensibles avant diffusion", "Validation obligatoire", "Direction communication")]),
          ("Tableau de bord de performance créative", ("Indicateur", "Définition", "Cible"), [("Taux de validation du premier coup", "Part des livrables validés sans révision", "Fixée avant le début du travail"), ("Délai de cycle", "Jours ouvrés du brief à la validation", "Fixée avant le début du travail"), ("Tours de reprise", "Tours de révision par livrable", "Fixée avant le début du travail"), ("Cohérence de marque", "Résultat d'une revue structurée", "Fixée avant le début du travail")])]),
 }
+ART = {
+ "en": dict(lbl="What you receive", h="The work products of an engagement.", p="Typical work products, listed by name. Their content is specific to each organisation and is delivered within a mission.",
+  items=[("Creative diagnostic", "A structured reading of the creative function."), ("Constraint analysis", "The main limit on performance, identified and tested."), ("Creative governance model", "Who decides what, on which criteria."), ("Workflow architecture", "How creative work moves from brief to release."), ("AI opportunity map", "Where AI augments the work, under human control."), ("Creative performance scorecard", "Indicators to follow the system over time.")]),
+ "fr": dict(lbl="Ce que vous recevez", h="Les livrables d'un engagement.", p="Des livrables types, listés par leur nom. Leur contenu est propre à chaque organisation et remis dans le cadre d'une mission.",
+  items=[("Diagnostic créatif", "Une lecture structurée de la fonction créative."), ("Analyse de la contrainte", "La limite principale à la performance, identifiée et vérifiée."), ("Modèle de gouvernance créative", "Qui décide quoi, sur quels critères."), ("Architecture des flux de travail", "Comment le travail créatif circule du brief à la diffusion."), ("Cartographie des opportunités d'IA", "Où l'IA augmente le travail, sous contrôle humain."), ("Tableau de bord de performance créative", "Des indicateurs pour suivre le système dans le temps.")]),
+}
 CASES = {
  "en": dict(lbl="Documented cases", h="Real work, reported as documented.", p="Two cases are documented by MAIORIS. They show the challenge, the contribution and the reported impact. They are not presented as full MCPS deployments, and no result is added to what the documents state.",
   cols=("Challenge", "MAIORIS contribution", "Reported impact"),
@@ -133,13 +139,15 @@ def table(head, rows):
     body = "".join("<tr>%s</tr>" % "".join(("<th scope=\"row\">%s</th>" if i == 0 else "<td>%s</td>") % E(v) for i, v in enumerate(r[:n])) for r in rows)
     return '<div class="vp-scroll" role="region" tabindex="0" aria-label="%s"><table class="vp-table vp-ex-t"><thead><tr>%s</tr></thead><tbody>%s</tbody></table></div>' % (E(head[0]), th, body)
 
+SHOWN = (0, 1, 3)  # finalité, question stratégique, résultat attendu : le type d'intervention et la preuve observable restent dans les engagements
+
 def method_sections(lang):
     S = STAGE_T[lang]; ST = STAGES[lang]; labs = S[3]
-    stage_cards = "".join('<div class="vp-stage"><h3>%s</h3>%s</div>' % (E(s[0]), "".join('<p><b>%s</b>%s</p>' % (E(labs[i]), E(s[i + 1])) for i in range(5))) for s in ST)
+    stage_cards = "".join('<div class="vp-stage"><h3>%s</h3>%s</div>' % (E(s[0]), "".join('<p><b>%s</b>%s</p>' % (E(labs[i]), E(s[i + 1])) for i in SHOWN)) for s in ST)
     stages = '<section class="sec" id="mcps-stages" data-reveal=""><div class="wrap"><p class="lbl">%s</p><p class="h2 narrow">%s</p><p class="vp-lead"><b>%s</b></p><p class="vp-lead">%s</p><div class="vp-stages">%s</div></div></section>' % (E(S[4]), E(S[0]), E(S[1]), E(S[2]), stage_cards)
-    X = EXH[lang]
-    ex = "".join('<div class="vp-ex"><h3>%s</h3><p class="vp-tag">%s</p>%s</div>' % (E(t), E(X["tag"]), table(h_, r_)) for t, h_, r_ in X["items"])
-    exh = '<section class="sec alt" id="mcps-evidence" data-reveal=""><div class="wrap"><p class="lbl">%s</p><p class="h2 narrow">%s</p><p class="vp-lead">%s</p><div class="vp-exs">%s</div></div></section>' % (E(X["lbl"]), E(X["h"]), E(X["p"]), ex)
+    X = ART[lang]
+    art = "".join('<li><b>%s</b><span>%s</span></li>' % (E(n), E(d)) for n, d in X["items"])
+    exh = '<section class="sec alt" id="mcps-evidence" data-reveal=""><div class="wrap"><p class="lbl">%s</p><p class="h2 narrow">%s</p><p class="vp-lead">%s</p><ul class="vp-links vp-art">%s</ul></div></section>' % (E(X["lbl"]), E(X["h"]), E(X["p"]), art)
     K = CASES[lang]
     cs = "".join('<div class="vp-case"><h3>%s</h3><div class="vp-case-g"><div><h4>%s</h4><p>%s</p></div><div><h4>%s</h4><p>%s</p></div><div><h4>%s</h4><p>%s</p></div></div><p><a class="link" href="%s">%s →</a></p></div>' % (E(n), E(K["cols"][0]), E(a), E(K["cols"][1]), E(b), E(K["cols"][2]), E(c_), href, E(lk)) for n, a, b, c_, href, lk in K["items"])
     cases = '<section class="sec" id="mcps-cases" data-reveal=""><div class="wrap"><p class="lbl">%s</p><p class="h2 narrow">%s</p><p class="vp-lead">%s</p><div class="vp-cases">%s</div></div></section>' % (E(K["lbl"]), E(K["h"]), E(K["p"]), cs)

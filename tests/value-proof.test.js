@@ -20,23 +20,24 @@ test("leadership fractionné : section économique, comparaison de trois modèle
     assert.ok(/tools\.[0-9a-f]{8}\.css/.test(t) && /fcl\.[0-9a-f]{8}\.js/.test(t), l + " : ressources du comparateur");
   }
 });
-test("méthode MCPS : six étapes, cinq rubriques chacune, définition, fondements", () => {
-  const labels = { en: ["Purpose", "Strategic question", "Type of intervention", "Expected output", "Observable evidence"], fr: ["Finalité", "Question stratégique", "Type d'intervention", "Résultat attendu", "Preuve observable"] };
+test("méthode MCPS : six étapes, trois rubriques publiques chacune (le détail d'intervention reste dans les missions), définition, fondements", () => {
+  const labels = { en: ["Purpose", "Strategic question", "Expected output"], fr: ["Finalité", "Question stratégique", "Résultat attendu"] }, hidden = { en: ["Type of intervention", "Observable evidence"], fr: ["Type d'intervention", "Preuve observable"] };
   for (const l of ["en", "fr"]) {
     const t = rd(MCPS[l]);
     assert.equal((t.match(/class="vp-stage"/g) || []).length, 6, l);
     for (const lab of labels[l]) assert.equal((t.match(new RegExp(`<b>${lab.replace(/'/g, "(?:'|&#x27;)")}</b>`, "g")) || []).length, 6, l + " : " + lab);
+    for (const lab of hidden[l]) assert.ok(!t.includes(`<b>${lab.replace(/'/g, "&#x27;")}</b>`) && !t.includes(`<b>${lab}</b>`), l + " : rubrique non publique " + lab);
     assert.ok(/strategic operating system designed to transform creative intelligence into structured decisions, operational coherence and measurable creative performance|système d'exploitation stratégique conçu pour transformer l'intelligence créative en décisions structurées, en cohérence opérationnelle et en performance créative mesurable/.test(text(t).replace(/&#x27;/g, "'")), l + " : définition");
     for (const f of ["Theory of Constraints", "Six Sigma", "Systems Thinking"]) assert.ok(t.includes(f), f);
   }
 });
-test("preuves : six exemples marqués illustratifs, distingués des résultats clients", () => {
+test("livrables : six livrables listés par leur nom, sans tableau ni contenu détaillé", () => {
   for (const l of ["en", "fr"]) {
-    const t = rd(MCPS[l]), s = t.match(/<section class="sec alt" id="mcps-evidence"[\s\S]*?<\/section>/)[0];
-    assert.equal((s.match(/class="vp-ex"/g) || []).length, 6, l);
-    assert.equal((s.match(/class="vp-tag"/g) || []).length, 6, l + " : étiquette sur chaque exemple");
-    assert.ok(/Illustrative example, not a client result|Exemple illustratif, pas un résultat client/.test(s));
-    assert.ok(!/\d+\s?%/.test(text(s)), l + " : aucun pourcentage dans les exemples");
+    const t = rd(MCPS[l]), sec = t.match(/<section class="sec alt" id="mcps-evidence"[\s\S]*?<\/section>/)[0];
+    assert.equal((sec.match(/<li><b>/g) || []).length, 6, l);
+    assert.ok(!/<table|vp-ex/.test(sec), l + " : aucun tableau");
+    assert.ok(/delivered within a mission|remis dans le cadre d'une mission/.test(sec.replace(/&#x27;/g, "'")), l + " : contenu remis en mission");
+    assert.ok(!/Propose|Decides|Décide|Mandatory approval|Validation obligatoire|First time approval|Taux de validation/.test(sec), l + " : aucun détail de gabarit");
   }
 });
 test("cas documentés : SOCIAM et TCL, impact rapporté tel que documenté, aucun déploiement MCPS revendiqué", () => {
