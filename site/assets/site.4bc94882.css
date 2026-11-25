@@ -1341,3 +1341,5 @@ html.pdfv-open { overflow: hidden; }
 .js [data-reveal] .vp-stage, .js [data-reveal] .vp-ex, .js [data-reveal] .vp-case { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
 .js [data-reveal].in .vp-stage, .js [data-reveal].in .vp-ex, .js [data-reveal].in .vp-case { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) { .js [data-reveal] .vp-stage, .js [data-reveal] .vp-ex, .js [data-reveal] .vp-case { opacity: 1; transform: none; transition: none; } }
+
+.vp-art li b { font-weight: 600; }
